@@ -37,4 +37,4 @@ Người 5: ERD + Business Rule
 Từ Screen Flow & UC → rút ra Entity (thực thể: CLB, thành viên, sự kiện, đơn đăng ký,…).
 Vẽ ERD (mối quan hệ giữa các entity).
 Ghi chú sơ bộ Business Rule liên quan (VD: mỗi sinh viên tham gia tối đa 3 CLB, sự kiện cần có admin duyệt…).
-Đầu ra: ERD + list rule.
+Đầu ra: ERD + list rule.ádsa
