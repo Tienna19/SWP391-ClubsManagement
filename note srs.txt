@@ -1,0 +1,40 @@
+context: su dung cac danh tu chi du lieu thong tin, Các actor ( các thực thể ) tương tác với hệ thống
+
+Swimlane: luồng chức năng( các cn lquan đến nhau), làm 1 vài cái main flow chính 
+
+US case: từng Actors làm được vc j 
+
+Screen Flow: luồng đi các giao diện dựa vào các UC( hiểu nghiệp vụ)
+
+ERD: dựa theo Screen Flow , mỗi màn sẽ tạo ra đc 1 thực thể (hên xui)
+
+UC description: ghi rõ, mô tả luồng đi của các chức năng theo UC (25-30 uc)
+Busineses rule: Quy tắc nghiệp vụ lquan đến kinh doanh thì chưa cần rõ ràng lắm
+
+các hình vẽ được sử dụng AI để tham khảo
+
+Người 1: Context Diagram + Actor  ( Minh Hoàng)
+Xác định danh từ dữ liệu / thông tin (VD: CLB, thành viên, sự kiện, đơn đăng ký…).
+Vẽ Context diagram: các Actor (sinh viên, admin, giảng viên,…) tương tác với hệ thống.
+Đầu ra: Context diagram + danh sách Actor + mô tả ngắn.
+
+Người 2: Swimlane + Main Flow (nghĩa)
+Vẽ Swimlane diagram (chia theo nhóm chức năng liên quan).
+Xác định vài main flow quan trọng nhất (VD: đăng ký CLB, duyệt thành viên, tạo sự kiện, quản lý hoạt động…).
+Đầu ra: Swimlane + mô tả main flow.
+
+Người 3: Use Case + Use Case Description
+Liệt kê Use Case theo từng Actor.
+Viết mô tả chi tiết (UC Description) cho 25–30 UC (theo mẫu: Tên, Actor, Tiền điều kiện, Main flow, Alternative flow, Kết quả).
+Đầu ra: Bảng Use Case + UC Description chi tiết.
+
+Người 4: Screen Flow (Hải)
+Vẽ Screen Flow Diagram: các màn hình giao diện chính + cách chuyển qua lại dựa theo Use Case.
+Đảm bảo mapping rõ ràng với UC.
+Đầu ra: sơ đồ Screen Flow + chú thích các bước.
+
+Người 5: ERD + Business Rule
+Từ Screen Flow & UC → rút ra Entity (thực thể: CLB, thành viên, sự kiện, đơn đăng ký,…).
+Vẽ ERD (mối quan hệ giữa các entity).
+Ghi chú sơ bộ Business Rule liên quan (VD: mỗi sinh viên tham gia tối đa 3 CLB, sự kiện cần có admin duyệt…).
+Đầu ra: ERD + list rule.
