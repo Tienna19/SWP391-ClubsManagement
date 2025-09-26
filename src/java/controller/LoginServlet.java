@@ -13,7 +13,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("view/login.jsp").forward(request, response);
     } 
 
     @Override
@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("home");
         } else {
             request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("view/login.jsp").forward(request, response);
         }
     }
 }

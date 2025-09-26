@@ -18,6 +18,6 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("clubs", cdao.getAllClubs());
         request.setAttribute("events", edao.getAllEvents());
 
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        request.getRequestDispatcher("view/index.jsp").forward(request, response);
     }
 }
