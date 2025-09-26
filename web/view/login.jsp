@@ -61,50 +61,49 @@
                     <div class="account-container">
                         <div class="heading-bx left">
                             <h2 class="title-head">Login to your <span>Account</span></h2>
-                            <p>Don't have an account? <a href="register.jsp">Create one here</a></p>
+                            <p>Don't have an account? <a href="register">Create one here</a></p>
                         </div>	
-
-                        <div class="row placeani">
-                            <form class="contact-bx" action="login" method="post">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your Name</label>
-                                            <input name="username" type="text" required="" class="form-control">
+                        <form class="contact-bx" action="login" method="post">
+                            <div class="row placeani">
+                                <form class="contact-bx" action="login" method="post">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <label>Your Name</label>
+                                                <input name="username" type="text" required="" class="form-control">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group"> 
-                                            <label>Your Password</label>
-                                            <input name="password" type="password" class="form-control" required="">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="input-group"> 
+                                                <label>Your Password</label>
+                                                <input name="password" type="password" class="form-control" required="">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-12 m-b30">
-                                    <button name="submit" type="submit" value="Submit" class="btn button-md">Login</button>
-                                </div>
-                            </form>
-                            <div class="col-lg-12">
-                                <div class="form-group form-forget">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                                        <label class="custom-control-label" for="customControlAutosizing">Remember me</label>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group form-forget">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                                                <label class="custom-control-label" for="customControlAutosizing">Remember me</label>
+                                            </div>
+                                            <a href="forget-password.html" class="ml-auto">Forgot Password?</a>
+                                        </div>
                                     </div>
-                                    <a href="forget-password.html" class="ml-auto">Forgot Password?</a>
-                                </div>
+                                    <div class="col-lg-12 m-b30">
+                                        <button name="submit" type="submit" value="Submit" class="btn button-md">Login</button>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <h6>Login with Social media</h6>
+                                        <div class="d-flex">
+                                            <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
+                                            <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google Plus</a>
+                                        </div>
+                                    </div>
                             </div>
-
-                            <div class="col-lg-12">
-                                <h6>Login with Social media</h6>
-                                <div class="d-flex">
-                                    <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
-                                    <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google Plus</a>
-                                </div>
-                            </div>
-                        </div>
-
+                        </form>
                     </div>
                 </div>
             </div>

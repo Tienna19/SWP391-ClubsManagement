@@ -85,14 +85,14 @@
                                 </li>
                                 <c:choose>
                                     <c:when test="${not empty account}">
-                                        <div class="mb-3">
+                                        <h3 class="mb-3">
                                             Hi, <strong>${account.username}</strong> 
                                             (<a href="logout">Logout</a>)
-                                        </div>
+                                        </h3>
                                     </c:when>
                                     <c:otherwise>
-                                        <li><a href="login.jsp">Login</a></li>
-                                        <li><a href="register.jsp">Register</a></li>
+                                        <li><a href="login">Login</a></li>
+                                        <li><a href="register">Register</a></li>
                                         </c:otherwise>
                                     </c:choose>
 
