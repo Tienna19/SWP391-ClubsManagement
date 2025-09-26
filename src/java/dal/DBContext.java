@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
-/**
- *
- * @author lengo
- */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,14 +9,16 @@ public class DBContext {
 
     public DBContext() {
         try {
-            // Edit URL, username, password to authenticate with your MS SQL Server
             String url = "jdbc:sqlserver://localhost:1433;databaseName=ClubManagement73";
             String username = "sa";
-            String password = "123456";
+            String password = "123";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException ex) {
-            System.out.println(ex);
+            System.out.println("Error: " + ex.getMessage());
         }
+    }// Phương thức trả về kết nối cơ sở dữ liệu
+    public Connection getConnection() {
+        return this.connection;
     }
 }
