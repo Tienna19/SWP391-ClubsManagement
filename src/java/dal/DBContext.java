@@ -6,7 +6,7 @@ package dal;
 
 /**
  *
- * @author lengo
+ * @author admin
  */
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author lengo
+ * @author admin
  */
 @WebServlet(name = "NewServlet", urlPatterns = {"/new"})
 public class NewServlet extends HttpServlet {

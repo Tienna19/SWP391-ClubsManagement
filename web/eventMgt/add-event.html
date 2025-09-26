@@ -21,30 +21,30 @@
 	<meta name="format-detection" content="telephone=no">
 	
 	<!-- FAVICONS ICON ============================================= -->
-	<link rel="icon" href="../error-404.html" type="image/x-icon" />
+	<link rel="icon" href="error-404.html" type="image/x-icon" />
 	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
-	
+
 	<!-- PAGE TITLE HERE ============================================= -->
 	<title>Add New Event - Student Club Management System</title>
-	
+
 	<!-- MOBILE SPECIFIC ============================================= -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
+
 	<!--[if lt IE 9]>
 	<script src="assets/js/html5shiv.min.js"></script>
 	<script src="assets/js/respond.min.js"></script>
 	<![endif]-->
-	
+
 	<!-- All PLUGINS CSS ============================================= -->
 	<link rel="stylesheet" type="text/css" href="assets/css/assets.css">
 	<link rel="stylesheet" type="text/css" href="assets/vendors/calendar/fullcalendar.css">
-	
+
 	<!-- TYPOGRAPHY ============================================= -->
 	<link rel="stylesheet" type="text/css" href="assets/css/typography.css">
-	
+
 	<!-- SHORTCODES ============================================= -->
 	<link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
-	
+
 	<!-- STYLESHEETS ============================================= -->
 	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/dashboard.css">
@@ -128,15 +128,15 @@
 				<!-- header left menu start -->
 				<ul class="ttr-header-navigation">
 					<li>
-						<a href="../index.html" class="ttr-material-button ttr-submenu-toggle">HOME</a>
+						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">HOME</a>
 					</li>
 					<li>
 						<a href="#" class="ttr-material-button ttr-submenu-toggle">CLUBS <i class="fa fa-angle-down"></i></a>
 						<div class="ttr-header-submenu">
 							<ul>
-								<li><a href="../clubs.html">All Clubs</a></li>
-								<li><a href="../my-clubs.html">My Clubs</a></li>
-								<li><a href="../create-club.html">Create Club</a></li>
+								<li><a href="clubs.html">All Clubs</a></li>
+								<li><a href="my-clubs.html">My Clubs</a></li>
+								<li><a href="create-club.html">Create Club</a></li>
 							</ul>
 						</div>
 					</li>
@@ -144,9 +144,9 @@
 						<a href="#" class="ttr-material-button ttr-submenu-toggle">EVENTS <i class="fa fa-angle-down"></i></a>
 						<div class="ttr-header-submenu">
 							<ul>
-								<li><a href="../events.html">All Events</a></li>
-								<li><a href="add-event.html">Add Event</a></li>
-								<li><a href="../my-events.html">My Events</a></li>
+								<li><a href="events.html">All Events</a></li>
+								<li><a href="addNewEvent">Add Event</a></li>
+								<li><a href="my-events.html">My Events</a></li>
 							</ul>
 						</div>
 					</li>
@@ -240,7 +240,7 @@
 								<li><a href="my-clubs.html">My Clubs</a></li>
 								<li><a href="my-events.html">My Events</a></li>
 								<li><a href="settings.html">Settings</a></li>
-								<li><a href="../login.html">Logout</a></li>
+								<li><a href="login.html">Logout</a></li>
 							</ul>
 						</div>
 					</li>
@@ -370,7 +370,7 @@
 		                </a>
 		            </li>
 					<li>
-						<a href="add-event.html" class="ttr-material-button">
+						<a href="addNewEvent" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-calendar"></i></span>
 		                	<span class="ttr-label">Add Event</span>
 		                </a>
@@ -418,7 +418,7 @@
 							<h4>Add New Event</h4>
 						</div>
 						<div class="widget-inner">
-							<form class="edit-profile m-b30" id="addEventForm">
+							<form class="edit-profile m-b30" id="addEventForm" action="addNewEvent" method="post">
 								<div class="row">
 									<div class="col-12">
 										<div class="ml-auto">
@@ -436,7 +436,8 @@
 										<div>
 											<select class="form-control" name="clubId" id="clubId" required>
 												<option value="">Select a club</option>
-												<!-- Options will be populated dynamically -->
+												<option value="1" selected>Default Club (Hardcoded)</option>
+												<!-- Additional options will be populated dynamically when club management is implemented -->
 											</select>
 										</div>
 									</div>
@@ -530,30 +531,12 @@
 $(document).ready(function() {
     // Form validation and submission
     $('#addEventForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        // Validate form
-        if (validateEventForm()) {
-            // Get form data
-            var formData = {
-                title: $('#eventTitle').val(),
-                clubId: $('#clubId').val(),
-                status: $('#eventStatus').val(),
-                description: $('#eventDescription').val(),
-                location: $('#eventLocation').val(),
-                startTime: $('#startTime').val(),
-                endTime: $('#endTime').val()
-            };
-            
-            // Here you would typically send the data to your backend
-            console.log('Event data:', formData);
-            
-            // Show success message
-            showAlert('Event created successfully!', 'success');
-            
-            // Reset form
-            this.reset();
+        // Validate form before submission
+        if (!validateEventForm()) {
+            e.preventDefault(); // Only prevent submission if validation fails
+            return false;
         }
+        // If validation passes, allow normal form submission to servlet
     });
     
     // Real-time validation
@@ -639,20 +622,10 @@ function validateDateTime() {
 }
 
 function loadClubs() {
-    // This would typically be an AJAX call to your backend
-    // For now, we'll add some sample data
-    var clubs = [
-        { id: 1, name: 'Computer Science Club' },
-        { id: 2, name: 'Photography Club' },
-        { id: 3, name: 'Music Club' },
-        { id: 4, name: 'Sports Club' },
-        { id: 5, name: 'Debate Club' }
-    ];
-    
-    var clubSelect = $('#clubId');
-    clubs.forEach(function(club) {
-        clubSelect.append('<option value="' + club.id + '">' + club.name + '</option>');
-    });
+    // Club management is not yet implemented, so we're using a hardcoded default club
+    // The default option is already set in the HTML
+    // This function is kept for future implementation when club management is added
+    console.log('Using hardcoded club for now. Club management will be implemented later.');
 }
 
 function showAlert(message, type) {
