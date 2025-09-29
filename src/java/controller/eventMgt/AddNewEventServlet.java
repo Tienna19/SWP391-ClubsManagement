@@ -43,7 +43,7 @@ public class AddNewEventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         // Forward to the add event HTML form
-        request.getRequestDispatcher("/eventMgt/add-event.html").forward(request, response);
+        request.getRequestDispatcher("/view/eventMgt/add-event.html").forward(request, response);
     }
 
     /**
