@@ -12,18 +12,35 @@ public class ClubDAO extends DBContext {
     // 🔹 Lấy danh sách CLB theo filter
     public List<Club> getFilteredClubs(Integer categoryId, String status, String keyword) {
         List<Club> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM Clubs WHERE 1=1");
+        StringBuilder sql = new StringBuilder(
+                "SELECT c.*, cat.Name AS CategoryName "
+                + "FROM Clubs c "
+                + "JOIN ClubCategories cat ON c.CategoryID = cat.CategoryID "
+                + "WHERE 1=1"
+        );
 
-        if (categoryId != null) sql.append(" AND CategoryID = ?");
-        if (status != null && !status.isEmpty()) sql.append(" AND Status = ?");
-        if (keyword != null && !keyword.isEmpty()) sql.append(" AND Name LIKE ?");
+        if (categoryId != null) {
+            sql.append(" AND c.CategoryID = ?");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND c.Status = ?");
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND c.Name LIKE ?");
+        }
 
         try {
             PreparedStatement st = connection.prepareStatement(sql.toString());
             int index = 1;
-            if (categoryId != null) st.setInt(index++, categoryId);
-            if (status != null && !status.isEmpty()) st.setString(index++, status);
-            if (keyword != null && !keyword.isEmpty()) st.setString(index++, "%" + keyword + "%");
+            if (categoryId != null) {
+                st.setInt(index++, categoryId);
+            }
+            if (status != null && !status.isEmpty()) {
+                st.setString(index++, status);
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                st.setString(index++, "%" + keyword + "%");
+            }
 
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
@@ -33,6 +50,7 @@ public class ClubDAO extends DBContext {
                         rs.getString("Description"),
                         rs.getString("LogoUrl"),
                         rs.getInt("CategoryID"),
+                        rs.getString("CategoryName"), // 🔹 lấy luôn tên category
                         rs.getInt("CreatedByUserID"),
                         rs.getString("Status"),
                         rs.getTimestamp("CreatedAt"),
@@ -71,7 +89,7 @@ public class ClubDAO extends DBContext {
     public void insertClub(Club club) {
         try {
             String sql = "INSERT INTO Clubs (Name, Description, LogoUrl, CategoryID, CreatedByUserID, Status, CreatedAt) "
-                       + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, club.getName());
             st.setString(2, club.getDescription());

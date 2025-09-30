@@ -160,11 +160,10 @@
                 <th>Tên CLB</th>
                 <th>Mô tả</th>
                 <th>Logo</th>
-                <th>Category ID</th>
-                <th>Created By</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Approved By</th>
+                <th>Thể loại  </th>
+                <th>Thành lập bởi</th>
+                <th>Trạng thái</th>
+                <th>Thành lập ngày</th>
             </tr>
 
             <c:choose>
@@ -182,18 +181,11 @@
                                     <span style="color:#999;">Chưa có</span>
                                 </c:if>
                             </td>
-                            <td>${c.categoryId}</td>
+                            <td>${c.categoryName}</td>
                             <td>${c.createdByUserId}</td>
                             <td>${c.status}</td>
                             <td>${c.createdAt}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${c.approvedByUserId != null}">
-                                        ${c.approvedByUserId}
-                                    </c:when>
-                                    <c:otherwise>N/A</c:otherwise>
-                                </c:choose>
-                            </td>
+                            
                         </tr>
                     </c:forEach>
                 </c:when>

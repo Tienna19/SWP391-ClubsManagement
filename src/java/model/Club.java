@@ -9,6 +9,7 @@ public class Club {
     private String description;
     private String logoUrl;
     private int categoryId;
+    private String categoryName;  // 🔹 thêm field này
     private int createdByUserId;
     private String status;
     private Timestamp createdAt;
@@ -17,13 +18,15 @@ public class Club {
     public Club() {
     }
 
-    public Club(int clubId, String name, String description, String logoUrl, int categoryId,
-            int createdByUserId, String status, Timestamp createdAt, Integer approvedByUserId) {
+    public Club(int clubId, String name, String description, String logoUrl,
+            int categoryId, String categoryName, int createdByUserId,
+            String status, Timestamp createdAt, Integer approvedByUserId) {
         this.clubId = clubId;
         this.name = name;
         this.description = description;
         this.logoUrl = logoUrl;
         this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.createdByUserId = createdByUserId;
         this.status = status;
         this.createdAt = createdAt;
@@ -31,6 +34,14 @@ public class Club {
     }
 
     // Getters & Setters
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public int getClubId() {
         return clubId;
     }
