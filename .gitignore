@@ -69,6 +69,15 @@ nbproject/
 build.xml
 manifest.mf
 
+# NetBeans specific files
+nbproject/private/
+nbproject/genfiles.properties
+nbproject/project.xml
+nbproject/build-impl.xml
+nbproject/build-impl.xml~
+nbproject/ant-deploy.xml
+nbproject/project.properties
+
 # Eclipse
 .metadata
 bin/
