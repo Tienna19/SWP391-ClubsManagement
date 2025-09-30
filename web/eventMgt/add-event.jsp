@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -418,6 +421,16 @@
 							<h4>Add New Event</h4>
 						</div>
 						<div class="widget-inner">
+							<!-- Display success/error messages if any -->
+							<c:if test="${not empty message}">
+								<div class="alert alert-${messageType} alert-dismissible fade show" role="alert">
+									${message}
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+							</c:if>
+							
 							<form class="edit-profile m-b30" id="addEventForm" action="addNewEvent" method="post">
 								<div class="row">
 									<div class="col-12">
@@ -428,7 +441,7 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Event Title <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="text" name="title" id="eventTitle" required maxlength="200" placeholder="Enter event title">
+											<input class="form-control" type="text" name="title" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${param.title}">
 										</div>
 									</div>
 									<div class="form-group col-6">
@@ -436,7 +449,7 @@
 										<div>
 											<select class="form-control" name="clubId" id="clubId" required>
 												<option value="">Select a club</option>
-												<option value="1" selected>Default Club (Hardcoded)</option>
+												<option value="1" ${param.clubId == '1' ? 'selected' : ''}>Default Club (Hardcoded)</option>
 												<!-- Additional options will be populated dynamically when club management is implemented -->
 											</select>
 										</div>
@@ -445,8 +458,8 @@
 										<label class="col-form-label">Status</label>
 										<div>
 											<select class="form-control" name="status" id="eventStatus">
-												<option value="Draft">Draft</option>
-												<option value="Published">Published</option>
+												<option value="Draft" ${param.status == 'Draft' ? 'selected' : ''}>Draft</option>
+												<option value="Published" ${param.status == 'Published' ? 'selected' : ''}>Published</option>
 											</select>
 										</div>
 									</div>
@@ -460,13 +473,13 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Description</label>
 										<div>
-											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description"></textarea>
+											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description">${param.description}</textarea>
 										</div>
 									</div>
 									<div class="form-group col-12">
 										<label class="col-form-label">Location</label>
 										<div>
-											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location">
+											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location" value="${param.location}">
 										</div>
 									</div>
 									<div class="seperator"></div>
@@ -479,13 +492,13 @@
 									<div class="form-group col-6">
 										<label class="col-form-label">Start Date & Time <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="startTime" id="startTime" required>
+											<input class="form-control" type="datetime-local" name="startTime" id="startTime" required value="${param.startTime}">
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">End Date & Time <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="endTime" id="endTime" required>
+											<input class="form-control" type="datetime-local" name="endTime" id="endTime" required value="${param.endTime}">
 										</div>
 									</div>
 									<div class="col-12">
