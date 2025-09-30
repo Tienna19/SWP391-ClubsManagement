@@ -9,11 +9,22 @@ import model.Club;
 
 public class ClubDAO extends DBContext {
 
-    public List<Club> getAllClubs() {
+    // 🔹 Lấy danh sách CLB theo filter
+    public List<Club> getFilteredClubs(Integer categoryId, String status, String keyword) {
         List<Club> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM Clubs WHERE 1=1");
+
+        if (categoryId != null) sql.append(" AND CategoryID = ?");
+        if (status != null && !status.isEmpty()) sql.append(" AND Status = ?");
+        if (keyword != null && !keyword.isEmpty()) sql.append(" AND Name LIKE ?");
+
         try {
-            String sql = "SELECT * FROM Clubs";
-            PreparedStatement st = connection.prepareStatement(sql);
+            PreparedStatement st = connection.prepareStatement(sql.toString());
+            int index = 1;
+            if (categoryId != null) st.setInt(index++, categoryId);
+            if (status != null && !status.isEmpty()) st.setString(index++, status);
+            if (keyword != null && !keyword.isEmpty()) st.setString(index++, "%" + keyword + "%");
+
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Club c = new Club(
@@ -22,7 +33,7 @@ public class ClubDAO extends DBContext {
                         rs.getString("Description"),
                         rs.getString("LogoUrl"),
                         rs.getInt("CategoryID"),
-                        rs.getInt("CreatedByUserID"), // 🔹 lấy dạng String
+                        rs.getInt("CreatedByUserID"),
                         rs.getString("Status"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getObject("ApprovedByUserID") != null ? rs.getInt("ApprovedByUserID") : null
@@ -35,9 +46,10 @@ public class ClubDAO extends DBContext {
         return list;
     }
 
+    // 🔹 Lấy toàn bộ categories
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
-        String sql = "SELECT CategoryID AS id, Name FROM ClubCategories"; // ✅ bảng đúng
+        String sql = "SELECT CategoryID AS id, Name FROM ClubCategories";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -55,6 +67,7 @@ public class ClubDAO extends DBContext {
         return list;
     }
 
+    // 🔹 Insert Club
     public void insertClub(Club club) {
         try {
             String sql = "INSERT INTO Clubs (Name, Description, LogoUrl, CategoryID, CreatedByUserID, Status, CreatedAt) "
@@ -64,7 +77,7 @@ public class ClubDAO extends DBContext {
             st.setString(2, club.getDescription());
             st.setString(3, club.getLogoUrl());
             st.setInt(4, club.getCategoryId());
-            st.setInt(5, club.getCreatedByUserId()); // 🔹 lưu dạng String
+            st.setInt(5, club.getCreatedByUserId());
             st.setString(6, club.getStatus());
             st.setTimestamp(7, club.getCreatedAt());
             st.executeUpdate();
