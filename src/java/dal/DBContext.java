@@ -9,7 +9,7 @@ public class DBContext {
 
     public DBContext() {
         try {
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=ClubManagement73";
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=ClubDB";
             String username = "sa";
             String password = "123";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -17,7 +17,7 @@ public class DBContext {
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
-    }// Phương thức trả về kết nối cơ sở dữ liệu
+    }
     public Connection getConnection() {
         return this.connection;
     }
