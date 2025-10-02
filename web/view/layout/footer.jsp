@@ -17,5 +17,3 @@
 <script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
 <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
 <script src="assets/js/functions.js"></script>
-</body>
-</html>

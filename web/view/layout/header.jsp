@@ -1,19 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student Club Management System</title>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
-    <style>
+<!-- Header Styles -->
+<style>
         body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
@@ -120,13 +108,11 @@
             object-fit: cover;
         }
     </style>
-</head>
-<body>
 
 <header>
     <div class="header-left">
         <a href="${pageContext.request.contextPath}/index.jsp" class="logo">
-            <div class="logo-icon">🎓</div>
+            <div class="logo-icon">?</div>
             <div class="logo-text">
                 <strong>Student Club</strong>
                 <span>Management System</span>
@@ -165,6 +151,3 @@
         <a href="#"><img src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" class="avatar" alt="User"></a>
     </div>
 </header>
-
-</body>
-</html>
