@@ -7,8 +7,9 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import model.Club;
+import model.Category;
 
-@WebServlet(name="ViewAllClubServlet", urlPatterns={"/viewAllClubs", "/ViewAllClubServlet"})
+// @WebServlet annotation removed - servlet is configured in web.xml
 public class ViewAllClubServlet extends HttpServlet {
     
     @Override
@@ -46,9 +47,13 @@ public class ViewAllClubServlet extends HttpServlet {
             // Get all clubs for statistics
             List<Club> allClubs = dao.getAllClubs();
             
+            // Get all categories for dropdown
+            List<Category> categories = dao.getAllCategories();
+            
             // Set attributes for JSP
             request.setAttribute("clubs", filteredClubs);
             request.setAttribute("allClubs", allClubs);
+            request.setAttribute("categories", categories);
             request.setAttribute("totalClubs", filteredClubs.size());
             request.setAttribute("searchQuery", searchQuery);
             request.setAttribute("statusFilter", statusFilter);

@@ -1,4 +1,4 @@
-package controller;
+package controller.club;
 
 import dal.ClubDAO;
 import model.Club;
@@ -15,8 +15,8 @@ import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.List;
 
-@WebServlet("/createClub")
-@MultipartConfig // ⚠️ Bắt buộc để xử lý form có file upload
+// @WebServlet annotation removed - servlet is configured in web.xml
+@MultipartConfig 
 public class CreateClubServlet extends HttpServlet {
 
     @Override

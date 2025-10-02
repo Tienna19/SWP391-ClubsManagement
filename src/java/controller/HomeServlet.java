@@ -10,17 +10,18 @@ import java.util.List;
 import model.Club;
 import model.Event;
 
-@WebServlet(name="HomeServlet", urlPatterns={"/home"})
+// @WebServlet annotation removed - servlet is configured in web.xml
 public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        ClubDAO cdao = new ClubDAO();
-        EventDAO edao = new EventDAO();
+        try {
+            ClubDAO cdao = new ClubDAO();
+            EventDAO edao = new EventDAO();
 
-        // Lấy danh sách tất cả clubs và events
-        List<Club> clubs = cdao.getAllClubs();
-        List<Event> events = edao.getAllEvents();
+            // Lấy danh sách tất cả clubs và events
+            List<Club> clubs = cdao.getAllClubs();
+            List<Event> events = edao.getAllEvents();
 
         // Lấy một số clubs tiêu biểu (giới hạn 4 clubs để hiển thị trên homepage)
         List<Club> featuredClubs = clubs.size() > 4 ? clubs.subList(0, 4) : clubs;
@@ -38,8 +39,14 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("totalClubs", clubs.size());
         request.setAttribute("totalEvents", events.size());
 
-        // Chuyển tiếp yêu cầu đến trang JSP
-        request.getRequestDispatcher("view/home/index.jsp").forward(request, response);
+            // Chuyển tiếp yêu cầu đến trang JSP
+            request.getRequestDispatcher("view/home/index.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Show error page or redirect to error page
+            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
+            request.getRequestDispatcher("view/error.jsp").forward(request, response);
+        }
     }
     
     @Override

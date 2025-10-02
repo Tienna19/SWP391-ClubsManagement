@@ -111,7 +111,7 @@
 
 <header>
     <div class="header-left">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="logo">
+        <a href="${pageContext.request.contextPath}/home" class="logo">
             <div class="logo-icon">?</div>
             <div class="logo-text">
                 <strong>Student Club</strong>
@@ -120,7 +120,7 @@
         </a>
         <nav>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/index.jsp">HOME</a></li>
+                <li><a href="${pageContext.request.contextPath}/home">HOME</a></li>
                 <li>
                     <a href="#">CLUBS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
                     <div class="submenu">

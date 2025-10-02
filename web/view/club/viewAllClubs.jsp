@@ -127,12 +127,12 @@
         <h2>📋 Danh sách Câu Lạc Bộ</h2>
 
         <!-- 🔍 Bộ lọc -->
-        <form method="get" action="${pageContext.request.contextPath}/clubs" class="filter-bar">
+        <form method="get" action="${pageContext.request.contextPath}/viewAllClubs" class="filter-bar">
             <!-- Lọc theo Category -->
-            <select name="categoryId">
+            <select name="category">
                 <option value="">-- Tất cả Categories --</option>
                 <c:forEach var="cat" items="${categories}">
-                    <option value="${cat.id}" <c:if test="${param.categoryId eq cat.id}">selected</c:if>>
+                    <option value="${cat.id}" <c:if test="${param.category eq cat.id}">selected</c:if>>
                         ${cat.name}
                     </option>
                 </c:forEach>
@@ -147,8 +147,8 @@
             </select>
 
             <!-- Ô tìm kiếm -->
-            <input type="text" name="keyword" placeholder="Tìm kiếm theo tên CLB..."
-                   value="${param.keyword != null ? param.keyword : ''}"/>
+            <input type="text" name="search" placeholder="Tìm kiếm theo tên CLB..."
+                   value="${param.search != null ? param.search : ''}"/>
 
             <button type="submit">Lọc</button>
         </form>

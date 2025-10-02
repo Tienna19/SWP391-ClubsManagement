@@ -26,6 +26,13 @@ public class ClubDAO extends DBContext {
      */
     public List<Club> getFilteredClubs(Integer categoryId, String status, String keyword) {
         List<Club> list = new ArrayList<>();
+        
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot execute query.");
+            return list; // Return empty list instead of crashing
+        }
+        
         StringBuilder sql = new StringBuilder(
                 "SELECT c.ClubID, c.Name, c.Description, c.LogoUrl, c.CategoryID, "
                 + "cat.Name AS CategoryName, c.CreatedByUserID, c.Status, c.CreatedAt, c.ApprovedByUserID "
@@ -93,6 +100,12 @@ public class ClubDAO extends DBContext {
      * @return Club object hoặc null nếu không tìm thấy
      */
     public Club getClubById(int clubId) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot execute query.");
+            return null;
+        }
+        
         String sql = "SELECT c.ClubID, c.Name, c.Description, c.LogoUrl, c.CategoryID, "
                 + "cat.Name AS CategoryName, c.CreatedByUserID, c.Status, c.CreatedAt, c.ApprovedByUserID "
                 + "FROM Clubs c "
@@ -158,6 +171,13 @@ public class ClubDAO extends DBContext {
      */
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
+        
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot execute query.");
+            return list; // Return empty list instead of crashing
+        }
+        
         String sql = "SELECT CategoryID AS id, Name FROM ClubCategories ORDER BY Name";
 
         try {
@@ -183,6 +203,12 @@ public class ClubDAO extends DBContext {
      * @return true nếu thành công, false nếu thất bại
      */
     public boolean insertClub(Club club) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot insert club.");
+            return false;
+        }
+        
         try {
             String sql = "INSERT INTO Clubs (Name, Description, LogoUrl, CategoryID, CreatedByUserID, Status, CreatedAt) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -210,6 +236,12 @@ public class ClubDAO extends DBContext {
      * @return true nếu thành công, false nếu thất bại
      */
     public boolean updateClub(Club club) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot update club.");
+            return false;
+        }
+        
         try {
             String sql = "UPDATE Clubs SET Name = ?, Description = ?, LogoUrl = ?, "
                     + "CategoryID = ?, Status = ?, ApprovedByUserID = ? WHERE ClubID = ?";
@@ -241,6 +273,12 @@ public class ClubDAO extends DBContext {
      * @return true nếu thành công, false nếu thất bại
      */
     public boolean deleteClub(int clubId) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot delete club.");
+            return false;
+        }
+        
         try {
             String sql = "DELETE FROM Clubs WHERE ClubID = ?";
             PreparedStatement st = connection.prepareStatement(sql);
@@ -261,6 +299,12 @@ public class ClubDAO extends DBContext {
      * @return Số lượng clubs
      */
     public int countClubsByStatus(String status) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot count clubs by status.");
+            return 0;
+        }
+        
         String sql = "SELECT COUNT(*) FROM Clubs WHERE Status = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -281,6 +325,12 @@ public class ClubDAO extends DBContext {
      * @return Tổng số clubs
      */
     public int getTotalClubsCount() {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot get total clubs count.");
+            return 0;
+        }
+        
         String sql = "SELECT COUNT(*) FROM Clubs";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -294,4 +344,5 @@ public class ClubDAO extends DBContext {
         }
         return 0;
     }
+    
 }
