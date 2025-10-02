@@ -9,7 +9,7 @@ public class Club {
     private String description;
     private String logoUrl;
     private int categoryId;
-    private String categoryName;  // 🔹 thêm field này
+    private String categoryName; // Tên category
     private int createdByUserId;
     private String status;
     private Timestamp createdAt;
@@ -18,9 +18,24 @@ public class Club {
     public Club() {
     }
 
-    public Club(int clubId, String name, String description, String logoUrl,
-            int categoryId, String categoryName, int createdByUserId,
-            String status, Timestamp createdAt, Integer approvedByUserId) {
+    // Constructor cũ (backward compatibility)
+    public Club(int clubId, String name, String description, String logoUrl, int categoryId,
+            int createdByUserId, String status, Timestamp createdAt, Integer approvedByUserId) {
+        this.clubId = clubId;
+        this.name = name;
+        this.description = description;
+        this.logoUrl = logoUrl;
+        this.categoryId = categoryId;
+        this.categoryName = null; // Sẽ được set sau
+        this.createdByUserId = createdByUserId;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.approvedByUserId = approvedByUserId;
+    }
+    
+    // Constructor mới với categoryName
+    public Club(int clubId, String name, String description, String logoUrl, int categoryId,
+            String categoryName, int createdByUserId, String status, Timestamp createdAt, Integer approvedByUserId) {
         this.clubId = clubId;
         this.name = name;
         this.description = description;
@@ -34,14 +49,6 @@ public class Club {
     }
 
     // Getters & Setters
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
     public int getClubId() {
         return clubId;
     }
@@ -82,6 +89,14 @@ public class Club {
         this.categoryId = categoryId;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public int getCreatedByUserId() {
         return createdByUserId;
     }
@@ -112,5 +127,148 @@ public class Club {
 
     public void setApprovedByUserId(Integer approvedByUserId) {
         this.approvedByUserId = approvedByUserId;
+    }
+    
+    // Utility methods
+    
+    /**
+     * Check if the club is approved
+     * @return true if status is "Approved", false otherwise
+     */
+    public boolean isApproved() {
+        return "Approved".equalsIgnoreCase(this.status);
+    }
+    
+    /**
+     * Check if the club is pending approval
+     * @return true if status is "Pending", false otherwise
+     */
+    public boolean isPending() {
+        return "Pending".equalsIgnoreCase(this.status);
+    }
+    
+    /**
+     * Check if the club is active (approved and not suspended)
+     * @return true if club is active, false otherwise
+     */
+    public boolean isActive() {
+        return "Approved".equalsIgnoreCase(this.status) || "Active".equalsIgnoreCase(this.status);
+    }
+    
+    /**
+     * Get display status with proper formatting
+     * @return formatted status string
+     */
+    public String getDisplayStatus() {
+        if (this.status == null) return "Unknown";
+        
+        switch (this.status.toLowerCase()) {
+            case "approved":
+            case "active":
+                return "Active";
+            case "pending":
+                return "Pending Approval";
+            case "rejected":
+                return "Rejected";
+            case "suspended":
+                return "Suspended";
+            default:
+                return this.status;
+        }
+    }
+    
+    /**
+     * Get CSS class for status display
+     * @return CSS class name for status styling
+     */
+    public String getStatusCssClass() {
+        if (this.status == null) return "text-secondary";
+        
+        switch (this.status.toLowerCase()) {
+            case "approved":
+            case "active":
+                return "text-success";
+            case "pending":
+                return "text-warning";
+            case "rejected":
+            case "suspended":
+                return "text-danger";
+            default:
+                return "text-secondary";
+        }
+    }
+    
+    /**
+     * Get default logo URL if logoUrl is null or empty
+     * @return logo URL or default placeholder
+     */
+    public String getLogoUrlOrDefault() {
+        if (this.logoUrl == null || this.logoUrl.trim().isEmpty()) {
+            return "assets/images/clubs/default-club-logo.png";
+        }
+        return this.logoUrl;
+    }
+    
+    /**
+     * Get formatted creation date
+     * @return formatted date string
+     */
+    public String getFormattedCreatedAt() {
+        if (this.createdAt == null) return "Unknown";
+        
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy");
+        return sdf.format(this.createdAt);
+    }
+    
+    /**
+     * Get short description (truncated if too long)
+     * @param maxLength maximum length of description
+     * @return truncated description
+     */
+    public String getShortDescription(int maxLength) {
+        if (this.description == null) return "";
+        
+        if (this.description.length() <= maxLength) {
+            return this.description;
+        }
+        
+        return this.description.substring(0, maxLength - 3) + "...";
+    }
+    
+    /**
+     * Get short description with default length of 100 characters
+     * @return truncated description
+     */
+    public String getShortDescription() {
+        return getShortDescription(100);
+    }
+    
+    @Override
+    public String toString() {
+        return "Club{" +
+                "clubId=" + clubId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", logoUrl='" + logoUrl + '\'' +
+                ", categoryId=" + categoryId +
+                ", createdByUserId=" + createdByUserId +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                ", approvedByUserId=" + approvedByUserId +
+                '}';
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        Club club = (Club) obj;
+        return clubId == club.clubId;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(clubId);
     }
 }
