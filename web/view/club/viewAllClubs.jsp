@@ -106,6 +106,69 @@
             background-color: #2e7d32;
         }
 
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .action-buttons a {
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .action-buttons a.view {
+            background-color: #2196F3;
+            color: white;
+        }
+        .action-buttons a.view:hover {
+            background-color: #1976D2;
+        }
+        .action-buttons a.join {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .action-buttons a.join:hover {
+            background-color: #388E3C;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 8px;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.2s;
+            min-width: 40px;
+            text-align: center;
+        }
+        .pagination a:hover {
+            background-color: #f5f5f5;
+            border-color: #5E35B1;
+        }
+        .pagination .current {
+            background-color: #5E35B1;
+            color: white;
+            border-color: #5E35B1;
+        }
+        .pagination .disabled {
+            color: #ccc;
+            cursor: not-allowed;
+            background-color: #f9f9f9;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .filter-bar {
@@ -127,7 +190,7 @@
         <h2>📋 Danh sách Câu Lạc Bộ</h2>
 
         <!-- 🔍 Bộ lọc -->
-        <form method="get" action="${pageContext.request.contextPath}/viewAllClubs" class="filter-bar">
+        <form method="get" action="<c:url value='/viewAllClubs'/>" class="filter-bar">
             <!-- Lọc theo Category -->
             <select name="category">
                 <option value="">-- Tất cả Categories --</option>
@@ -158,12 +221,9 @@
             <tr>
                 <th>ID</th>
                 <th>Tên CLB</th>
-                <th>Mô tả</th>
-                <th>Logo</th>
-                <th>Thể loại  </th>
-                <th>Thành lập bởi</th>
-                <th>Trạng thái</th>
-                <th>Thành lập ngày</th>
+                <th>Thể loại</th>
+                <th>Thành viên</th>
+                <th>Actions</th>
             </tr>
 
             <c:choose>
@@ -172,26 +232,20 @@
                         <tr>
                             <td>${c.clubId}</td>
                             <td>${c.name}</td>
-                            <td>${c.description}</td>
-                            <td>
-                                <c:if test="${not empty c.logoUrl}">
-                                    <img src="${c.logoUrl}" alt="logo"/>
-                                </c:if>
-                                <c:if test="${empty c.logoUrl}">
-                                    <span style="color:#999;">Chưa có</span>
-                                </c:if>
-                            </td>
                             <td>${c.categoryName}</td>
-                            <td>${c.createdByUserId}</td>
-                            <td>${c.status}</td>
-                            <td>${c.createdAt}</td>
-                            
+                            <td>N/A</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="<c:url value='/viewClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="view">View</a>
+                                    <a href="<c:url value='/joinClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="join">Join</a>
+                                </div>
+                            </td>
                         </tr>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
                     <tr>
-                        <td colspan="9" style="text-align:center; color:#999; font-style:italic;">
+                        <td colspan="5" style="text-align:center; color:#999; font-style:italic;">
                             Không có CLB nào.
                         </td>
                     </tr>
@@ -199,7 +253,57 @@
             </c:choose>
         </table>
 
-        <a href="${pageContext.request.contextPath}/createClub" class="button">+ Tạo CLB mới</a>
+        <!-- Phân trang -->
+        <div class="pagination">
+            <!-- Nút Previous -->
+            <c:choose>
+                <c:when test="${currentPage > 1}">
+                    <a href="<c:url value='/viewAllClubs'>
+                        <c:param name='page' value='${currentPage - 1}'/>
+                        <c:param name='category' value='${param.category}'/>
+                        <c:param name='status' value='${param.status}'/>
+                        <c:param name='search' value='${param.search}'/>
+                    </c:url>">&laquo;</a>
+                </c:when>
+                <c:otherwise>
+                    <span class="disabled">&laquo;</span>
+                </c:otherwise>
+            </c:choose>
+
+            <!-- Các số trang -->
+            <c:forEach begin="1" end="${totalPages}" var="pageNum">
+                <c:choose>
+                    <c:when test="${pageNum == currentPage}">
+                        <span class="current">${pageNum}</span>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="<c:url value='/viewAllClubs'>
+                            <c:param name='page' value='${pageNum}'/>
+                            <c:param name='category' value='${param.category}'/>
+                            <c:param name='status' value='${param.status}'/>
+                            <c:param name='search' value='${param.search}'/>
+                        </c:url>">${pageNum}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <!-- Nút Next -->
+            <c:choose>
+                <c:when test="${currentPage < totalPages}">
+                    <a href="<c:url value='/viewAllClubs'>
+                        <c:param name='page' value='${currentPage + 1}'/>
+                        <c:param name='category' value='${param.category}'/>
+                        <c:param name='status' value='${param.status}'/>
+                        <c:param name='search' value='${param.search}'/>
+                    </c:url>">&raquo;</a>
+                </c:when>
+                <c:otherwise>
+                    <span class="disabled">&raquo;</span>
+                </c:otherwise>
+            </c:choose>
+        </div>
+
+        <a href="<c:url value='/createClub'/>" class="button">+ Tạo CLB mới</a>
     </div>
 
     <!-- ✅ Include footer -->
