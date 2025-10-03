@@ -2,13 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/E:/5/SWP391-ClubsManagement/src/java/model/Member.java</file>
-            <file>file:/E:/5/SWP391-ClubsManagement/src/java/dal/MemberDAO.java</file>
-            <file>file:/E:/5/SWP391-ClubsManagement/web/index.html</file>
-            <file>file:/E:/5/SWP391-ClubsManagement/web/memberList.jsp</file>
-            <file>file:/E:/5/SWP391-ClubsManagement/src/java/controller/ViewMembersServlet.java</file>
-            <file>file:/E:/5/SWP391-ClubsManagement/src/java/dal/DBContext.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

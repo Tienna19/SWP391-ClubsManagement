@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
@@ -36,6 +36,29 @@
 
     <h2>Danh Sách Thành Viên Câu Lạc Bộ</h2>
 
+    <!-- Form tìm kiếm và sắp xếp -->
+    <form action="view" method="get">
+        <!-- Sort -->
+        <label for="sortBy">Sắp xếp theo:</label>
+        <select name="sortBy" id="sortBy">
+            <option value="memberName" ${sortBy == 'memberName' ? 'selected' : ''}>Tên</option>
+            <option value="role" ${sortBy == 'role' ? 'selected' : ''}>Vai trò</option>
+            <option value="joinDate" ${sortBy == 'joinDate' ? 'selected' : ''}>Ngày gia nhập</option>
+        </select>
+
+        <!-- Order -->
+        <label for="order">Thứ tự:</label>
+        <select name="order" id="order">
+            <option value="ASC" ${order == 'ASC' ? 'selected' : ''}>Tăng dần</option>
+            <option value="DESC" ${order == 'DESC' ? 'selected' : ''}>Giảm dần</option>
+        </select>
+
+        <button type="submit">Áp dụng</button>
+    </form>
+
+    <br />
+
+    <!-- Hiển thị danh sách thành viên -->
     <c:if test="${not empty members}">
         <table>
             <thead>
@@ -59,6 +82,7 @@
         </table>
     </c:if>
 
+    <!-- Hiển thị thông báo nếu không có thành viên -->
     <c:if test="${empty members}">
         <div class="no-members">Câu lạc bộ này chưa có thành viên.</div>
     </c:if>
