@@ -1,21 +1,11 @@
-<<<<<<< Updated upstream
-=======
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
->>>>>>> Stashed changes
 package dal;
 
 import model.Membership;
 import java.sql.*;
-<<<<<<< Updated upstream
-
-public class MembershipDAO extends DBContext {
-
-    public Membership findById(int membershipId) throws SQLException {
-        String sql = "SELECT * FROM Memberships WHERE MembershipID = ?";
-=======
 import java.util.ArrayList;
 import java.util.List;
 import model.PendingRequest;
@@ -46,34 +36,24 @@ public class MembershipDAO extends DBContext {
                      "FROM Memberships m " +
                      "JOIN Users u ON m.UserID = u.UserID " +
                      "WHERE m.MembershipID = ?";
->>>>>>> Stashed changes
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, membershipId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-<<<<<<< Updated upstream
-                return new Membership(
-=======
                 Membership m = new Membership(
->>>>>>> Stashed changes
                     rs.getInt("MembershipID"),
                     rs.getInt("ClubID"),
                     rs.getInt("UserID"),
                     rs.getString("Role"),
                     rs.getString("Status")
                 );
-<<<<<<< Updated upstream
-=======
                 m.setFullName(rs.getString("FullName"));
                 return m;
->>>>>>> Stashed changes
             }
             return null;
         }
     }
 
-<<<<<<< Updated upstream
-=======
     // Paginated list of members for a club, join Users to get FullName
     public List<Membership> getMembersByPage(int clubId, int offset, int limit) throws SQLException {
         List<Membership> list = new ArrayList<>();
@@ -114,7 +94,6 @@ public class MembershipDAO extends DBContext {
     }
 
     // Update role
->>>>>>> Stashed changes
     public boolean updateRole(int membershipId, String newRole) throws SQLException {
         String sql = "UPDATE Memberships SET Role = ? WHERE MembershipID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -124,9 +103,6 @@ public class MembershipDAO extends DBContext {
             return rows > 0;
         }
     }
-<<<<<<< Updated upstream
-}
-=======
 
     // Check uniqueness of a critical role within a club
     public boolean isRoleUnique(int clubId, String role) throws SQLException {
@@ -156,4 +132,3 @@ public class MembershipDAO extends DBContext {
 
 
 
->>>>>>> Stashed changes
