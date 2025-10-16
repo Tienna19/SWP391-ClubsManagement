@@ -1,5 +1,51 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/images/favicon.png">
+<link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/assets/images/favicon.png">
+
+<!-- Simple Error Suppression -->
+<script>
+    // Suppress browser extension errors globally
+    (function() {
+        'use strict';
+        
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.error = function() {
+            const message = Array.prototype.join.call(arguments, ' ');
+            if (message.includes('runtime.lastError') || 
+                message.includes('message port closed') ||
+                message.includes('extension')) {
+                return;
+            }
+            originalError.apply(console, arguments);
+        };
+        
+        console.warn = function() {
+            const message = Array.prototype.join.call(arguments, ' ');
+            if (message.includes('runtime.lastError') || 
+                message.includes('message port closed') ||
+                message.includes('extension')) {
+                return;
+            }
+            originalWarn.apply(console, arguments);
+        };
+        
+        window.addEventListener('error', function(e) {
+            if (e.message && (
+                e.message.includes('runtime.lastError') ||
+                e.message.includes('message port closed')
+            )) {
+                e.preventDefault();
+                return false;
+            }
+        }, true);
+        
+    })();
+</script>
+
 <!-- Header Styles -->
 <style>
         body {

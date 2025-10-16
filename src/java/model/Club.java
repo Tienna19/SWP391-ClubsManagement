@@ -199,6 +199,30 @@ public class Club {
     }
     
     /**
+     * Safe getter for display status (null-safe)
+     * @return formatted status string or "Unknown"
+     */
+    public String getSafeDisplayStatus() {
+        try {
+            return getDisplayStatus();
+        } catch (Exception e) {
+            return "Unknown";
+        }
+    }
+    
+    /**
+     * Safe getter for status CSS class (null-safe)
+     * @return CSS class name or "text-secondary"
+     */
+    public String getSafeStatusCssClass() {
+        try {
+            return getStatusCssClass();
+        } catch (Exception e) {
+            return "text-secondary";
+        }
+    }
+    
+    /**
      * Get default logo URL if logoUrl is null or empty
      * @return logo URL or default placeholder
      */
@@ -216,8 +240,12 @@ public class Club {
     public String getFormattedCreatedAt() {
         if (this.createdAt == null) return "Unknown";
         
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy");
-        return sdf.format(this.createdAt);
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy");
+            return sdf.format(this.createdAt);
+        } catch (Exception e) {
+            return "Unknown";
+        }
     }
     
     /**
@@ -226,13 +254,17 @@ public class Club {
      * @return truncated description
      */
     public String getShortDescription(int maxLength) {
-        if (this.description == null) return "";
+        if (this.description == null || this.description.trim().isEmpty()) return "";
         
-        if (this.description.length() <= maxLength) {
-            return this.description;
+        try {
+            if (this.description.length() <= maxLength) {
+                return this.description;
+            }
+            
+            return this.description.substring(0, maxLength - 3) + "...";
+        } catch (Exception e) {
+            return this.description != null ? this.description : "";
         }
-        
-        return this.description.substring(0, maxLength - 3) + "...";
     }
     
     /**
@@ -241,6 +273,31 @@ public class Club {
      */
     public String getShortDescription() {
         return getShortDescription(100);
+    }
+    
+    /**
+     * Safe getter for short description (null-safe)
+     * @param maxLength maximum length
+     * @return truncated description or empty string
+     */
+    public String getSafeShortDescription(int maxLength) {
+        try {
+            return getShortDescription(maxLength);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
+    /**
+     * Safe getter for formatted date (null-safe)
+     * @return formatted date or "Unknown"
+     */
+    public String getSafeFormattedCreatedAt() {
+        try {
+            return getFormattedCreatedAt();
+        } catch (Exception e) {
+            return "Unknown";
+        }
     }
     
     @Override

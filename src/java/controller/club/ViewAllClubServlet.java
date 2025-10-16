@@ -24,6 +24,8 @@ public class ViewAllClubServlet extends HttpServlet {
             String statusFilter = request.getParameter("status");
             String categoryFilter = request.getParameter("category");
             String clubIdParam = request.getParameter("clubId");
+            String sortBy = request.getParameter("sort");
+            String sortOrder = request.getParameter("order");
             
             // If clubId is provided, show club details
             if (clubIdParam != null && !clubIdParam.trim().isEmpty()) {
@@ -41,27 +43,69 @@ public class ViewAllClubServlet extends HttpServlet {
                 }
             }
             
-            // Get filtered clubs directly from DAO
-            List<Club> filteredClubs = dao.getFilteredClubs(categoryId, statusFilter, searchQuery);
+            // Pagination parameters
+            int currentPage = 1;
+            int recordsPerPage = 10; // Số records per page
             
-            // Get all clubs for statistics
-            List<Club> allClubs = dao.getAllClubs();
+            try {
+                String pageParam = request.getParameter("page");
+                if (pageParam != null && !pageParam.trim().isEmpty()) {
+                    currentPage = Integer.parseInt(pageParam);
+                    if (currentPage < 1) currentPage = 1;
+                }
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+            
+            // Get filtered clubs directly from DAO
+            List<Club> allFilteredClubs = dao.getFilteredClubs(categoryId, statusFilter, searchQuery);
+            
+            // Calculate pagination
+            int totalRecords = allFilteredClubs.size();
+            int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+            
+            // Adjust current page if it's beyond total pages
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+            }
+            
+            // Apply sorting
+            if (sortBy != null && sortBy.equals("id")) {
+                if (sortOrder != null && sortOrder.equals("desc")) {
+                    allFilteredClubs.sort((c1, c2) -> Integer.compare(c2.getClubId(), c1.getClubId()));
+                } else {
+                    allFilteredClubs.sort((c1, c2) -> Integer.compare(c1.getClubId(), c2.getClubId()));
+                }
+            }
+            
+            // Get paginated clubs
+            List<Club> paginatedClubs = getPaginatedClubs(allFilteredClubs, currentPage, recordsPerPage);
             
             // Get all categories for dropdown
             List<Category> categories = dao.getAllCategories();
             
             // Set attributes for JSP
-            request.setAttribute("clubs", filteredClubs);
-            request.setAttribute("allClubs", allClubs);
+            request.setAttribute("clubs", paginatedClubs);
             request.setAttribute("categories", categories);
-            request.setAttribute("totalClubs", filteredClubs.size());
+            request.setAttribute("totalClubs", totalRecords);
             request.setAttribute("searchQuery", searchQuery);
             request.setAttribute("statusFilter", statusFilter);
             request.setAttribute("categoryFilter", categoryFilter);
+            request.setAttribute("sortBy", sortBy);
+            request.setAttribute("sortOrder", sortOrder);
+            
+            // Pagination attributes
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("recordsPerPage", recordsPerPage);
             
             // Count clubs by status
-            long activeClubs = filteredClubs.stream().filter(Club::isActive).count();
-            long pendingClubs = filteredClubs.stream().filter(Club::isPending).count();
+            long activeClubs = allFilteredClubs.stream()
+                .filter(c -> "Approved".equalsIgnoreCase(c.getStatus()) || "Active".equalsIgnoreCase(c.getStatus()))
+                .count();
+            long pendingClubs = allFilteredClubs.stream()
+                .filter(c -> "Pending".equalsIgnoreCase(c.getStatus()))
+                .count();
             
             request.setAttribute("activeClubs", activeClubs);
             request.setAttribute("pendingClubs", pendingClubs);
@@ -111,5 +155,21 @@ public class ViewAllClubServlet extends HttpServlet {
         }
     }
     
-    // Filtering is now handled by DAO's getFilteredClubs method
+    /**
+     * Get paginated clubs from the list
+     */
+    private List<Club> getPaginatedClubs(List<Club> allClubs, int currentPage, int recordsPerPage) {
+        if (allClubs == null || allClubs.isEmpty()) {
+            return allClubs;
+        }
+        
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, allClubs.size());
+        
+        if (startIndex >= allClubs.size()) {
+            return new java.util.ArrayList<>();
+        }
+        
+        return allClubs.subList(startIndex, endIndex);
+    }
 }

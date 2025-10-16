@@ -3,7 +3,31 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/FU/Ky5/SWP291/Ban_Hang/web/index.html</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/index.html</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/view/club/viewAllClubs.jsp</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/controller/club/CreateClubServlet.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/view/layout/header.jsp</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/nbproject/build-impl.xml</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/assets/js/functions.js</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/.git/config</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/META-INF/context.xml</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/view/layout/footer.jsp</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/assets/css/shortcodes/button.css</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/view/club/createClubs.jsp</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/controller/eventMgt/AddNewEventServlet.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/controller/HomeServlet.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/model/Membership.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/dal/DBContext.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/model/User.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/view/home/index.jsp</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/controller/club/ViewAllClubServlet.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/model/Event.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/model/Category.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/web/WEB-INF/web.xml</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/dal/ClubDAO.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/conf/MANIFEST.MF</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/model/Club.java</file>
+            <file>file:/D:/FU/K8/WDP301/Code/SWP391-ClubsManagement/src/java/dal/EventDAO.java</file>
         </group>
     </open-files>
 </project-private>
