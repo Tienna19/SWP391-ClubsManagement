@@ -4,7 +4,7 @@
  */
 package dal;
 
-import model.Membership;
+import model.MembershipRole;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class MembershipDAO extends DBContext {
         }
     }
     // Find one membership by ID (include user full name)
-    public Membership findById(int membershipId) throws SQLException {
+    public MembershipRole findById(int membershipId) throws SQLException {
         String sql = "SELECT m.MembershipID, m.ClubID, m.UserID, m.Role, m.Status, u.FullName " +
                      "FROM Memberships m " +
                      "JOIN Users u ON m.UserID = u.UserID " +
@@ -40,7 +40,7 @@ public class MembershipDAO extends DBContext {
             stmt.setInt(1, membershipId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                Membership m = new Membership(
+                MembershipRole m = new MembershipRole(
                     rs.getInt("MembershipID"),
                     rs.getInt("ClubID"),
                     rs.getInt("UserID"),
@@ -55,8 +55,8 @@ public class MembershipDAO extends DBContext {
     }
 
     // Paginated list of members for a club, join Users to get FullName
-    public List<Membership> getMembersByPage(int clubId, int offset, int limit) throws SQLException {
-        List<Membership> list = new ArrayList<>();
+    public List<MembershipRole> getMembersByPage(int clubId, int offset, int limit) throws SQLException {
+        List<MembershipRole> list = new ArrayList<>();
         String sql = "SELECT m.MembershipID, m.ClubID, m.UserID, m.Role, m.Status, u.FullName " +
                      "FROM Memberships m " +
                      "JOIN Users u ON m.UserID = u.UserID " +
@@ -69,7 +69,7 @@ public class MembershipDAO extends DBContext {
             stmt.setInt(3, limit);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Membership m = new Membership();
+                MembershipRole m = new MembershipRole();
                 m.setMembershipId(rs.getInt("MembershipID"));
                 m.setClubId(rs.getInt("ClubID"));
                 m.setUserId(rs.getInt("UserID"));

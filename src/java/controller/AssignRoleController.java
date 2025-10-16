@@ -5,7 +5,7 @@
 package controller;
 
 import dal.MembershipDAO;
-import model.Membership;
+import model.MembershipRole;
 import model.PendingRequest;
 
 public class AssignRoleController {
@@ -17,7 +17,7 @@ public class AssignRoleController {
 
     public String assignRole(int membershipId, String newRole, String currentUserRole, int currentUserId) {
         try {
-            Membership member = membershipDAO.findById(membershipId);
+            MembershipRole member = membershipDAO.findById(membershipId);
             if (member == null) {
                 return "Error: Membership not found.";
             }

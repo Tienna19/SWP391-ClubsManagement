@@ -4,7 +4,7 @@
  */
 package model;
 
-public class Membership {
+public class MembershipRole {
     private int membershipId;
     private int clubId;
     private int userId;
@@ -12,9 +12,9 @@ public class Membership {
     private String status;
     private String fullName; 
 
-    public Membership() {}
+    public MembershipRole() {}
 
-    public Membership(int membershipId, int clubId, int userId, String role, String status) {
+    public MembershipRole(int membershipId, int clubId, int userId, String role, String status) {
         this.membershipId = membershipId;
         this.clubId = clubId;
         this.userId = userId;

@@ -6,7 +6,7 @@
 package controller;
 
 import dal.MembershipDAO;
-import model.Membership;
+import model.MembershipRole;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class AssignRoleServlet extends HttpServlet {
             if (request.getParameter("page") != null) {
                 try { page = Integer.parseInt(request.getParameter("page")); } catch (NumberFormatException ignored) {}
             }
-            List<Membership> members = membershipDAO.getMembersByPage(clubId, (page - 1) * recordsPerPage, recordsPerPage);
+            List<MembershipRole> members = membershipDAO.getMembersByPage(clubId, (page - 1) * recordsPerPage, recordsPerPage);
             int totalRecords = membershipDAO.getTotalMembers(clubId);
             int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
