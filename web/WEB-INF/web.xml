@@ -4,11 +4,14 @@
         <servlet-name>AssignRoleServlet</servlet-name>
         <servlet-class>controller.AssignRoleServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ViewClubMemberServlet</servlet-name>
+        <servlet-class>controller.member.ViewClubMemberServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AssignRoleServlet</servlet-name>
         <url-pattern>/AssignRoleServlet</url-pattern>
     </servlet-mapping>
-    
     <servlet>
         <servlet-name>ViewListEventsServlet</servlet-name>
         <servlet-class>controller.eventMgt.ViewListEventsServlet</servlet-class>
