@@ -31,23 +31,20 @@ public class EventDAO extends DBContext {
             return -1;
         }
 
-        String sql = "INSERT INTO Events (ClubID, Title, Description, Location, StartTime, EndTime, Status, CreatedAt) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Events (ClubID, EventName, Description, EventDate, Status, CreatedAt) " +
+                     "VALUES (?, ?, ?, ?, ?, GETDATE())";
         try {
             PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, event.getClubID());
-            st.setString(2, event.getTitle());
+            st.setString(2, event.getEventName());
             st.setString(3, event.getDescription());
-            st.setString(4, event.getLocation());
-            st.setTimestamp(5, event.getStartTime());
-            st.setTimestamp(6, event.getEndTime());
-            st.setString(7, event.getStatus());
+            st.setTimestamp(4, event.getEventDate());
+            st.setString(5, event.getStatus());
 
             System.out.println("Executing SQL: " + sql);
             System.out.println("Parameters: ClubID=" + event.getClubID() +
-                             ", Title=" + event.getTitle() +
-                             ", StartTime=" + event.getStartTime() +
-                             ", EndTime=" + event.getEndTime());
+                             ", EventName=" + event.getEventName() +
+                             ", EventDate=" + event.getEventDate());
 
             int affectedRows = st.executeUpdate();
 
@@ -128,7 +125,7 @@ public class EventDAO extends DBContext {
      */
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT EventID, ClubID, Title, Description, Location, StartTime, EndTime, Status, CreatedAt FROM Events ORDER BY CreatedAt DESC";
+        String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events ORDER BY CreatedAt DESC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
@@ -136,11 +133,9 @@ public class EventDAO extends DBContext {
                 Event event = new Event(
                     rs.getInt("EventID"),
                     rs.getInt("ClubID"),
-                    rs.getString("Title"),
+                    rs.getString("EventName"),
                     rs.getString("Description"),
-                    rs.getString("Location"),
-                    rs.getTimestamp("StartTime"),
-                    rs.getTimestamp("EndTime"),
+                    rs.getTimestamp("EventDate"),
                     rs.getString("Status"),
                     rs.getTimestamp("CreatedAt")
                 );
@@ -159,7 +154,7 @@ public class EventDAO extends DBContext {
      * @return The event object, or null if not found
      */
     public Event getEventById(int eventID) {
-        String sql = "SELECT EventID, ClubID, Title, Description, Location, StartTime, EndTime, Status, CreatedAt FROM Events WHERE EventID = ?";
+        String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events WHERE EventID = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, eventID);
@@ -168,11 +163,9 @@ public class EventDAO extends DBContext {
                 return new Event(
                     rs.getInt("EventID"),
                     rs.getInt("ClubID"),
-                    rs.getString("Title"),
+                    rs.getString("EventName"),
                     rs.getString("Description"),
-                    rs.getString("Location"),
-                    rs.getTimestamp("StartTime"),
-                    rs.getTimestamp("EndTime"),
+                    rs.getTimestamp("EventDate"),
                     rs.getString("Status"),
                     rs.getTimestamp("CreatedAt")
                 );
@@ -191,7 +184,7 @@ public class EventDAO extends DBContext {
      */
     public List<Event> getEventsByClubId(int clubID) {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT EventID, ClubID, Title, Description, Location, StartTime, EndTime, Status, CreatedAt FROM Events WHERE ClubID = ? ORDER BY StartTime ASC";
+        String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events WHERE ClubID = ? ORDER BY EventDate ASC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, clubID);
@@ -200,11 +193,9 @@ public class EventDAO extends DBContext {
                 Event event = new Event(
                     rs.getInt("EventID"),
                     rs.getInt("ClubID"),
-                    rs.getString("Title"),
+                    rs.getString("EventName"),
                     rs.getString("Description"),
-                    rs.getString("Location"),
-                    rs.getTimestamp("StartTime"),
-                    rs.getTimestamp("EndTime"),
+                    rs.getTimestamp("EventDate"),
                     rs.getString("Status"),
                     rs.getTimestamp("CreatedAt")
                 );

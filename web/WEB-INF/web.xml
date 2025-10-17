@@ -8,4 +8,13 @@
         <servlet-name>AddNewEventServlet</servlet-name>
         <url-pattern>/addNewEvent</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ViewListEventsServlet</servlet-name>
+        <servlet-class>controller.eventMgt.ViewListEventsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewListEventsServlet</servlet-name>
+        <url-pattern>/listEvents</url-pattern>
+    </servlet-mapping>
 </web-app>

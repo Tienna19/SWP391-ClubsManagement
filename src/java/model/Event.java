@@ -13,38 +13,33 @@ import java.sql.Timestamp;
 public class Event {
     private int eventID;
     private int clubID;
-    private String title;
+    private String eventName;
     private String description;
     private String location;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Timestamp eventDate;
     private String status;
     private Timestamp createdAt;
 
     public Event() {
     }
 
-    public Event(int eventID, int clubID, String title, String description, String location, 
-                 Timestamp startTime, Timestamp endTime, String status, Timestamp createdAt) {
+    public Event(int eventID, int clubID, String eventName, String description, 
+                 Timestamp eventDate, String status, Timestamp createdAt) {
         this.eventID = eventID;
         this.clubID = clubID;
-        this.title = title;
+        this.eventName = eventName;
         this.description = description;
-        this.location = location;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.eventDate = eventDate;
         this.status = status;
         this.createdAt = createdAt;
     }
 
-    public Event(int clubID, String title, String description, String location, 
-                 Timestamp startTime, Timestamp endTime, String status) {
+    public Event(int clubID, String eventName, String description, 
+                 Timestamp eventDate, String status) {
         this.clubID = clubID;
-        this.title = title;
+        this.eventName = eventName;
         this.description = description;
-        this.location = location;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.eventDate = eventDate;
         this.status = status;
     }
 
@@ -64,12 +59,12 @@ public class Event {
         this.clubID = clubID;
     }
 
-    public String getTitle() {
-        return title;
+    public String getEventName() {
+        return eventName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public String getDescription() {
@@ -80,28 +75,12 @@ public class Event {
         this.description = description;
     }
 
-    public String getLocation() {
-        return location;
+    public Timestamp getEventDate() {
+        return eventDate;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Timestamp getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Timestamp startTime) {
-        this.startTime = startTime;
-    }
-
-    public Timestamp getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Timestamp endTime) {
-        this.endTime = endTime;
+    public void setEventDate(Timestamp eventDate) {
+        this.eventDate = eventDate;
     }
 
     public String getStatus() {
@@ -125,11 +104,9 @@ public class Event {
         return "Event{" +
                 "eventID=" + eventID +
                 ", clubID=" + clubID +
-                ", title='" + title + '\'' +
+                ", eventName='" + eventName + '\'' +
                 ", description='" + description + '\'' +
-                ", location='" + location + '\'' +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
+                ", eventDate=" + eventDate +
                 ", status='" + status + '\'' +
                 ", createdAt=" + createdAt +
                 '}';

@@ -137,7 +137,7 @@
 				<!-- header left menu start -->
 				<ul class="ttr-header-navigation">
 					<li>
-						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">HOME</a>
+						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">DASHBOARD</a>
 					</li>
 					<li>
 						<a href="#" class="ttr-material-button ttr-submenu-toggle">CLUBS <i class="fa fa-angle-down"></i></a>
@@ -414,7 +414,7 @@
 			<div class="db-breadcrumb">
 				<h4 class="breadcrumb-title">Add New Event</h4>
 				<ul class="db-breadcrumb-list">
-					<li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+					<li><a href="#"><i class="fa fa-home"></i>Dashboard</a></li>
 					<li>Events</li>
 					<li>Add New Event</li>
 				</ul>

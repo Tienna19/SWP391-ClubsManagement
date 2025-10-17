@@ -60,9 +60,7 @@ public class AddNewEventServlet extends HttpServlet {
             String clubIdStr = request.getParameter("clubId");
             String status = request.getParameter("status");
             String description = request.getParameter("description");
-            String location = request.getParameter("location");
             String startTimeStr = request.getParameter("startTime");
-            String endTimeStr = request.getParameter("endTime");
 
             // Validate required fields
             StringBuilder errors = new StringBuilder();
@@ -79,14 +77,10 @@ public class AddNewEventServlet extends HttpServlet {
                 errors.append("Start time is required.<br>");
             }
 
-            if (endTimeStr == null || endTimeStr.trim().isEmpty()) {
-                errors.append("End time is required.<br>");
-            }
 
             // Parse and validate data types
             int clubId = 1; // Default hardcoded club ID as requested
             Timestamp startTime = null;
-            Timestamp endTime = null;
 
             try {
                 if (clubIdStr != null && !clubIdStr.trim().isEmpty()) {
@@ -105,19 +99,6 @@ public class AddNewEventServlet extends HttpServlet {
                 errors.append("Invalid start time format.<br>");
             }
 
-            try {
-                if (endTimeStr != null && !endTimeStr.trim().isEmpty()) {
-                    LocalDateTime endDateTime = LocalDateTime.parse(endTimeStr);
-                    endTime = Timestamp.valueOf(endDateTime);
-                }
-            } catch (DateTimeParseException e) {
-                errors.append("Invalid end time format.<br>");
-            }
-
-            // Validate that end time is after start time
-            if (startTime != null && endTime != null && !endTime.after(startTime)) {
-                errors.append("End time must be after start time.<br>");
-            }
 
             // Set default values for optional fields
             if (status == null || status.trim().isEmpty()) {
@@ -126,10 +107,6 @@ public class AddNewEventServlet extends HttpServlet {
 
             if (description == null) {
                 description = "";
-            }
-
-            if (location == null) {
-                location = "";
             }
 
             // If there are validation errors, forward back to JSP with error message
@@ -141,7 +118,7 @@ public class AddNewEventServlet extends HttpServlet {
             }
 
             // Create Event object
-            Event event = new Event(clubId, title, description, location, startTime, endTime, status);
+            Event event = new Event(clubId, title, description, startTime, status);
 
             // Insert event into database
             int eventId = eventDAO.insertEvent(event);
