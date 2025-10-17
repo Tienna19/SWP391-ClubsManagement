@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <!-- HomeServlet -->
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <servlet-class>controller.HomeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+    
+    <!-- ViewAllClubServlet -->
+    <servlet>
+        <servlet-name>ViewAllClubServlet</servlet-name>
+        <servlet-class>controller.club.ViewAllClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewAllClubServlet</servlet-name>
+        <url-pattern>/viewAllClubs</url-pattern>
+        <url-pattern>/ViewAllClubServlet</url-pattern>
+    </servlet-mapping>
+    
+    <!-- CreateClubServlet -->
+    <servlet>
+        <servlet-name>CreateClubServlet</servlet-name>
+        <servlet-class>controller.club.CreateClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateClubServlet</servlet-name>
+        <url-pattern>/createClub</url-pattern>
+    </servlet-mapping>
+    
+    <!-- AddNewEventServlet -->
     <servlet>
         <servlet-name>AssignRoleServlet</servlet-name>
         <servlet-class>controller.AssignRoleServlet</servlet-class>
@@ -29,4 +61,24 @@
         <servlet-name>AddNewEventServlet</servlet-name>
         <url-pattern>/addNewEvent</url-pattern>
     </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>home</welcome-file>
+        <welcome-file>view/home/index.jsp</welcome-file>
+    </welcome-file-list>
+    
+    <!-- Error pages configuration -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/view/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/view/error.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/view/error.jsp</location>
+    </error-page>
 </web-app>

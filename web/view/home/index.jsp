@@ -8,6 +8,37 @@
 
 	<!-- META ============================================= -->
 	<meta charset="utf-8">
+	<!-- Simple Error Suppression -->
+	<script>
+		// Suppress browser extension errors
+		(function() {
+			'use strict';
+			
+			const originalError = console.error;
+			const originalWarn = console.warn;
+			
+			console.error = function() {
+				const message = Array.prototype.join.call(arguments, ' ');
+				if (message.includes('runtime.lastError') || 
+					message.includes('message port closed') ||
+					message.includes('extension')) {
+					return;
+				}
+				originalError.apply(console, arguments);
+			};
+			
+			console.warn = function() {
+				const message = Array.prototype.join.call(arguments, ' ');
+				if (message.includes('runtime.lastError') || 
+					message.includes('message port closed') ||
+					message.includes('extension')) {
+					return;
+				}
+				originalWarn.apply(console, arguments);
+			};
+			
+		})();
+	</script>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="keywords" content="" />
 	<meta name="author" content="" />
@@ -204,20 +235,35 @@
 									<div class="item">
 										<div class="cours-bx">
 											<div class="action-box">
-												<img src="${not empty club.logoUrl ? club.logoUrl : 'assets/images/courses/pic'.concat((status.index % 4) + 1).concat('.jpg')}" 
-													 alt="${club.name}">
+												<c:choose>
+													<c:when test="${not empty club.logo}">
+														<img src="${club.logo}" alt="${club.clubName != null ? club.clubName : 'Club'}">
+													</c:when>
+													<c:otherwise>
+														<img src="assets/images/courses/pic${(status.index % 4) + 1}.jpg" alt="${club.clubName != null ? club.clubName : 'Club'}">
+													</c:otherwise>
+												</c:choose>
 												<a href="viewAllClubs?clubId=${club.clubId}" class="btn">Join Club</a>
 											</div>
 											<div class="info-bx text-center">
-												<h5><a href="viewAllClubs?clubId=${club.clubId}">${club.name}</a></h5>
-												<span>Category ID: ${club.categoryId}</span>
+												<h5><a href="viewAllClubs?clubId=${club.clubId}">${club.clubName != null ? club.clubName : 'Unknown Club'}</a></h5>
+												<span>Club Type: ${club.clubTypes != null ? club.clubTypes : 'N/A'}</span>
 											</div>
 											<div class="cours-more-info">
 												<div class="review">
-													<span><i class="ti-calendar"></i> <fmt:formatDate value="${club.createdAt}" pattern="MMM yyyy"/></span>
+													<span><i class="ti-calendar"></i> 
+														<c:choose>
+															<c:when test="${club.createdAt != null}">
+																<fmt:formatDate value="${club.createdAt}" pattern="MMM yyyy"/>
+															</c:when>
+															<c:otherwise>
+																Unknown
+															</c:otherwise>
+														</c:choose>
+													</span>
 												</div>
 												<div class="price">
-													<h5 class="${club.status == 'Approved' ? 'text-success' : 'text-warning'}">${club.status}</h5>
+													<h5 class="${club.status == 'Approved' ? 'text-success' : 'text-warning'}">${club.status != null ? club.status : 'Unknown'}</h5>
 												</div>
 											</div>
 										</div>

@@ -25,6 +25,12 @@ public class EventDAO extends DBContext {
      * @return The generated event ID, or -1 if insertion failed
      */
     public int insertEvent(Event event) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot insert event.");
+            return -1;
+        }
+        
         // First check if the club exists
         if (!clubExists(event.getClubID())) {
             System.out.println("Error: Club with ID " + event.getClubID() + " does not exist");
@@ -72,6 +78,12 @@ public class EventDAO extends DBContext {
      * @return true if the club exists, false otherwise
      */
     private boolean clubExists(int clubID) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot check club existence.");
+            return false;
+        }
+        
         String sql = "SELECT COUNT(*) FROM Clubs WHERE ClubID = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -125,6 +137,13 @@ public class EventDAO extends DBContext {
      */
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
+        
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot get events.");
+            return events; // Return empty list instead of crashing
+        }
+        
         String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events ORDER BY CreatedAt DESC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);

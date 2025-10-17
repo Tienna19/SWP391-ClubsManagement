@@ -1,5 +1,51 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/images/favicon.png">
+<link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/assets/images/favicon.png">
+
+<!-- Simple Error Suppression -->
+<script>
+    // Suppress browser extension errors globally
+    (function() {
+        'use strict';
+        
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.error = function() {
+            const message = Array.prototype.join.call(arguments, ' ');
+            if (message.includes('runtime.lastError') || 
+                message.includes('message port closed') ||
+                message.includes('extension')) {
+                return;
+            }
+            originalError.apply(console, arguments);
+        };
+        
+        console.warn = function() {
+            const message = Array.prototype.join.call(arguments, ' ');
+            if (message.includes('runtime.lastError') || 
+                message.includes('message port closed') ||
+                message.includes('extension')) {
+                return;
+            }
+            originalWarn.apply(console, arguments);
+        };
+        
+        window.addEventListener('error', function(e) {
+            if (e.message && (
+                e.message.includes('runtime.lastError') ||
+                e.message.includes('message port closed')
+            )) {
+                e.preventDefault();
+                return false;
+            }
+        }, true);
+        
+    })();
+</script>
+
 <!-- Header Styles -->
 <style>
     body {
@@ -127,7 +173,7 @@
         </ul>
     </div>
     <div class="header-left">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="logo">
+        <a href="${pageContext.request.contextPath}/home" class="logo">
             <div class="logo-icon">?</div>
             <div class="logo-text">
                 <strong>Student Club</strong>
@@ -136,7 +182,7 @@
         </a>
         <nav>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/index.jsp">HOME</a></li>
+                <li><a href="${pageContext.request.contextPath}/home">HOME</a></li>
                 <li>
                     <a href="#">CLUBS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
                     <div class="submenu">
