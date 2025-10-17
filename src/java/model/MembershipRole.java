@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.security.Timestamp;
+
 public class MembershipRole {
     private int membershipId;
     private int clubId;
@@ -11,6 +13,7 @@ public class MembershipRole {
     private String role;
     private String status;
     private String fullName; 
+    private Timestamp joinDate;
 
     public MembershipRole() {}
 
@@ -62,4 +65,13 @@ public class MembershipRole {
     public void setFullName(String fullName) { 
         this.fullName = fullName; 
     }
+
+    public Timestamp getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(Timestamp joinDate) {
+        this.joinDate = joinDate;
+    }
+    
 }
