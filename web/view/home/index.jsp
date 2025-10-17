@@ -236,18 +236,18 @@
 										<div class="cours-bx">
 											<div class="action-box">
 												<c:choose>
-													<c:when test="${not empty club.logoUrl}">
-														<img src="${club.logoUrl}" alt="${club.name != null ? club.name : 'Club'}">
+													<c:when test="${not empty club.logo}">
+														<img src="${club.logo}" alt="${club.clubName != null ? club.clubName : 'Club'}">
 													</c:when>
 													<c:otherwise>
-														<img src="assets/images/courses/pic${(status.index % 4) + 1}.jpg" alt="${club.name != null ? club.name : 'Club'}">
+														<img src="assets/images/courses/pic${(status.index % 4) + 1}.jpg" alt="${club.clubName != null ? club.clubName : 'Club'}">
 													</c:otherwise>
 												</c:choose>
 												<a href="viewAllClubs?clubId=${club.clubId}" class="btn">Join Club</a>
 											</div>
 											<div class="info-bx text-center">
-												<h5><a href="viewAllClubs?clubId=${club.clubId}">${club.name != null ? club.name : 'Unknown Club'}</a></h5>
-												<span>Category ID: ${club.categoryId != null ? club.categoryId : 'N/A'}</span>
+												<h5><a href="viewAllClubs?clubId=${club.clubId}">${club.clubName != null ? club.clubName : 'Unknown Club'}</a></h5>
+												<span>Club Type: ${club.clubTypes != null ? club.clubTypes : 'N/A'}</span>
 											</div>
 											<div class="cours-more-info">
 												<div class="review">

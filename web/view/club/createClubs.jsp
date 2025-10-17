@@ -210,8 +210,8 @@
 
             <!-- Tên CLB -->
             <div class="mb-3">
-                <label for="name" class="form-label">Tên CLB <span class="required">*</span></label>
-                <input type="text" id="name" name="name" class="form-control" 
+                <label for="clubName" class="form-label">Tên CLB <span class="required">*</span></label>
+                <input type="text" id="clubName" name="clubName" class="form-control" 
                        placeholder="Nhập tên CLB" maxlength="100" required>
                 <div class="form-text">Tên CLB không được vượt quá 100 ký tự</div>
                 <div class="invalid-feedback">Vui lòng nhập tên CLB</div>
@@ -253,11 +253,11 @@
 
             <!-- Thể loại CLB -->
             <div class="mb-3">
-                <label for="categoryId" class="form-label">Thể loại CLB <span class="required">*</span></label>
-                <select id="categoryId" name="categoryId" class="form-select" required>
+                <label for="clubTypes" class="form-label">Thể loại CLB <span class="required">*</span></label>
+                <select id="clubTypes" name="clubTypes" class="form-select" required>
                     <option value="">-- Chọn thể loại --</option>
                     <c:forEach var="c" items="${categoryList}">
-                        <option value="${c.id}">${c.name}</option>
+                        <option value="${c.name}">${c.name}</option>
                     </c:forEach>
                 </select>
                 <div class="form-text">Chọn thể loại phù hợp với hoạt động của CLB</div>
@@ -266,26 +266,17 @@
 
             <!-- Mã sinh viên (Chủ tịch CLB) -->
             <div class="mb-3">
-                <label for="createdByUserId" class="form-label">Mã sinh viên (Chủ tịch CLB) <span class="required">*</span></label>
-                <input type="text" id="createdByUserId" name="createdByUserId" class="form-control" 
-                       placeholder="Nhập mã sinh viên của bạn" pattern="[0-9]+" maxlength="10" required>
+                <label for="createdBy" class="form-label">Mã người tạo (Chủ tịch CLB) <span class="required">*</span></label>
+                <input type="text" id="createdBy" name="createdBy" class="form-control" 
+                       placeholder="Nhập mã người tạo" pattern="[0-9]+" maxlength="10" required>
                 <div class="form-text">Mã sinh viên của người sẽ làm chủ tịch CLB</div>
                 <div class="invalid-feedback">Vui lòng nhập mã sinh viên hợp lệ</div>
-            </div>
-
-            <!-- Mã giảng viên giám sát -->
-            <div class="mb-3">
-                <label for="supervisorId" class="form-label">Mã giảng viên giám sát <span class="required">*</span></label>
-                <input type="text" id="supervisorId" name="supervisorId" class="form-control" 
-                       placeholder="Nhập mã giảng viên giám sát" pattern="[0-9]+" maxlength="10" required>
-                <div class="form-text">Mã giảng viên sẽ giám sát hoạt động của CLB</div>
-                <div class="invalid-feedback">Vui lòng nhập mã giảng viên hợp lệ</div>
             </div>
 
             <!-- Thông tin bổ sung -->
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i>
-                <strong>Lưu ý:</strong> Sau khi tạo CLB, bạn cần chờ giảng viên giám sát phê duyệt trước khi CLB có thể hoạt động chính thức.
+                <strong>Lưu ý:</strong> CLB sẽ được tạo với trạng thái Active và có thể hoạt động ngay lập tức.
             </div>
 
             <!-- Nút submit -->

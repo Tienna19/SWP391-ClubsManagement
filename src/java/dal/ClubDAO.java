@@ -36,7 +36,7 @@ public class ClubDAO extends DBContext {
         }
         
         StringBuilder sql = new StringBuilder(
-                "SELECT c.ClubID, c.ClubName, c.Description, c.ClubType, c.PresidentID, c.SupervisorID, c.CreatedAt "
+                "SELECT c.ClubID, c.ClubName, c.Description, c.Logo, c.ClubTypes, c.CreatedBy, c.CreatedAt, c.Status "
                 + "FROM Clubs c "
                 + "WHERE 1=1"
         );
@@ -63,31 +63,24 @@ public class ClubDAO extends DBContext {
             while (rs.next()) {
                 Club c = new Club();
                 c.setClubId(rs.getInt("ClubID"));
-                String clubName = rs.getString("ClubName");
-                String description = rs.getString("Description");
-                String clubType = rs.getString("ClubType");
-                
-                c.setName(clubName);
-                c.setDescription(description);
-                c.setLogoUrl(""); // Default empty logo
-                
-                // Use ClubType from database directly
-                String categoryName = clubType != null ? clubType : "Khác";
-                int clubCategoryId = getCategoryIdFromClubType(clubType);
-                
-                c.setCategoryId(clubCategoryId);
-                c.setCategoryName(categoryName);
-                c.setCreatedByUserId(rs.getInt("PresidentID")); // Use PresidentID as CreatedByUserID
-                c.setStatus("Active"); // Default status
+                c.setClubName(rs.getString("ClubName"));
+                c.setDescription(rs.getString("Description"));
+                c.setLogo(rs.getString("Logo") != null ? rs.getString("Logo") : "");
+                c.setClubTypes(rs.getString("ClubTypes"));
+                c.setCreatedBy(rs.getInt("CreatedBy"));
                 c.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                c.setApprovedByUserId(rs.getInt("SupervisorID")); // Use SupervisorID as ApprovedByUserID
+                c.setStatus(rs.getString("Status"));
                 
                 // Apply filters after creating the club object
                 boolean includeClub = true;
                 
-                // Filter by category
-                if (categoryId != null && clubCategoryId != categoryId) {
-                    includeClub = false;
+                // Filter by category (using ClubTypes)
+                if (categoryId != null) {
+                    // Convert categoryId to ClubTypes string for comparison
+                    String expectedClubType = getClubTypeFromCategoryId(categoryId);
+                    if (!expectedClubType.equals(c.getClubTypes())) {
+                        includeClub = false;
+                    }
                 }
                 
                 // Filter by status
@@ -118,7 +111,7 @@ public class ClubDAO extends DBContext {
             return null;
         }
         
-        String sql = "SELECT c.ClubID, c.ClubName, c.Description, c.ClubType, c.PresidentID, c.SupervisorID, c.CreatedAt "
+        String sql = "SELECT c.ClubID, c.ClubName, c.Description, c.Logo, c.ClubTypes, c.CreatedBy, c.CreatedAt, c.Status "
                 + "FROM Clubs c "
                 + "WHERE c.ClubID = ?";
         
@@ -130,24 +123,13 @@ public class ClubDAO extends DBContext {
             if (rs.next()) {
                 Club c = new Club();
                 c.setClubId(rs.getInt("ClubID"));
-                String clubName = rs.getString("ClubName");
-                String description = rs.getString("Description");
-                String clubType = rs.getString("ClubType");
-                
-                c.setName(clubName);
-                c.setDescription(description);
-                c.setLogoUrl(""); // Default empty logo
-                
-                // Use ClubType from database directly
-                String categoryName = clubType != null ? clubType : "Khác";
-                int clubCategoryId = getCategoryIdFromClubType(clubType);
-                
-                c.setCategoryId(clubCategoryId);
-                c.setCategoryName(categoryName);
-                c.setCreatedByUserId(rs.getInt("PresidentID")); // Use PresidentID as CreatedByUserID
-                c.setStatus("Active"); // Default status
+                c.setClubName(rs.getString("ClubName"));
+                c.setDescription(rs.getString("Description"));
+                c.setLogo(rs.getString("Logo") != null ? rs.getString("Logo") : "");
+                c.setClubTypes(rs.getString("ClubTypes"));
+                c.setCreatedBy(rs.getInt("CreatedBy"));
                 c.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                c.setApprovedByUserId(rs.getInt("SupervisorID")); // Use SupervisorID as ApprovedByUserID
+                c.setStatus(rs.getString("Status"));
                 return c;
             }
         } catch (Exception e) {
@@ -201,7 +183,7 @@ public class ClubDAO extends DBContext {
         }
         
         // Get distinct ClubTypes from database with consistent ordering
-        String sql = "SELECT DISTINCT ClubType FROM Clubs WHERE ClubType IS NOT NULL ORDER BY ClubType";
+        String sql = "SELECT DISTINCT ClubTypes FROM Clubs WHERE ClubTypes IS NOT NULL ORDER BY ClubTypes";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -211,10 +193,10 @@ public class ClubDAO extends DBContext {
             
             while (rs.next()) {
                 Category c = new Category();
-                String clubType = rs.getString("ClubType");
+                String clubTypes = rs.getString("ClubTypes");
                 c.setId(id);
-                c.setName(clubType);
-                categoryIdCache.put(clubType, id); // Cache the mapping
+                c.setName(clubTypes);
+                categoryIdCache.put(clubTypes, id); // Cache the mapping
                 list.add(c);
                 id++;
             }
@@ -243,13 +225,13 @@ public class ClubDAO extends DBContext {
         if (connection == null) return 0;
         
         try {
-            String sql = "SELECT DISTINCT ClubType FROM Clubs WHERE ClubType IS NOT NULL ORDER BY ClubType";
+            String sql = "SELECT DISTINCT ClubTypes FROM Clubs WHERE ClubTypes IS NOT NULL ORDER BY ClubTypes";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             int id = 1;
             
             while (rs.next()) {
-                if (rs.getString("ClubType").equals(clubType)) {
+                if (rs.getString("ClubTypes").equals(clubType)) {
                     return id;
                 }
                 id++;
@@ -280,14 +262,14 @@ public class ClubDAO extends DBContext {
         if (connection == null) return "Khác";
         
         try {
-            String sql = "SELECT DISTINCT ClubType FROM Clubs WHERE ClubType IS NOT NULL ORDER BY ClubType";
+            String sql = "SELECT DISTINCT ClubTypes FROM Clubs WHERE ClubTypes IS NOT NULL ORDER BY ClubTypes";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             int id = 1;
             
             while (rs.next()) {
                 if (id == categoryId) {
-                    return rs.getString("ClubType");
+                    return rs.getString("ClubTypes");
                 }
                 id++;
             }
@@ -311,19 +293,16 @@ public class ClubDAO extends DBContext {
         }
         
         try {
-            String sql = "INSERT INTO Clubs (ClubName, Description, ClubType, PresidentID, SupervisorID, CreatedAt) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Clubs (ClubName, Description, Logo, ClubTypes, CreatedBy, CreatedAt, Status) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setString(1, club.getName());
+            st.setString(1, club.getClubName());
             st.setString(2, club.getDescription());
-            
-            // Convert categoryId to ClubType
-            String clubType = getClubTypeFromCategoryId(club.getCategoryId());
-            st.setString(3, clubType);
-            
-            st.setInt(4, club.getCreatedByUserId()); // PresidentID
-            st.setInt(5, club.getApprovedByUserId() != null ? club.getApprovedByUserId() : 1); // SupervisorID
+            st.setString(3, club.getLogo());
+            st.setString(4, club.getClubTypes());
+            st.setInt(5, club.getCreatedBy());
             st.setTimestamp(6, club.getCreatedAt());
+            st.setString(7, club.getStatus());
             
             int rowsAffected = st.executeUpdate();
             return rowsAffected > 0;
@@ -347,19 +326,15 @@ public class ClubDAO extends DBContext {
         }
         
         try {
-            String sql = "UPDATE Clubs SET Name = ?, Description = ?, LogoUrl = ?, "
-                    + "CategoryID = ?, Status = ?, ApprovedByUserID = ? WHERE ClubID = ?";
+            String sql = "UPDATE Clubs SET ClubName = ?, Description = ?, Logo = ?, "
+                    + "ClubTypes = ?, CreatedBy = ?, Status = ? WHERE ClubID = ?";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setString(1, club.getName());
+            st.setString(1, club.getClubName());
             st.setString(2, club.getDescription());
-            st.setString(3, club.getLogoUrl());
-            st.setInt(4, club.getCategoryId());
-            st.setString(5, club.getStatus());
-            if (club.getApprovedByUserId() != null) {
-                st.setInt(6, club.getApprovedByUserId());
-            } else {
-                st.setNull(6, java.sql.Types.INTEGER);
-            }
+            st.setString(3, club.getLogo());
+            st.setString(4, club.getClubTypes());
+            st.setInt(5, club.getCreatedBy());
+            st.setString(6, club.getStatus());
             st.setInt(7, club.getClubId());
             
             int rowsAffected = st.executeUpdate();

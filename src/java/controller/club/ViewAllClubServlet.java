@@ -101,14 +101,14 @@ public class ViewAllClubServlet extends HttpServlet {
             
             // Count clubs by status
             long activeClubs = allFilteredClubs.stream()
-                .filter(c -> "Approved".equalsIgnoreCase(c.getStatus()) || "Active".equalsIgnoreCase(c.getStatus()))
+                .filter(c -> "Active".equalsIgnoreCase(c.getStatus()))
                 .count();
-            long pendingClubs = allFilteredClubs.stream()
-                .filter(c -> "Pending".equalsIgnoreCase(c.getStatus()))
+            long inactiveClubs = allFilteredClubs.stream()
+                .filter(c -> "Inactive".equalsIgnoreCase(c.getStatus()))
                 .count();
             
             request.setAttribute("activeClubs", activeClubs);
-            request.setAttribute("pendingClubs", pendingClubs);
+            request.setAttribute("inactiveClubs", inactiveClubs);
             
             // Forward to view
             request.getRequestDispatcher("/view/club/viewAllClubs.jsp").forward(request, response);

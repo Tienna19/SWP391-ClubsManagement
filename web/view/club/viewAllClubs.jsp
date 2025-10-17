@@ -308,8 +308,8 @@
                 <p>CLB Hoạt động</p>
             </div>
             <div class="stat-card">
-                <h3>${pendingClubs}</h3>
-                <p>Chờ phê duyệt</p>
+                <h3>${inactiveClubs}</h3>
+                <p>Không hoạt động</p>
             </div>
         </div>
 
@@ -328,8 +328,8 @@
             <!-- Lọc theo Status -->
             <select name="status">
                 <option value="">-- Tất cả Trạng thái --</option>
-                <option value="Pending" <c:if test="${param.status eq 'Pending'}">selected</c:if>>Pending</option>
-                <option value="Approved" <c:if test="${param.status eq 'Approved'}">selected</c:if>>Approved</option>
+                <option value="Active" <c:if test="${param.status eq 'Active'}">selected</c:if>>Active</option>
+                <option value="Inactive" <c:if test="${param.status eq 'Inactive'}">selected</c:if>>Inactive</option>
                 <option value="Rejected" <c:if test="${param.status eq 'Rejected'}">selected</c:if>>Rejected</option>
             </select>
 
@@ -369,10 +369,14 @@
                             <td>${c.clubId}</td>
                             <td>
                                 <c:choose>
-                                    <c:when test="${not empty c.logoUrl}">
-                                        <img src="${pageContext.request.contextPath}/${c.logoUrl}" 
-                                             alt="Logo ${c.name}" 
-                                             style="max-width: 50px; max-height: 50px; border-radius: 6px;">
+                                    <c:when test="${not empty c.logo}">
+                                        <img src="${pageContext.request.contextPath}/${c.logo}" 
+                                             alt="Logo ${c.clubName}" 
+                                             style="max-width: 50px; max-height: 50px; border-radius: 6px;"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 6px; display: none; align-items: center; justify-content: center; color: #999;">
+                                            <i class="fas fa-image"></i>
+                                        </div>
                                     </c:when>
                                     <c:otherwise>
                                         <div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999;">
@@ -382,7 +386,7 @@
                                 </c:choose>
                             </td>
                             <td>
-                                <strong>${c.name != null ? c.name : 'N/A'}</strong>
+                                <strong>${c.clubName != null ? c.clubName : 'N/A'}</strong>
                                 <c:if test="${not empty c.description}">
                                     <br><small style="color: #666;">
                                         <c:choose>
@@ -396,20 +400,14 @@
                                     </small>
                                 </c:if>
                             </td>
-                            <td>${c.categoryName != null ? c.categoryName : 'N/A'}</td>
+                            <td>${c.clubTypes != null ? c.clubTypes : 'N/A'}</td>
                             <td>
                                 <c:choose>
-                                    <c:when test="${c.status == 'Approved'}">
+                                    <c:when test="${c.status == 'Active'}">
                                         <span class="status-badge text-success">Active</span>
                                     </c:when>
-                                    <c:when test="${c.status == 'Pending'}">
-                                        <span class="status-badge text-warning">Pending Approval</span>
-                                    </c:when>
-                                    <c:when test="${c.status == 'Rejected'}">
-                                        <span class="status-badge text-danger">Rejected</span>
-                                    </c:when>
-                                    <c:when test="${c.status == 'Suspended'}">
-                                        <span class="status-badge text-danger">Suspended</span>
+                                    <c:when test="${c.status == 'Inactive'}">
+                                        <span class="status-badge text-danger">Inactive</span>
                                     </c:when>
                                     <c:otherwise>
                                         <span class="status-badge text-secondary">${c.status != null ? c.status : 'Unknown'}</span>
@@ -429,7 +427,7 @@
                             <td>
                                 <div class="action-buttons">
                                     <a href="<c:url value='/viewClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="view">View</a>
-                                    <c:if test="${c.status != null && (c.status == 'Approved' || c.status == 'Active')}">
+                                    <c:if test="${c.status != null && c.status == 'Active'}">
                                         <a href="<c:url value='/joinClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="join">Join</a>
                                     </c:if>
                                 </div>

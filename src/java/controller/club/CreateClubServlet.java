@@ -51,32 +51,26 @@ public class CreateClubServlet extends HttpServlet {
 
         try {
             // ✅ Validate input parameters
-            String name = request.getParameter("name");
+            String clubName = request.getParameter("clubName");
             String description = request.getParameter("description");
-            String categoryIdStr = request.getParameter("categoryId");
-            String createdByUserIdStr = request.getParameter("createdByUserId");
-            String supervisorIdStr = request.getParameter("supervisorId");
+            String clubTypes = request.getParameter("clubTypes");
+            String createdByStr = request.getParameter("createdBy");
 
             // Validation
-            if (name == null || name.trim().isEmpty()) {
+            if (clubName == null || clubName.trim().isEmpty()) {
                 throw new IllegalArgumentException("Tên CLB không được để trống");
             }
             if (description == null || description.trim().isEmpty()) {
                 throw new IllegalArgumentException("Mô tả CLB không được để trống");
             }
-            if (categoryIdStr == null || categoryIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Vui long chon the loai CLB");
+            if (clubTypes == null || clubTypes.trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn thể loại CLB");
             }
-            if (createdByUserIdStr == null || createdByUserIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Mã sinh viên không được để trống");
-            }
-            if (supervisorIdStr == null || supervisorIdStr.trim().isEmpty()) {
-                throw new IllegalArgumentException("Mã giảng viên giám sát không được để trống");
+            if (createdByStr == null || createdByStr.trim().isEmpty()) {
+                throw new IllegalArgumentException("Mã người tạo không được để trống");
             }
 
-            int categoryId = Integer.parseInt(categoryIdStr);
-            int createdByUserId = Integer.parseInt(createdByUserIdStr);
-            int supervisorId = Integer.parseInt(supervisorIdStr);
+            int createdBy = Integer.parseInt(createdByStr);
 
             // ✅ Validate file upload
             Part filePart = request.getPart("logo");
@@ -112,17 +106,16 @@ public class CreateClubServlet extends HttpServlet {
                 Files.copy(input, new File(filePath).toPath());
             }
 
-            String logoUrl = UPLOAD_DIR + "/" + uniqueFileName;
+            String logo = UPLOAD_DIR + "/" + uniqueFileName;
 
             // ✅ Create Club object
             Club newClub = new Club();
-            newClub.setName(name.trim());
+            newClub.setClubName(clubName.trim());
             newClub.setDescription(description.trim());
-            newClub.setLogoUrl(logoUrl);
-            newClub.setCategoryId(categoryId);
-            newClub.setCreatedByUserId(createdByUserId);
-            newClub.setApprovedByUserId(supervisorId); // Use supervisorId as approvedByUserId
-            newClub.setStatus("Pending");
+            newClub.setLogo(logo);
+            newClub.setClubTypes(clubTypes.trim());
+            newClub.setCreatedBy(createdBy);
+            newClub.setStatus("Active");
             newClub.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
             // ✅ Save to database
@@ -131,7 +124,7 @@ public class CreateClubServlet extends HttpServlet {
 
             if (success) {
                 // Success - redirect with success message
-                request.getSession().setAttribute("successMessage", "Tao CLB thanh cong! CLB dang cho phe duyet tu giang vien.");
+                request.getSession().setAttribute("successMessage", "Tạo CLB thành công!");
                 response.sendRedirect(request.getContextPath() + "/viewAllClubs");
             } else {
                 // Database error - delete uploaded file and show error
