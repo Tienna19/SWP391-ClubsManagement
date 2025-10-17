@@ -437,7 +437,7 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Event Title <span class="text-danger">*</span></label>
 										<div>
-								<input class="form-control" type="text" name="title" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${param.title}">
+								<input class="form-control" type="text" name="eventName" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${param.eventName}">
 								<div class="text-danger" id="eventTitleError"></div>
 										</div>
 									</div>
@@ -446,8 +446,11 @@
 										<div>
 								<select class="form-control" name="clubId" id="clubId" required>
 												<option value="">Select a club</option>
-												<option value="1" ${param.clubId == '1' ? 'selected' : ''}>Default Club (Hardcoded)</option>
-												<!-- Additional options will be populated dynamically when club management is implemented -->
+												<c:forEach var="club" items="${clubs}">
+													<option value="${club.clubId}" ${param.clubId == club.clubId ? 'selected' : ''}>
+														${club.name}
+													</option>
+												</c:forEach>
 											</select>
 								<div class="text-danger" id="clubIdError"></div>
 										</div>
@@ -488,28 +491,21 @@
 										</div>
 									</div>
 									<div class="form-group col-6">
-										<label class="col-form-label">Start Date & Time <span class="text-danger">*</span></label>
+										<label class="col-form-label">Event Date & Time <span class="text-danger">*</span></label>
 										<div>
-								<input class="form-control" type="datetime-local" name="startTime" id="startTime" required value="${param.startTime}">
+								<input class="form-control" type="datetime-local" name="eventDate" id="startTime" required value="${param.eventDate}">
 								<div class="text-danger" id="startTimeError"></div>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">End Date & Time <span class="text-danger">*</span></label>
-										<div>
-								<input class="form-control" type="datetime-local" name="endTime" id="endTime" value="${param.endTime}">
-								<div class="text-danger" id="endTimeError"></div>
 										</div>
 									</div>
 									<div class="col-12">
 							<div class="alert alert-info">
-								<i class="fa fa-info-circle"></i> <strong>Note:</strong> Start time must be at least 3 days from today.
+								<i class="fa fa-info-circle"></i> <strong>Note:</strong> Event date must be at least 3 days from today.
 							</div>
 									</div>
 									<div class="col-12 m-t20">
 										<button type="submit" class="btn btn-primary m-r5"><i class="fa fa-save"></i> Create Event</button>
 										<button type="reset" class="btn btn-secondary"><i class="fa fa-refresh"></i> Reset Form</button>
-										<a href="events.html" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Back to Events</a>
+										<a href="listEvents" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Back to Events</a>
 									</div>
 								</div>
 							</form>
@@ -563,10 +559,7 @@ $(document).ready(function() {
     
     // Real-time validation
     $('#startTime').on('change input blur', function() {
-        validateStartTime();
-    });
-    $('#endTime').on('change input blur', function() {
-        validateEndAfterStart();
+        validateEventDate();
     });
 
     // Real-time validation for title and club
@@ -590,8 +583,7 @@ $(document).ready(function() {
         }
     });
     
-    // Load clubs (this would typically come from your backend)
-    loadClubs();
+    // Clubs are loaded from server via servlet
 });
 
 function validateEventForm() {
@@ -602,7 +594,6 @@ function validateEventForm() {
     $('#eventTitleError').text('');
     $('#clubIdError').text('');
     $('#startTimeError').text('');
-    $('#endTimeError').text('');
     
     // Check required fields
     if (!$('#eventTitle').val().trim()) {
@@ -625,36 +616,22 @@ function validateEventForm() {
     
     if (!$('#startTime').val()) {
         $('#startTime').addClass('is-invalid');
-        $('#startTimeError').text('Start time is required');
+        $('#startTimeError').text('Event date is required');
         isValid = false;
     } else {
-        // Check start >= today + 3 days
-        var startTime = new Date($('#startTime').val());
+        // Check event date >= today + 3 days
+        var eventDate = new Date($('#startTime').val());
         var now = new Date();
-        var minStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        minStart.setDate(minStart.getDate() + 3);
+        var minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        minDate.setDate(minDate.getDate() + 3);
 
-        if (startTime < minStart) {
+        if (eventDate < minDate) {
             $('#startTime').addClass('is-invalid');
-            $('#startTimeError').text('Start time must be at least 3 days from today');
+            $('#startTimeError').text('Event date must be at least 3 days from today');
             isValid = false;
         } else {
             $('#startTime').removeClass('is-invalid');
             $('#startTimeError').text('');
-        }
-    }
-    
-    // If endTime provided, it must be after startTime
-    if ($('#startTime').val() && $('#endTime').val()) {
-        var startTimeSubmit = new Date($('#startTime').val());
-        var endTimeSubmit = new Date($('#endTime').val());
-        if (endTimeSubmit <= startTimeSubmit) {
-            $('#endTime').addClass('is-invalid');
-            $('#endTimeError').text('End time must be after start time');
-            isValid = false;
-        } else {
-            $('#endTime').removeClass('is-invalid');
-            $('#endTimeError').text('');
         }
     }
     
@@ -666,48 +643,24 @@ function validateEventForm() {
     return isValid;
 }
 
-function validateStartTime() {
+function validateEventDate() {
     if (!$('#startTime').val()) {
         return;
     }
-    var startTime = new Date($('#startTime').val());
+    var eventDate = new Date($('#startTime').val());
     var now = new Date();
-    var minStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    minStart.setDate(minStart.getDate() + 3);
+    var minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    minDate.setDate(minDate.getDate() + 3);
 
-    if (startTime < minStart) {
+    if (eventDate < minDate) {
         $('#startTime').addClass('is-invalid');
-        $('#startTimeError').text('Start time must be at least 3 days from today');
+        $('#startTimeError').text('Event date must be at least 3 days from today');
     } else {
         $('#startTime').removeClass('is-invalid');
         $('#startTimeError').text('');
     }
 }
 
-function validateEndAfterStart() {
-    if (!$('#startTime').val() || !$('#endTime').val()) {
-        // If either missing, don't show cross-field error
-        $('#endTime').removeClass('is-invalid');
-        $('#endTimeError').text('');
-        return;
-    }
-    var start = new Date($('#startTime').val());
-    var end = new Date($('#endTime').val());
-    if (end <= start) {
-        $('#endTime').addClass('is-invalid');
-        $('#endTimeError').text('End time must be after start time');
-    } else {
-        $('#endTime').removeClass('is-invalid');
-        $('#endTimeError').text('');
-    }
-}
-
-function loadClubs() {
-    // Club management is not yet implemented, so we're using a hardcoded default club
-    // The default option is already set in the HTML
-    // This function is kept for future implementation when club management is added
-    console.log('Using hardcoded club for now. Club management will be implemented later.');
-}
 
 function showAlert(message, type) {
     var alertClass = type === 'success' ? 'alert-success' : 

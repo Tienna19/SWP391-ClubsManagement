@@ -6,15 +6,18 @@
 package controller.eventMgt;
 
 import dal.EventDAO;
+import dal.ClubDAO;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Event;
+import model.Club;
 
 /**
  * Servlet for handling Add New Event functionality
@@ -23,11 +26,13 @@ import model.Event;
 public class AddNewEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
+    private ClubDAO clubDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         eventDAO = new EventDAO();
+        clubDAO = new ClubDAO();
     }
 
     /**
@@ -40,8 +45,19 @@ public class AddNewEventServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        // Forward to the add event JSP form
-        request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+        try {
+            // Get all clubs for dropdown
+            List<Club> clubs = clubDAO.getAllClubs();
+            request.setAttribute("clubs", clubs);
+            
+            // Forward to the add event JSP form
+            request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+        } catch (Exception e) {
+            // Handle error
+            request.setAttribute("error", "Error loading clubs: " + e.getMessage());
+            request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -56,16 +72,16 @@ public class AddNewEventServlet extends HttpServlet {
     throws ServletException, IOException {
         try {
             // Get form parameters
-            String title = request.getParameter("title");
+            String eventName = request.getParameter("eventName");
             String clubIdStr = request.getParameter("clubId");
             String status = request.getParameter("status");
             String description = request.getParameter("description");
-            String startTimeStr = request.getParameter("startTime");
+            String eventDateStr = request.getParameter("eventDate");
 
             // Validate required fields
             StringBuilder errors = new StringBuilder();
 
-            if (title == null || title.trim().isEmpty()) {
+            if (eventName == null || eventName.trim().isEmpty()) {
                 errors.append("Event title is required.<br>");
             }
 
@@ -73,14 +89,14 @@ public class AddNewEventServlet extends HttpServlet {
                 errors.append("Club selection is required.<br>");
             }
 
-            if (startTimeStr == null || startTimeStr.trim().isEmpty()) {
-                errors.append("Start time is required.<br>");
+            if (eventDateStr == null || eventDateStr.trim().isEmpty()) {
+                errors.append("Event date is required.<br>");
             }
 
 
             // Parse and validate data types
             int clubId = 1; // Default hardcoded club ID as requested
-            Timestamp startTime = null;
+            Timestamp eventDate = null;
 
             try {
                 if (clubIdStr != null && !clubIdStr.trim().isEmpty()) {
@@ -91,12 +107,12 @@ public class AddNewEventServlet extends HttpServlet {
             }
 
             try {
-                if (startTimeStr != null && !startTimeStr.trim().isEmpty()) {
-                    LocalDateTime startDateTime = LocalDateTime.parse(startTimeStr);
-                    startTime = Timestamp.valueOf(startDateTime);
+                if (eventDateStr != null && !eventDateStr.trim().isEmpty()) {
+                    LocalDateTime eventDateTime = LocalDateTime.parse(eventDateStr);
+                    eventDate = Timestamp.valueOf(eventDateTime);
                 }
             } catch (DateTimeParseException e) {
-                errors.append("Invalid start time format.<br>");
+                errors.append("Invalid event date format.<br>");
             }
 
 
@@ -118,14 +134,14 @@ public class AddNewEventServlet extends HttpServlet {
             }
 
             // Create Event object
-            Event event = new Event(clubId, title, description, startTime, status);
+            Event event = new Event(clubId, eventName, description, eventDate, status);
 
             // Insert event into database
             int eventId = eventDAO.insertEvent(event);
 
             if (eventId > 0) {
                 // Success - redirect to success page or show success message
-                request.setAttribute("message", "Event '" + escapeHtml(title) + "' has been created successfully with ID: " + eventId);
+                request.setAttribute("message", "Event '" + escapeHtml(eventName) + "' has been created successfully with ID: " + eventId);
                 request.setAttribute("messageType", "success");
                 request.setAttribute("eventId", eventId);
                 request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);

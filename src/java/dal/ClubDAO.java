@@ -27,22 +27,14 @@ public class ClubDAO extends DBContext {
     public List<Club> getFilteredClubs(Integer categoryId, String status, String keyword) {
         List<Club> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT c.ClubID, c.Name, c.Description, c.LogoUrl, c.CategoryID, "
-                + "cat.Name AS CategoryName, c.CreatedByUserID, c.Status, c.CreatedAt, c.ApprovedByUserID "
+                "SELECT c.ClubID, c.ClubName, c.Description, c.PresidentID, c.SupervisorID, c.CreatedAt "
                 + "FROM Clubs c "
-                + "LEFT JOIN ClubCategories cat ON c.CategoryID = cat.CategoryID "
                 + "WHERE 1=1"
         );
 
         // Build dynamic WHERE clause
-        if (categoryId != null) {
-            sql.append(" AND c.CategoryID = ?");
-        }
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" AND c.Status = ?");
-        }
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND (c.Name LIKE ? OR c.Description LIKE ?)");
+            sql.append(" AND (c.ClubName LIKE ? OR c.Description LIKE ?)");
         }
         
         sql.append(" ORDER BY c.CreatedAt DESC");
@@ -52,12 +44,6 @@ public class ClubDAO extends DBContext {
             int index = 1;
             
             // Set parameters
-            if (categoryId != null) {
-                st.setInt(index++, categoryId);
-            }
-            if (status != null && !status.trim().isEmpty()) {
-                st.setString(index++, status);
-            }
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
                 st.setString(index++, searchPattern); // For name
@@ -66,18 +52,13 @@ public class ClubDAO extends DBContext {
 
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Club c = new Club(
-                        rs.getInt("ClubID"),
-                        rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("LogoUrl"),
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"), // Category name from JOIN
-                        rs.getInt("CreatedByUserID"),
-                        rs.getString("Status"),
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getObject("ApprovedByUserID") != null ? rs.getInt("ApprovedByUserID") : null
-                );
+                Club c = new Club();
+                c.setClubId(rs.getInt("ClubID"));
+                c.setName(rs.getString("ClubName"));
+                c.setDescription(rs.getString("Description"));
+                c.setCreatedByUserId(rs.getInt("PresidentID"));
+                c.setStatus("Active"); // Default status since not in current schema
+                c.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 list.add(c);
             }
         } catch (Exception e) {
@@ -93,10 +74,8 @@ public class ClubDAO extends DBContext {
      * @return Club object hoặc null nếu không tìm thấy
      */
     public Club getClubById(int clubId) {
-        String sql = "SELECT c.ClubID, c.Name, c.Description, c.LogoUrl, c.CategoryID, "
-                + "cat.Name AS CategoryName, c.CreatedByUserID, c.Status, c.CreatedAt, c.ApprovedByUserID "
+        String sql = "SELECT c.ClubID, c.ClubName, c.Description, c.PresidentID, c.SupervisorID, c.CreatedAt "
                 + "FROM Clubs c "
-                + "LEFT JOIN ClubCategories cat ON c.CategoryID = cat.CategoryID "
                 + "WHERE c.ClubID = ?";
         
         try {
@@ -105,18 +84,14 @@ public class ClubDAO extends DBContext {
             ResultSet rs = st.executeQuery();
             
             if (rs.next()) {
-                return new Club(
-                        rs.getInt("ClubID"),
-                        rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("LogoUrl"),
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("CreatedByUserID"),
-                        rs.getString("Status"),
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getObject("ApprovedByUserID") != null ? rs.getInt("ApprovedByUserID") : null
-                );
+                Club c = new Club();
+                c.setClubId(rs.getInt("ClubID"));
+                c.setName(rs.getString("ClubName"));
+                c.setDescription(rs.getString("Description"));
+                c.setCreatedByUserId(rs.getInt("PresidentID"));
+                c.setStatus("Active"); // Default status
+                c.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                return c;
             }
         } catch (Exception e) {
             System.err.println("Error in getClubById: " + e.getMessage());
