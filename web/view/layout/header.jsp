@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- Favicon -->
@@ -198,7 +199,13 @@
                 <c:when test="${not empty account}">
                 <a href="#"><img src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" class="avatar" alt="User"></a>
                 Hi, <strong>${account.fullName}</strong> 
-                (<a href="logout">Logout</a>)
+                <a href="#" 
+                   onclick="if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
+               window.location.href = 'logout';
+           }
+           return false;">
+                    <i class="fa fa-sign-out"></i> Logout
+                </a>
             </c:when>
             <c:otherwise>
                 <a href="login">Login</a>
