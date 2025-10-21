@@ -111,4 +111,30 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+    
+        // LẤY THÔNG TIN CƠ BẢN CỦA USER THEO ID (dành cho Profile)
+    public User getBasicUserInfoById(int userId) {
+        try {
+            String sql = "SELECT UserID, FullName, Email, PhoneNumber, Address, Gender, CreatedAt "
+                    + "FROM Users WHERE UserID = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, userId);
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setFullName(rs.getString("FullName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhoneNumber(rs.getString("PhoneNumber"));
+                user.setAddress(rs.getString("Address"));
+                user.setGender(rs.getString("Gender"));
+                user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                return user;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
