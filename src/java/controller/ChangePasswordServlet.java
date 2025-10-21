@@ -31,7 +31,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
         // Lấy lại thông tin user để hiển thị sidebar
         request.setAttribute("userInfo", account);
-        request.getRequestDispatcher("view/profile/change-password.jsp").forward(request, response);
+        request.getRequestDispatcher("view/user/changePassword.jsp").forward(request, response);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ChangePasswordServlet extends HttpServlet {
                 || currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.setAttribute("userInfo", account);
-            request.getRequestDispatcher("view/profile/change-password.jsp").forward(request, response);
+            request.getRequestDispatcher("view/user/changePassword.jsp").forward(request, response);
             return;
         }
 
@@ -66,7 +66,7 @@ public class ChangePasswordServlet extends HttpServlet {
         if (!BCrypt.checkpw(currentPassword, account.getPasswordHash())) {
             request.setAttribute("error", "Mật khẩu hiện tại không chính xác!");
             request.setAttribute("userInfo", account);
-            request.getRequestDispatcher("view/profile/change-password.jsp").forward(request, response);
+            request.getRequestDispatcher("view/user/changePassword.jsp").forward(request, response);
             return;
         }
 
@@ -74,7 +74,7 @@ public class ChangePasswordServlet extends HttpServlet {
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu nhập lại không khớp!");
             request.setAttribute("userInfo", account);
-            request.getRequestDispatcher("view/profile/change-password.jsp").forward(request, response);
+            request.getRequestDispatcher("view/user/changePassword.jsp").forward(request, response);
             return;
         }
 
@@ -83,7 +83,7 @@ public class ChangePasswordServlet extends HttpServlet {
             request.setAttribute("error",
                     "Mật khẩu phải có ít nhất 8 ký tự, gồm 1 chữ hoa, 1 số và 1 ký tự đặc biệt.");
             request.setAttribute("userInfo", account);
-            request.getRequestDispatcher("view/profile/change-password.jsp").forward(request, response);
+            request.getRequestDispatcher("view/user/changePassword.jsp").forward(request, response);
             return;
         }
 
@@ -102,6 +102,6 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         request.setAttribute("userInfo", account);
-        request.getRequestDispatcher("view/profile/change-password.jsp").forward(request, response);
+        request.getRequestDispatcher("view/user/changePassword.jsp").forward(request, response);
     }
 }
