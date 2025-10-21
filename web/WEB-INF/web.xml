@@ -53,6 +53,7 @@
         <servlet-name>AddNewEventServlet</servlet-name>
         <url-pattern>/addNewEvent</url-pattern>
     </servlet-mapping>
+
     <!-- EditEventServlet -->
     <servlet>
         <servlet-name>EditEventServlet</servlet-name>
@@ -62,6 +63,7 @@
         <servlet-name>EditEventServlet</servlet-name>
         <url-pattern>/editEvent</url-pattern>
     </servlet-mapping>
+
     <!-- CancelEventServlet -->
     <servlet>
         <servlet-name>CancelEventServlet</servlet-name>
@@ -71,6 +73,7 @@
         <servlet-name>CancelEventServlet</servlet-name>
         <url-pattern>/cancelEvent</url-pattern>
     </servlet-mapping>
+
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
