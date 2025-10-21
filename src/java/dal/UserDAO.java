@@ -10,11 +10,11 @@ public class UserDAO extends DBContext {
 
     // ĐĂNG NHẬP (LOGIN)
     public User login(String email, String passwordHash) {
-        User user = getUserByEmail(email); 
+        User user = getUserByEmail(email);
         if (user != null && BCrypt.checkpw(passwordHash, user.getPasswordHash())) {
-            return user; 
+            return user;
         }
-        return null; 
+        return null;
     }
 
     // LẤY USER THEO EMAIL
@@ -111,8 +111,8 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-    
-        // LẤY THÔNG TIN CƠ BẢN CỦA USER THEO ID (dành cho Profile)
+
+    // LẤY THÔNG TIN CƠ BẢN CỦA USER THEO ID (dành cho Profile)
     public User getBasicUserInfoById(int userId) {
         try {
             String sql = "SELECT UserID, FullName, Email, PhoneNumber, Address, Gender, CreatedAt "
@@ -137,4 +137,20 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+
+// CẬP NHẬT MẬT KHẨU
+    public boolean updatePassword(int userId, String hashedPassword) {
+        try {
+            String sql = "UPDATE Users SET PasswordHash = ? WHERE UserID = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, hashedPassword);
+            st.setInt(2, userId);
+            int rows = st.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
