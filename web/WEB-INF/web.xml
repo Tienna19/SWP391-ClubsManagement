@@ -72,6 +72,16 @@
         <url-pattern>/editEvent</url-pattern>
     </servlet-mapping>
     
+    <!-- CancelEventServlet -->
+    <servlet>
+        <servlet-name>CancelEventServlet</servlet-name>
+        <servlet-class>controller.eventMgt.CancelEventServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CancelEventServlet</servlet-name>
+        <url-pattern>/cancelEvent</url-pattern>
+    </servlet-mapping>
+    
     <welcome-file-list>
 <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
