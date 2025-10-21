@@ -667,10 +667,10 @@
 												<div class="card-courses-media">
 													<div class="event-date">
 														<div class="day">
-															<fmt:formatDate value="${event.eventDate}" pattern="dd" />
+															<fmt:formatDate value="${event.startDate}" pattern="dd" />
 														</div>
 														<div class="month">
-															<fmt:formatDate value="${event.eventDate}" pattern="MMM" />
+															<fmt:formatDate value="${event.startDate}" pattern="MMM" />
 														</div>
 													</div>
 												</div>
@@ -686,25 +686,25 @@
 																	<i class="fa fa-calendar" style="font-size: 24px; color: #666;"></i>
 																</div>
 																<div class="card-courses-user-info">
-																	<h5>Event Date</h5>
-																	<h4><fmt:formatDate value="${event.eventDate}" pattern="MMM dd, yyyy" /></h4>
+																	<h5>Start Date</h5>
+																	<h4><fmt:formatDate value="${event.startDate}" pattern="MMM dd, yyyy" /></h4>
 																</div>
 															</li>
 															<li class="card-courses-categories">
-																<h5>Time</h5>
-																<h4><fmt:formatDate value="${event.eventDate}" pattern="HH:mm" /></h4>
+																<h5>End Date</h5>
+																<h4><fmt:formatDate value="${event.endDate}" pattern="MMM dd, yyyy" /></h4>
 															</li>
 															<li class="card-courses-review">
-																<h5>Club ID</h5>
-																<h4>${event.clubID}</h4>
+																<h5>Location</h5>
+																<h4>${not empty event.location ? event.location : 'TBD'}</h4>
 															</li>
 															<li class="card-courses-stats">
-																<h5>Status</h5>
-																<h4>${event.status}</h4>
+																<h5>Capacity</h5>
+																<h4>${event.capacity}</h4>
 															</li>
 															<li class="card-courses-price">
-																<h5>Created</h5>
-																<h4><fmt:formatDate value="${event.createdAt}" pattern="MMM dd" /></h4>
+																<h5>Status</h5>
+																<h4>${event.status}</h4>
 															</li>
 														</ul>
 													</div>

@@ -76,7 +76,12 @@ public class AddNewEventServlet extends HttpServlet {
             String clubIdStr = request.getParameter("clubId");
             String status = request.getParameter("status");
             String description = request.getParameter("description");
-            String eventDateStr = request.getParameter("eventDate");
+            String location = request.getParameter("location");
+            String capacityStr = request.getParameter("capacity");
+            String startDateStr = request.getParameter("startDate");
+            String endDateStr = request.getParameter("endDate");
+            String registrationStartStr = request.getParameter("registrationStart");
+            String registrationEndStr = request.getParameter("registrationEnd");
 
             // Validate required fields
             StringBuilder errors = new StringBuilder();
@@ -89,14 +94,30 @@ public class AddNewEventServlet extends HttpServlet {
                 errors.append("Club selection is required.<br>");
             }
 
-            if (eventDateStr == null || eventDateStr.trim().isEmpty()) {
-                errors.append("Event date is required.<br>");
+            if (location == null || location.trim().isEmpty()) {
+                errors.append("Location is required.<br>");
+            }
+
+            if (capacityStr == null || capacityStr.trim().isEmpty()) {
+                errors.append("Capacity is required.<br>");
+            }
+
+            if (startDateStr == null || startDateStr.trim().isEmpty()) {
+                errors.append("Start date is required.<br>");
+            }
+
+            if (endDateStr == null || endDateStr.trim().isEmpty()) {
+                errors.append("End date is required.<br>");
             }
 
 
             // Parse and validate data types
             int clubId = 1; // Default hardcoded club ID as requested
-            Timestamp eventDate = null;
+            int capacity = 0;
+            Timestamp startDate = null;
+            Timestamp endDate = null;
+            Timestamp registrationStart = null;
+            Timestamp registrationEnd = null;
 
             try {
                 if (clubIdStr != null && !clubIdStr.trim().isEmpty()) {
@@ -107,22 +128,79 @@ public class AddNewEventServlet extends HttpServlet {
             }
 
             try {
-                if (eventDateStr != null && !eventDateStr.trim().isEmpty()) {
-                    LocalDateTime eventDateTime = LocalDateTime.parse(eventDateStr);
-                    eventDate = Timestamp.valueOf(eventDateTime);
+                if (capacityStr != null && !capacityStr.trim().isEmpty()) {
+                    capacity = Integer.parseInt(capacityStr);
+                    if (capacity <= 0) {
+                        errors.append("Capacity must be greater than 0.<br>");
+                    }
+                }
+            } catch (NumberFormatException e) {
+                errors.append("Invalid capacity format.<br>");
+            }
+
+            try {
+                if (startDateStr != null && !startDateStr.trim().isEmpty()) {
+                    LocalDateTime startDateTime = LocalDateTime.parse(startDateStr);
+                    startDate = Timestamp.valueOf(startDateTime);
                 }
             } catch (DateTimeParseException e) {
-                errors.append("Invalid event date format.<br>");
+                errors.append("Invalid start date format.<br>");
+            }
+
+            try {
+                if (endDateStr != null && !endDateStr.trim().isEmpty()) {
+                    LocalDateTime endDateTime = LocalDateTime.parse(endDateStr);
+                    endDate = Timestamp.valueOf(endDateTime);
+                }
+            } catch (DateTimeParseException e) {
+                errors.append("Invalid end date format.<br>");
+            }
+
+            try {
+                if (registrationStartStr != null && !registrationStartStr.trim().isEmpty()) {
+                    LocalDateTime regStartDateTime = LocalDateTime.parse(registrationStartStr);
+                    registrationStart = Timestamp.valueOf(regStartDateTime);
+                } else {
+                    // Default to current time if not provided
+                    registrationStart = Timestamp.valueOf(LocalDateTime.now());
+                }
+            } catch (DateTimeParseException e) {
+                errors.append("Invalid registration start date format.<br>");
+            }
+
+            try {
+                if (registrationEndStr != null && !registrationEndStr.trim().isEmpty()) {
+                    LocalDateTime regEndDateTime = LocalDateTime.parse(registrationEndStr);
+                    registrationEnd = Timestamp.valueOf(regEndDateTime);
+                } else {
+                    // Default to 7 days from now if not provided
+                    registrationEnd = Timestamp.valueOf(LocalDateTime.now().plusDays(7));
+                }
+            } catch (DateTimeParseException e) {
+                errors.append("Invalid registration end date format.<br>");
+            }
+
+            // Validate date logic
+            if (startDate != null && endDate != null && startDate.after(endDate)) {
+                errors.append("Start date must be before end date.<br>");
+            }
+
+            if (registrationStart != null && registrationEnd != null && registrationStart.after(registrationEnd)) {
+                errors.append("Registration start date must be before registration end date.<br>");
             }
 
 
             // Set default values for optional fields
             if (status == null || status.trim().isEmpty()) {
-                status = "Draft";
+                status = "Upcoming"; // Use database default status
             }
 
             if (description == null) {
                 description = "";
+            }
+
+            if (location == null) {
+                location = "";
             }
 
             // If there are validation errors, forward back to JSP with error message
@@ -134,7 +212,8 @@ public class AddNewEventServlet extends HttpServlet {
             }
 
             // Create Event object
-            Event event = new Event(clubId, eventName, description, eventDate, status);
+            Event event = new Event(clubId, eventName, description, location, capacity, 
+                                  startDate, endDate, registrationStart, registrationEnd, 1, status);
 
             // Insert event into database
             int eventId = eventDAO.insertEvent(event);

@@ -84,9 +84,9 @@ public class ViewClubMemberServlet extends HttpServlet {
 
         try {
             MembershipDAO dao = new MembershipDAO();
-            List<MembershipRole> members = dao.listMembers(clubId, sortBy, order);
+//            List<MembershipRole> members = dao.listMembers(clubId, sortBy, order);
 
-            req.setAttribute("members", members);
+//            req.setAttribute("members", members);
             req.setAttribute("clubId", clubId);
             req.setAttribute("sortBy", sortBy == null ? "name" : sortBy);
             req.setAttribute("order",  order  == null ? "ASC"  : order);
