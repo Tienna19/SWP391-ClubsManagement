@@ -1,7 +1,7 @@
 package controller.member;
 
 
-import DAO.MemberDAO;
+import dal.MemberDAO;
 import com.app.model.MemberDTO;
 
 import jakarta.servlet.ServletException;
