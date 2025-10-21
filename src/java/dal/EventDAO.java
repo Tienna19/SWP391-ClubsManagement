@@ -259,6 +259,53 @@ public class EventDAO extends DBContext {
     }
     
     /**
+     * Update an event in the database
+     * @param event The event to update
+     * @return true if update was successful, false otherwise
+     */
+    public boolean updateEvent(Event event) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot update event.");
+            return false;
+        }
+        
+        String sql = "UPDATE Events SET ClubID = ?, EventName = ?, Description = ?, Location = ?, " +
+                     "Capacity = ?, StartDate = ?, EndDate = ?, RegistrationStart = ?, " +
+                     "RegistrationEnd = ?, Status = ? WHERE EventID = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, event.getClubID());
+            st.setString(2, event.getEventName());
+            st.setString(3, event.getDescription());
+            st.setString(4, event.getLocation());
+            st.setInt(5, event.getCapacity());
+            st.setTimestamp(6, event.getStartDate());
+            st.setTimestamp(7, event.getEndDate());
+            st.setTimestamp(8, event.getRegistrationStart());
+            st.setTimestamp(9, event.getRegistrationEnd());
+            st.setString(10, event.getStatus());
+            st.setInt(11, event.getEventID());
+
+            System.out.println("Executing SQL: " + sql);
+            System.out.println("Parameters: EventID=" + event.getEventID() +
+                             ", ClubID=" + event.getClubID() +
+                             ", EventName=" + event.getEventName() +
+                             ", Location=" + event.getLocation() +
+                             ", Capacity=" + event.getCapacity());
+
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating event: " + e.getMessage());
+            System.out.println("SQL State: " + e.getSQLState());
+            System.out.println("Error Code: " + e.getErrorCode());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
      * Update an event's status
      * @param eventID The ID of the event to update
      * @param status The new status
