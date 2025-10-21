@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- Student Club Management System - Add Event Page -->
+<!-- Student Club Management System - Edit Event Page -->
 <head>
 
 	<!-- META ============================================= -->
@@ -28,7 +28,7 @@
 	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
 
 	<!-- PAGE TITLE HERE ============================================= -->
-	<title>Add New Event - Student Club Management System</title>
+	<title>Edit Event - Student Club Management System</title>
 
 	<!-- MOBILE SPECIFIC ============================================= -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -412,11 +412,11 @@
 	<main class="ttr-wrapper">
 		<div class="container-fluid">
 			<div class="db-breadcrumb">
-				<h4 class="breadcrumb-title">Add New Event</h4>
+				<h4 class="breadcrumb-title">Edit Event</h4>
 				<ul class="db-breadcrumb-list">
 					<li><a href="#"><i class="fa fa-home"></i>Dashboard</a></li>
 					<li>Events</li>
-					<li>Add New Event</li>
+					<li>Edit Event</li>
 				</ul>
 			</div>	
 			<div class="row">
@@ -424,10 +424,11 @@
 				<div class="col-lg-12 m-b30">
 					<div class="widget-box">
 						<div class="wc-title">
-							<h4>Add New Event</h4>
+							<h4>Edit Event: ${event.eventName}</h4>
 						</div>
 						<div class="widget-inner">
-							<form class="edit-profile m-b30" id="addEventForm" action="addNewEvent" method="post" novalidate>
+							<form class="edit-profile m-b30" id="editEventForm" action="editEvent" method="post" novalidate>
+								<input type="hidden" name="eventId" value="${event.eventID}">
 								<div class="row">
 									<div class="col-12">
 										<div class="ml-auto">
@@ -437,30 +438,31 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Event Title <span class="text-danger">*</span></label>
 										<div>
-								<input class="form-control" type="text" name="eventName" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${param.eventName}">
-								<div class="text-danger" id="eventTitleError"></div>
+											<input class="form-control" type="text" name="eventName" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${not empty param.eventName ? param.eventName : event.eventName}">
+											<div class="text-danger" id="eventTitleError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Club <span class="text-danger">*</span></label>
 										<div>
-								<select class="form-control" name="clubId" id="clubId" required>
+											<select class="form-control" name="clubId" id="clubId" required>
 												<option value="">Select a club</option>
 												<c:forEach var="club" items="${clubs}">
-													<option value="${club.clubId}" ${param.clubId == club.clubId ? 'selected' : ''}>
+													<option value="${club.clubId}" ${(not empty param.clubId ? param.clubId : event.clubID) == club.clubId ? 'selected' : ''}>
 														${club.clubName}
 													</option>
 												</c:forEach>
 											</select>
-								<div class="text-danger" id="clubIdError"></div>
+											<div class="text-danger" id="clubIdError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Status</label>
 										<div>
 											<select class="form-control" name="status" id="eventStatus">
-												<option value="Draft" ${param.status == 'Draft' ? 'selected' : ''}>Draft</option>
-												<option value="Published" ${param.status == 'Published' ? 'selected' : ''}>Published</option>
+												<option value="Draft" ${(not empty param.status ? param.status : event.status) == 'Draft' ? 'selected' : ''}>Draft</option>
+												<option value="Published" ${(not empty param.status ? param.status : event.status) == 'Published' ? 'selected' : ''}>Published</option>
+												<option value="Upcoming" ${(not empty param.status ? param.status : event.status) == 'Upcoming' ? 'selected' : ''}>Upcoming</option>
 											</select>
 										</div>
 									</div>
@@ -474,20 +476,20 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Description</label>
 										<div>
-											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description">${param.description}</textarea>
+											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description">${not empty param.description ? param.description : event.description}</textarea>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Location <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location" value="${param.location}" required>
+											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location" value="${not empty param.location ? param.location : event.location}" required>
 											<div class="text-danger" id="locationError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Capacity <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="number" name="capacity" id="eventCapacity" min="1" max="1000" placeholder="Enter capacity" value="${param.capacity}" required>
+											<input class="form-control" type="number" name="capacity" id="eventCapacity" min="1" max="1000" placeholder="Enter capacity" value="${not empty param.capacity ? param.capacity : event.capacity}" required>
 											<div class="text-danger" id="capacityError"></div>
 										</div>
 									</div>
@@ -501,14 +503,14 @@
 									<div class="form-group col-6">
 										<label class="col-form-label">Start Date & Time <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="startDate" id="startTime" required value="${param.startDate}">
+											<input class="form-control" type="datetime-local" name="startDate" id="startTime" required value="${not empty param.startDate ? param.startDate : event.startDate}">
 											<div class="text-danger" id="startTimeError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">End Date & Time <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="endDate" id="endTime" required value="${param.endDate}">
+											<input class="form-control" type="datetime-local" name="endDate" id="endTime" required value="${not empty param.endDate ? param.endDate : event.endDate}">
 											<div class="text-danger" id="endTimeError"></div>
 										</div>
 									</div>
@@ -520,24 +522,24 @@
 									<div class="form-group col-6">
 										<label class="col-form-label">Registration Start</label>
 										<div>
-											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${param.registrationStart}">
+											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${not empty param.registrationStart ? param.registrationStart : event.registrationStart}">
 											<div class="text-danger" id="regStartTimeError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Registration End</label>
 										<div>
-											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${param.registrationEnd}">
+											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${not empty param.registrationEnd ? param.registrationEnd : event.registrationEnd}">
 											<div class="text-danger" id="regEndTimeError"></div>
 										</div>
 									</div>
 									<div class="col-12">
-							<div class="alert alert-info">
-								<i class="fa fa-info-circle"></i> <strong>Note:</strong> Event date must be at least 3 days from today.
-							</div>
+										<div class="alert alert-info">
+											<i class="fa fa-info-circle"></i> <strong>Note:</strong> Event date must be at least 3 days from today.
+										</div>
 									</div>
 									<div class="col-12 m-t20">
-										<button type="submit" class="btn btn-primary m-r5"><i class="fa fa-save"></i> Create Event</button>
+										<button type="submit" class="btn btn-primary m-r5"><i class="fa fa-save"></i> Update Event</button>
 										<button type="reset" class="btn btn-secondary"><i class="fa fa-refresh"></i> Reset Form</button>
 										<a href="listEvents" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Back to Events</a>
 									</div>
@@ -582,7 +584,7 @@
 <script>
 $(document).ready(function() {
     // Form validation and submission
-    $('#addEventForm').on('submit', function(e) {
+    $('#editEventForm').on('submit', function(e) {
         // Validate form before submission
         if (!validateEventForm()) {
             e.preventDefault(); // Only prevent submission if validation fails
@@ -864,7 +866,7 @@ function showAlert(message, type) {
     $('.alert').remove();
     
     // Add new alert
-    $('#addEventForm').before(alertHtml);
+    $('#editEventForm').before(alertHtml);
     
     // Auto-hide after 5 seconds for success messages
     if (type === 'success') {
@@ -876,5 +878,5 @@ function showAlert(message, type) {
 </script>
 </body>
 
-<!-- Student Club Management System - Add Event Page -->
+<!-- Student Club Management System - Edit Event Page -->
 </html>

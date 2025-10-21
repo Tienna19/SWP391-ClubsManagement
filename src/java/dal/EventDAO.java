@@ -37,20 +37,30 @@ public class EventDAO extends DBContext {
             return -1;
         }
 
-        String sql = "INSERT INTO Events (ClubID, EventName, Description, EventDate, Status, CreatedAt) " +
-                     "VALUES (?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Events (ClubID, EventName, Description, Location, Capacity, " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, event.getClubID());
             st.setString(2, event.getEventName());
             st.setString(3, event.getDescription());
-            st.setTimestamp(4, event.getEventDate());
-            st.setString(5, event.getStatus());
+            st.setString(4, event.getLocation());
+            st.setInt(5, event.getCapacity());
+            st.setTimestamp(6, event.getStartDate());
+            st.setTimestamp(7, event.getEndDate());
+            st.setTimestamp(8, event.getRegistrationStart());
+            st.setTimestamp(9, event.getRegistrationEnd());
+            st.setInt(10, event.getCreatedBy());
+            st.setString(11, event.getStatus());
 
             System.out.println("Executing SQL: " + sql);
             System.out.println("Parameters: ClubID=" + event.getClubID() +
                              ", EventName=" + event.getEventName() +
-                             ", EventDate=" + event.getEventDate());
+                             ", Location=" + event.getLocation() +
+                             ", Capacity=" + event.getCapacity() +
+                             ", StartDate=" + event.getStartDate() +
+                             ", EndDate=" + event.getEndDate());
 
             int affectedRows = st.executeUpdate();
 
@@ -144,7 +154,9 @@ public class EventDAO extends DBContext {
             return events; // Return empty list instead of crashing
         }
         
-        String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events ORDER BY CreatedAt DESC";
+        String sql = "SELECT EventID, ClubID, EventName, Description, Location, Capacity, " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status " +
+                     "FROM Events ORDER BY StartDate DESC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
@@ -154,9 +166,14 @@ public class EventDAO extends DBContext {
                     rs.getInt("ClubID"),
                     rs.getString("EventName"),
                     rs.getString("Description"),
-                    rs.getTimestamp("EventDate"),
-                    rs.getString("Status"),
-                    rs.getTimestamp("CreatedAt")
+                    rs.getString("Location"),
+                    rs.getInt("Capacity"),
+                    rs.getTimestamp("StartDate"),
+                    rs.getTimestamp("EndDate"),
+                    rs.getTimestamp("RegistrationStart"),
+                    rs.getTimestamp("RegistrationEnd"),
+                    rs.getInt("CreatedBy"),
+                    rs.getString("Status")
                 );
                 events.add(event);
             }
@@ -173,7 +190,9 @@ public class EventDAO extends DBContext {
      * @return The event object, or null if not found
      */
     public Event getEventById(int eventID) {
-        String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events WHERE EventID = ?";
+        String sql = "SELECT EventID, ClubID, EventName, Description, Location, Capacity, " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status " +
+                     "FROM Events WHERE EventID = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, eventID);
@@ -184,9 +203,14 @@ public class EventDAO extends DBContext {
                     rs.getInt("ClubID"),
                     rs.getString("EventName"),
                     rs.getString("Description"),
-                    rs.getTimestamp("EventDate"),
-                    rs.getString("Status"),
-                    rs.getTimestamp("CreatedAt")
+                    rs.getString("Location"),
+                    rs.getInt("Capacity"),
+                    rs.getTimestamp("StartDate"),
+                    rs.getTimestamp("EndDate"),
+                    rs.getTimestamp("RegistrationStart"),
+                    rs.getTimestamp("RegistrationEnd"),
+                    rs.getInt("CreatedBy"),
+                    rs.getString("Status")
                 );
             }
         } catch (SQLException e) {
@@ -203,7 +227,9 @@ public class EventDAO extends DBContext {
      */
     public List<Event> getEventsByClubId(int clubID) {
         List<Event> events = new ArrayList<>();
-        String sql = "SELECT EventID, ClubID, EventName, Description, EventDate, Status, CreatedAt FROM Events WHERE ClubID = ? ORDER BY EventDate ASC";
+        String sql = "SELECT EventID, ClubID, EventName, Description, Location, Capacity, " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status " +
+                     "FROM Events WHERE ClubID = ? ORDER BY StartDate ASC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, clubID);
@@ -214,9 +240,14 @@ public class EventDAO extends DBContext {
                     rs.getInt("ClubID"),
                     rs.getString("EventName"),
                     rs.getString("Description"),
-                    rs.getTimestamp("EventDate"),
-                    rs.getString("Status"),
-                    rs.getTimestamp("CreatedAt")
+                    rs.getString("Location"),
+                    rs.getInt("Capacity"),
+                    rs.getTimestamp("StartDate"),
+                    rs.getTimestamp("EndDate"),
+                    rs.getTimestamp("RegistrationStart"),
+                    rs.getTimestamp("RegistrationEnd"),
+                    rs.getInt("CreatedBy"),
+                    rs.getString("Status")
                 );
                 events.add(event);
             }
@@ -225,6 +256,53 @@ public class EventDAO extends DBContext {
             e.printStackTrace();
         }
         return events;
+    }
+    
+    /**
+     * Update an event in the database
+     * @param event The event to update
+     * @return true if update was successful, false otherwise
+     */
+    public boolean updateEvent(Event event) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot update event.");
+            return false;
+        }
+        
+        String sql = "UPDATE Events SET ClubID = ?, EventName = ?, Description = ?, Location = ?, " +
+                     "Capacity = ?, StartDate = ?, EndDate = ?, RegistrationStart = ?, " +
+                     "RegistrationEnd = ?, Status = ? WHERE EventID = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, event.getClubID());
+            st.setString(2, event.getEventName());
+            st.setString(3, event.getDescription());
+            st.setString(4, event.getLocation());
+            st.setInt(5, event.getCapacity());
+            st.setTimestamp(6, event.getStartDate());
+            st.setTimestamp(7, event.getEndDate());
+            st.setTimestamp(8, event.getRegistrationStart());
+            st.setTimestamp(9, event.getRegistrationEnd());
+            st.setString(10, event.getStatus());
+            st.setInt(11, event.getEventID());
+
+            System.out.println("Executing SQL: " + sql);
+            System.out.println("Parameters: EventID=" + event.getEventID() +
+                             ", ClubID=" + event.getClubID() +
+                             ", EventName=" + event.getEventName() +
+                             ", Location=" + event.getLocation() +
+                             ", Capacity=" + event.getCapacity());
+
+            int affectedRows = st.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating event: " + e.getMessage());
+            System.out.println("SQL State: " + e.getSQLState());
+            System.out.println("Error Code: " + e.getErrorCode());
+            e.printStackTrace();
+            return false;
+        }
     }
     
     /**

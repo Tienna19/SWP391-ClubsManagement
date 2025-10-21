@@ -16,30 +16,61 @@ public class Event {
     private String eventName;
     private String description;
     private String location;
-    private Timestamp eventDate;
+    private int capacity;
+    private Timestamp startDate;
+    private Timestamp endDate;
+    private Timestamp registrationStart;
+    private Timestamp registrationEnd;
+    private int createdBy;
     private String status;
-    private Timestamp createdAt;
 
     public Event() {
     }
 
     public Event(int eventID, int clubID, String eventName, String description, 
-                 Timestamp eventDate, String status, Timestamp createdAt) {
+                 String location, int capacity, Timestamp startDate, Timestamp endDate,
+                 Timestamp registrationStart, Timestamp registrationEnd, int createdBy,
+                 String status) {
         this.eventID = eventID;
         this.clubID = clubID;
         this.eventName = eventName;
         this.description = description;
-        this.eventDate = eventDate;
+        this.location = location;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.registrationStart = registrationStart;
+        this.registrationEnd = registrationEnd;
+        this.createdBy = createdBy;
         this.status = status;
-        this.createdAt = createdAt;
     }
 
-    public Event(int clubID, String eventName, String description, 
-                 Timestamp eventDate, String status) {
+    public Event(int clubID, String eventName, String description, String location,
+                 int capacity, Timestamp startDate, Timestamp endDate, int createdBy, String status) {
         this.clubID = clubID;
         this.eventName = eventName;
         this.description = description;
-        this.eventDate = eventDate;
+        this.location = location;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.createdBy = createdBy;
+        this.status = status;
+    }
+
+    public Event(int clubID, String eventName, String description, String location,
+                 int capacity, Timestamp startDate, Timestamp endDate, 
+                 Timestamp registrationStart, Timestamp registrationEnd, int createdBy, String status) {
+        this.clubID = clubID;
+        this.eventName = eventName;
+        this.description = description;
+        this.location = location;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.registrationStart = registrationStart;
+        this.registrationEnd = registrationEnd;
+        this.createdBy = createdBy;
         this.status = status;
     }
 
@@ -67,6 +98,32 @@ public class Event {
         this.eventName = eventName;
     }
 
+    // Alias for JSP compatibility
+    public String getTitle() {
+        return eventName;
+    }
+
+    public void setTitle(String title) {
+        this.eventName = title;
+    }
+
+    // Aliases for JSP compatibility
+    public Timestamp getStartTime() {
+        return startDate;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startDate = startTime;
+    }
+
+    public Timestamp getEndTime() {
+        return endDate;
+    }
+
+    public void setEndTime(Timestamp endTime) {
+        this.endDate = endTime;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -75,12 +132,60 @@ public class Event {
         this.description = description;
     }
 
-    public Timestamp getEventDate() {
-        return eventDate;
+    public String getLocation() {
+        return location;
     }
 
-    public void setEventDate(Timestamp eventDate) {
-        this.eventDate = eventDate;
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+
+    public Timestamp getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
+
+    public Timestamp getRegistrationStart() {
+        return registrationStart;
+    }
+
+    public void setRegistrationStart(Timestamp registrationStart) {
+        this.registrationStart = registrationStart;
+    }
+
+    public Timestamp getRegistrationEnd() {
+        return registrationEnd;
+    }
+
+    public void setRegistrationEnd(Timestamp registrationEnd) {
+        this.registrationEnd = registrationEnd;
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
     }
 
     public String getStatus() {
@@ -91,14 +196,6 @@ public class Event {
         this.status = status;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
     @Override
     public String toString() {
         return "Event{" +
@@ -106,9 +203,14 @@ public class Event {
                 ", clubID=" + clubID +
                 ", eventName='" + eventName + '\'' +
                 ", description='" + description + '\'' +
-                ", eventDate=" + eventDate +
+                ", location='" + location + '\'' +
+                ", capacity=" + capacity +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", registrationStart=" + registrationStart +
+                ", registrationEnd=" + registrationEnd +
+                ", createdBy=" + createdBy +
                 ", status='" + status + '\'' +
-                ", createdAt=" + createdAt +
                 '}';
     }
 }

@@ -570,6 +570,47 @@
 				</ul>
 			</div>	
 			
+			<!-- Success/Error Message Display -->
+			<c:if test="${not empty message}">
+				<div class="row m-b30">
+					<div class="col-12">
+						<div class="alert alert-${messageType} alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+							<div class="d-flex align-items-center">
+								<c:choose>
+									<c:when test="${messageType == 'success'}">
+										<i class="fa fa-check-circle" style="font-size: 20px; color: #28a745; margin-right: 15px;"></i>
+									</c:when>
+									<c:when test="${messageType == 'danger'}">
+										<i class="fa fa-exclamation-circle" style="font-size: 20px; color: #dc3545; margin-right: 15px;"></i>
+									</c:when>
+									<c:when test="${messageType == 'warning'}">
+										<i class="fa fa-exclamation-triangle" style="font-size: 20px; color: #ffc107; margin-right: 15px;"></i>
+									</c:when>
+									<c:otherwise>
+										<i class="fa fa-info-circle" style="font-size: 20px; color: #17a2b8; margin-right: 15px;"></i>
+									</c:otherwise>
+								</c:choose>
+								<div>
+									<strong>
+										<c:choose>
+											<c:when test="${messageType == 'success'}">Success!</c:when>
+											<c:when test="${messageType == 'danger'}">Error!</c:when>
+											<c:when test="${messageType == 'warning'}">Warning!</c:when>
+											<c:otherwise>Info</c:otherwise>
+										</c:choose>
+									</strong>
+									<br>
+									<span style="font-size: 14px;">${message}</span>
+								</div>
+							</div>
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</c:if>
+			
 			<!-- Statistics Cards -->
 			<!-- <div class="row m-b30">
 				<div class="col-lg-3 col-md-6 col-sm-6 col-12">
@@ -667,10 +708,10 @@
 												<div class="card-courses-media">
 													<div class="event-date">
 														<div class="day">
-															<fmt:formatDate value="${event.eventDate}" pattern="dd" />
+															<fmt:formatDate value="${event.startDate}" pattern="dd" />
 														</div>
 														<div class="month">
-															<fmt:formatDate value="${event.eventDate}" pattern="MMM" />
+															<fmt:formatDate value="${event.startDate}" pattern="MMM" />
 														</div>
 													</div>
 												</div>
@@ -686,25 +727,25 @@
 																	<i class="fa fa-calendar" style="font-size: 24px; color: #666;"></i>
 																</div>
 																<div class="card-courses-user-info">
-																	<h5>Event Date</h5>
-																	<h4><fmt:formatDate value="${event.eventDate}" pattern="MMM dd, yyyy" /></h4>
+																	<h5>Start Date</h5>
+																	<h4><fmt:formatDate value="${event.startDate}" pattern="MMM dd, yyyy" /></h4>
 																</div>
 															</li>
 															<li class="card-courses-categories">
-																<h5>Time</h5>
-																<h4><fmt:formatDate value="${event.eventDate}" pattern="HH:mm" /></h4>
+																<h5>End Date</h5>
+																<h4><fmt:formatDate value="${event.endDate}" pattern="MMM dd, yyyy" /></h4>
 															</li>
 															<li class="card-courses-review">
-																<h5>Club ID</h5>
-																<h4>${event.clubID}</h4>
+																<h5>Location</h5>
+																<h4>${not empty event.location ? event.location : 'TBD'}</h4>
 															</li>
 															<li class="card-courses-stats">
-																<h5>Status</h5>
-																<h4>${event.status}</h4>
+																<h5>Capacity</h5>
+																<h4>${event.capacity}</h4>
 															</li>
 															<li class="card-courses-price">
-																<h5>Created</h5>
-																<h4><fmt:formatDate value="${event.createdAt}" pattern="MMM dd" /></h4>
+																<h5>Status</h5>
+																<h4>${event.status}</h4>
 															</li>
 														</ul>
 													</div>
@@ -726,14 +767,19 @@
 																		<i class="fa fa-check"></i> Publish
 																	</a>
 																</c:if>
-																<c:if test="${event.status == 'Published'}">
-																	<a href="unpublishEvent?eventId=${event.eventID}" class="btn btn-secondary btn-sm">
-																		<i class="fa fa-pause"></i> Unpublish
-																	</a>
-																</c:if>
-																<a href="deleteEvent?eventId=${event.eventID}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this event?')">
-																	<i class="fa fa-trash"></i> Delete
-																</a>
+								<c:if test="${event.status == 'Published'}">
+									<a href="unpublishEvent?eventId=${event.eventID}" class="btn btn-secondary btn-sm">
+										<i class="fa fa-pause"></i> Unpublish
+									</a>
+								</c:if>
+								<c:if test="${event.status == 'Upcoming' or event.status == 'Published'}">
+									<button type="button" class="btn btn-warning btn-sm" onclick="showCancelEventModal(${event.eventID}, '${event.eventName}')">
+										<i class="fa fa-times"></i> Cancel Event
+									</button>
+								</c:if>
+								<a href="deleteEvent?eventId=${event.eventID}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this event?')">
+									<i class="fa fa-trash"></i> Delete
+								</a>
 															</div>
 														</div>
 													</div>
@@ -911,7 +957,82 @@ $(document).ready(function() {
         }, 5000);
     });
 });
+
+// Cancel Event Modal Functions
+function showCancelEventModal(eventId, eventName) {
+    $('#cancelEventId').val(eventId);
+    $('#cancelEventName').text(eventName);
+    $('#cancelEventModal').modal('show');
+}
+
+function confirmCancelEvent() {
+    var eventId = $('#cancelEventId').val();
+    var eventName = $('#cancelEventName').text();
+    
+    // Show loading state
+    $('#cancelConfirmBtn').html('<i class="fa fa-spinner fa-spin"></i> Cancelling...');
+    $('#cancelConfirmBtn').prop('disabled', true);
+    
+    // Create form and submit
+    var form = $('<form>', {
+        'method': 'POST',
+        'action': 'cancelEvent'
+    });
+    
+    form.append($('<input>', {
+        'type': 'hidden',
+        'name': 'eventId',
+        'value': eventId
+    }));
+    
+    $('body').append(form);
+    form.submit();
+}
 </script>
+
+<!-- Cancel Event Confirmation Modal -->
+<div class="modal fade" id="cancelEventModal" tabindex="-1" role="dialog" aria-labelledby="cancelEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); border: none;">
+                <h5 class="modal-title text-white" id="cancelEventModalLabel">
+                    <i class="fa fa-exclamation-triangle"></i> Cancel Event
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div class="text-center mb-4">
+                    <div class="warning-icon" style="font-size: 48px; color: #ff6b6b; margin-bottom: 20px;">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 style="color: #333; margin-bottom: 15px;">Are you sure you want to cancel this event?</h4>
+                    <p style="color: #666; font-size: 16px; margin-bottom: 20px;">
+                        You are about to cancel the event: <strong id="cancelEventName"></strong>
+                    </p>
+                    <div class="alert alert-warning" style="border-left: 4px solid #ff6b6b; background-color: #fff3cd; border-color: #ffeaa7;">
+                        <i class="fa fa-info-circle"></i>
+                        <strong>Important:</strong> This action will notify all registered participants about the event cancellation. 
+                        This action cannot be undone.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border: none; padding: 20px 30px; background-color: #f8f9fa;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding: 10px 25px;">
+                    <i class="fa fa-times"></i> Keep Event
+                </button>
+                <button type="button" class="btn btn-danger" id="cancelConfirmBtn" onclick="confirmCancelEvent()" style="padding: 10px 25px; background: linear-gradient(135deg, #ff6b6b, #ee5a24); border: none;">
+                    <i class="fa fa-times"></i> Yes, Cancel Event
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden input to store event ID -->
+<input type="hidden" id="cancelEventId" value="">
+
 </body>
 
 <!-- Student Club Management System - Events List Page -->
