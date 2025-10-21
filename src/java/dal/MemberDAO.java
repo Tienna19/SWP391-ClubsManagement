@@ -11,10 +11,10 @@ import java.util.List;
 
 public class MemberDAO {
 
-    // Lấy tên CLB (chỉ đọc)
+ 
     public String getClubName(int clubId) {
         String sql = "SELECT ClubName FROM Clubs WHERE ClubID = ?";
-        // 👉 Tạo DBContext tại chỗ, dùng try-with-resources để đóng Connection
+       
         try (Connection con = new DBContext().connection;
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -29,7 +29,7 @@ public class MemberDAO {
         }
     }
 
-    // Lấy danh sách thành viên (5 cột yêu cầu)
+   
     public List<MemberDTO> findMembersByClub(int clubId) {
         String sql = """
             SELECT u.UserID, u.FullName, u.ProfileImage,

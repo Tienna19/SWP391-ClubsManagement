@@ -1,18 +1,20 @@
-package Controller;
+package controller.member;
+
 
 import DAO.MemberDAO;
 import com.app.model.MemberDTO;
+
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
+
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "MemberListServlet", urlPatterns = {"/member/list"})
+//@WebServlet(name = "MemberListServlet", urlPatterns = {"/member/list"})
 public class MemberListServlet extends HttpServlet {
 
-   
+    
     private static final int CLUB_ID = 1;
     private MemberDAO memberDAO;
 
@@ -30,5 +32,6 @@ public class MemberListServlet extends HttpServlet {
         request.setAttribute("members", members);
         
         request.getRequestDispatcher("/view/member/member-list.jsp").forward(request, response);
+
     }
 }

@@ -61,18 +61,17 @@
 </head>
 <body>
 
-    <!-- ✅ Header / Footer có sẵn -->
-    <jsp:include page="/layout/header.jsp" />
+    
+    <jsp:include page="/view/layout/header.jsp" />
 
     <div class="container">
 
-        <!-- 🔎 Search tổng + nút Search -->
+        
         <div class="filter-bar">
             <input id="globalSearch" type="text" placeholder="Tìm (UserID, FullName, RoleInClub, JoinDate)..." />
             <button id="btnSearch" type="button">Search</button>
         </div>
 
-        <!-- 📋 Bảng 5 cột + sort theo cột -->
         <table id="memberTable">
             <thead>
             <tr>
@@ -105,7 +104,7 @@
             </tbody>
         </table>
 
-        <!-- 🔢 Phân trang -->
+        
         <div class="pagination-wrap">
             <div class="page-size">
                 Show
@@ -122,7 +121,7 @@
         </div>
     </div>
 
-    <jsp:include page="/layout/footer.jsp" />
+    <jsp:include page="/view/layout/footer.jsp" />
 
 <script>
 (function(){
@@ -143,7 +142,7 @@
   function norm(s){ return (s||'').toString().toLowerCase().trim(); }
   function cellText(row, col){ return row.cells[col].innerText.trim(); }
 
-  // Parse "dd/MM/yyyy HH:mm" hoặc "dd/MM/yyyy"
+ 
   function parseDateVN(s){
     s = (s||'').trim();
     if(!s) return 0;
@@ -180,14 +179,14 @@
 
   function renderPagination(totalPages){
     paginationEl.innerHTML = '';
-    // Prev
+    
     const prevBtn = document.createElement('button');
     prevBtn.textContent = 'Prev';
     prevBtn.disabled = state.page <= 1;
     prevBtn.onclick = () => { if(state.page>1){ state.page--; paginate(); } };
     paginationEl.appendChild(prevBtn);
 
-    // Số trang (render tất cả cho đơn giản)
+    
     for(let p=1; p<=totalPages; p++){
       const b = document.createElement('button');
       b.textContent = p;
@@ -196,7 +195,7 @@
       paginationEl.appendChild(b);
     }
 
-    // Next
+    
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Next';
     nextBtn.disabled = state.page >= totalPages;
@@ -213,7 +212,7 @@
     const size = state.size;
     const totalPages = Math.max(1, Math.ceil(total / size));
 
-    // giữ state.page trong [1, totalPages]
+    
     if(state.page > totalPages) state.page = totalPages;
     if(state.page < 1) state.page = 1;
 
@@ -222,7 +221,7 @@
 
     filtered.slice(start, end).forEach(r => r.style.display = '');
 
-    // range info
+    
     const from = total === 0 ? 0 : (start + 1);
     const to = Math.min(end, total);
     
@@ -230,7 +229,6 @@
     renderPagination(totalPages);
   }
 
-  // toggle mũi tên sort
   sorters.forEach(s => {
     s.addEventListener('click', () => {
       sorters.forEach(x => { if(x!==s){ x.dataset.dir='asc'; x.textContent='▲'; x.classList.remove('active'); } });
@@ -246,19 +244,19 @@
     });
   });
 
-  // search realtime + nút Search
+  
   function applySearch(){ state.page = 1; paginate(); }
   search.addEventListener('input', applySearch);
   btnSearch.addEventListener('click', applySearch);
 
-  // thay đổi page size
+  
   pageSizeSel.addEventListener('change', () => {
     state.size = parseInt(pageSizeSel.value, 10) || 10;
     state.page = 1;
     paginate();
   });
 
-  // khởi tạo
+  
   paginate();
 })();
 </script>
