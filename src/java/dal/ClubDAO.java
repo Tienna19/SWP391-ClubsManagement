@@ -3,7 +3,9 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Category;
 import model.Club;
 
@@ -26,23 +28,22 @@ public class ClubDAO extends DBContext {
      */
     public List<Club> getFilteredClubs(Integer categoryId, String status, String keyword) {
         List<Club> list = new ArrayList<>();
+        
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot execute query.");
+            return list; // Return empty list instead of crashing
+        }
+        
         StringBuilder sql = new StringBuilder(
-                "SELECT c.ClubID, c.Name, c.Description, c.LogoUrl, c.CategoryID, "
-                + "cat.Name AS CategoryName, c.CreatedByUserID, c.Status, c.CreatedAt, c.ApprovedByUserID "
+                "SELECT c.ClubID, c.ClubName, c.Description, c.Logo, c.ClubTypes, c.CreatedBy, c.CreatedAt, c.Status "
                 + "FROM Clubs c "
-                + "LEFT JOIN ClubCategories cat ON c.CategoryID = cat.CategoryID "
                 + "WHERE 1=1"
         );
 
         // Build dynamic WHERE clause
-        if (categoryId != null) {
-            sql.append(" AND c.CategoryID = ?");
-        }
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" AND c.Status = ?");
-        }
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append(" AND (c.Name LIKE ? OR c.Description LIKE ?)");
+            sql.append(" AND (c.ClubName LIKE ? OR c.Description LIKE ?)");
         }
         
         sql.append(" ORDER BY c.CreatedAt DESC");
@@ -52,33 +53,44 @@ public class ClubDAO extends DBContext {
             int index = 1;
             
             // Set parameters
-            if (categoryId != null) {
-                st.setInt(index++, categoryId);
-            }
-            if (status != null && !status.trim().isEmpty()) {
-                st.setString(index++, status);
-            }
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword.trim() + "%";
-                st.setString(index++, searchPattern); // For name
-                st.setString(index++, searchPattern); // For description
+                st.setString(index++, searchPattern); // For ClubName
+                st.setString(index++, searchPattern); // For Description
             }
 
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                Club c = new Club(
-                        rs.getInt("ClubID"),
-                        rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("LogoUrl"),
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"), // Category name from JOIN
-                        rs.getInt("CreatedByUserID"),
-                        rs.getString("Status"),
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getObject("ApprovedByUserID") != null ? rs.getInt("ApprovedByUserID") : null
-                );
-                list.add(c);
+                Club c = new Club();
+                c.setClubId(rs.getInt("ClubID"));
+                c.setClubName(rs.getString("ClubName"));
+                c.setDescription(rs.getString("Description"));
+                c.setLogo(rs.getString("Logo") != null ? rs.getString("Logo") : "");
+                c.setClubTypes(rs.getString("ClubTypes"));
+                c.setCreatedBy(rs.getInt("CreatedBy"));
+                c.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                c.setStatus(rs.getString("Status"));
+                
+                // Apply filters after creating the club object
+                boolean includeClub = true;
+                
+                // Filter by category (using ClubTypes)
+                if (categoryId != null) {
+                    // Convert categoryId to ClubTypes string for comparison
+                    String expectedClubType = getClubTypeFromCategoryId(categoryId);
+                    if (!expectedClubType.equals(c.getClubTypes())) {
+                        includeClub = false;
+                    }
+                }
+                
+                // Filter by status
+                if (status != null && !status.trim().isEmpty() && !status.equalsIgnoreCase(c.getStatus())) {
+                    includeClub = false;
+                }
+                
+                if (includeClub) {
+                    list.add(c);
+                }
             }
         } catch (Exception e) {
             System.err.println("Error in getFilteredClubs: " + e.getMessage());
@@ -93,10 +105,14 @@ public class ClubDAO extends DBContext {
      * @return Club object hoặc null nếu không tìm thấy
      */
     public Club getClubById(int clubId) {
-        String sql = "SELECT c.ClubID, c.Name, c.Description, c.LogoUrl, c.CategoryID, "
-                + "cat.Name AS CategoryName, c.CreatedByUserID, c.Status, c.CreatedAt, c.ApprovedByUserID "
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot execute query.");
+            return null;
+        }
+        
+        String sql = "SELECT c.ClubID, c.ClubName, c.Description, c.Logo, c.ClubTypes, c.CreatedBy, c.CreatedAt, c.Status "
                 + "FROM Clubs c "
-                + "LEFT JOIN ClubCategories cat ON c.CategoryID = cat.CategoryID "
                 + "WHERE c.ClubID = ?";
         
         try {
@@ -105,18 +121,16 @@ public class ClubDAO extends DBContext {
             ResultSet rs = st.executeQuery();
             
             if (rs.next()) {
-                return new Club(
-                        rs.getInt("ClubID"),
-                        rs.getString("Name"),
-                        rs.getString("Description"),
-                        rs.getString("LogoUrl"),
-                        rs.getInt("CategoryID"),
-                        rs.getString("CategoryName"),
-                        rs.getInt("CreatedByUserID"),
-                        rs.getString("Status"),
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getObject("ApprovedByUserID") != null ? rs.getInt("ApprovedByUserID") : null
-                );
+                Club c = new Club();
+                c.setClubId(rs.getInt("ClubID"));
+                c.setClubName(rs.getString("ClubName"));
+                c.setDescription(rs.getString("Description"));
+                c.setLogo(rs.getString("Logo") != null ? rs.getString("Logo") : "");
+                c.setClubTypes(rs.getString("ClubTypes"));
+                c.setCreatedBy(rs.getInt("CreatedBy"));
+                c.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                c.setStatus(rs.getString("Status"));
+                return c;
             }
         } catch (Exception e) {
             System.err.println("Error in getClubById: " + e.getMessage());
@@ -152,22 +166,39 @@ public class ClubDAO extends DBContext {
         return getFilteredClubs(null, null, keyword);
     }
 
+    // Cache for category mapping to avoid repeated database calls
+    private static Map<String, Integer> categoryIdCache = null;
+    
     /**
-     * Lấy toàn bộ categories
+     * Lấy toàn bộ categories từ ClubType trong database
      * @return List of all categories
      */
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
-        String sql = "SELECT CategoryID AS id, Name FROM ClubCategories ORDER BY Name";
+        
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot execute query.");
+            return list; // Return empty list instead of crashing
+        }
+        
+        // Get distinct ClubTypes from database with consistent ordering
+        String sql = "SELECT DISTINCT ClubTypes FROM Clubs WHERE ClubTypes IS NOT NULL ORDER BY ClubTypes";
 
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+            int id = 1;
+            categoryIdCache = new HashMap<>(); // Initialize cache
+            
             while (rs.next()) {
                 Category c = new Category();
-                c.setId(rs.getInt("id"));
-                c.setName(rs.getString("Name"));
+                String clubTypes = rs.getString("ClubTypes");
+                c.setId(id);
+                c.setName(clubTypes);
+                categoryIdCache.put(clubTypes, id); // Cache the mapping
                 list.add(c);
+                id++;
             }
         } catch (Exception e) {
             System.err.println("Error in getAllCategories: " + e.getMessage());
@@ -176,6 +207,78 @@ public class ClubDAO extends DBContext {
 
         return list;
     }
+    
+    /**
+     * Convert ClubType to category ID based on database order
+     * @param clubType ClubType from database
+     * @return category ID
+     */
+    private int getCategoryIdFromClubType(String clubType) {
+        if (clubType == null) return 0;
+        
+        // Use cache if available
+        if (categoryIdCache != null) {
+            return categoryIdCache.getOrDefault(clubType, 0);
+        }
+        
+        // Fallback: query database directly
+        if (connection == null) return 0;
+        
+        try {
+            String sql = "SELECT DISTINCT ClubTypes FROM Clubs WHERE ClubTypes IS NOT NULL ORDER BY ClubTypes";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            int id = 1;
+            
+            while (rs.next()) {
+                if (rs.getString("ClubTypes").equals(clubType)) {
+                    return id;
+                }
+                id++;
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getCategoryIdFromClubType: " + e.getMessage());
+        }
+        
+        return 0;
+    }
+    
+    /**
+     * Convert category ID to ClubType for database insertion
+     * @param categoryId Category ID from form
+     * @return ClubType string for database
+     */
+    private String getClubTypeFromCategoryId(int categoryId) {
+        // Use cache if available
+        if (categoryIdCache != null) {
+            for (Map.Entry<String, Integer> entry : categoryIdCache.entrySet()) {
+                if (entry.getValue() == categoryId) {
+                    return entry.getKey();
+                }
+            }
+        }
+        
+        // Fallback: query database directly
+        if (connection == null) return "Khác";
+        
+        try {
+            String sql = "SELECT DISTINCT ClubTypes FROM Clubs WHERE ClubTypes IS NOT NULL ORDER BY ClubTypes";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            int id = 1;
+            
+            while (rs.next()) {
+                if (id == categoryId) {
+                    return rs.getString("ClubTypes");
+                }
+                id++;
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getClubTypeFromCategoryId: " + e.getMessage());
+        }
+        
+        return "Khác"; // Default fallback
+    }
 
     /**
      * Insert Club mới
@@ -183,17 +286,23 @@ public class ClubDAO extends DBContext {
      * @return true nếu thành công, false nếu thất bại
      */
     public boolean insertClub(Club club) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot insert club.");
+            return false;
+        }
+        
         try {
-            String sql = "INSERT INTO Clubs (Name, Description, LogoUrl, CategoryID, CreatedByUserID, Status, CreatedAt) "
+            String sql = "INSERT INTO Clubs (ClubName, Description, Logo, ClubTypes, CreatedBy, CreatedAt, Status) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setString(1, club.getName());
+            st.setString(1, club.getClubName());
             st.setString(2, club.getDescription());
-            st.setString(3, club.getLogoUrl());
-            st.setInt(4, club.getCategoryId());
-            st.setInt(5, club.getCreatedByUserId());
-            st.setString(6, club.getStatus());
-            st.setTimestamp(7, club.getCreatedAt());
+            st.setString(3, club.getLogo());
+            st.setString(4, club.getClubTypes());
+            st.setInt(5, club.getCreatedBy());
+            st.setTimestamp(6, club.getCreatedAt());
+            st.setString(7, club.getStatus());
             
             int rowsAffected = st.executeUpdate();
             return rowsAffected > 0;
@@ -210,20 +319,22 @@ public class ClubDAO extends DBContext {
      * @return true nếu thành công, false nếu thất bại
      */
     public boolean updateClub(Club club) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot update club.");
+            return false;
+        }
+        
         try {
-            String sql = "UPDATE Clubs SET Name = ?, Description = ?, LogoUrl = ?, "
-                    + "CategoryID = ?, Status = ?, ApprovedByUserID = ? WHERE ClubID = ?";
+            String sql = "UPDATE Clubs SET ClubName = ?, Description = ?, Logo = ?, "
+                    + "ClubTypes = ?, CreatedBy = ?, Status = ? WHERE ClubID = ?";
             PreparedStatement st = connection.prepareStatement(sql);
-            st.setString(1, club.getName());
+            st.setString(1, club.getClubName());
             st.setString(2, club.getDescription());
-            st.setString(3, club.getLogoUrl());
-            st.setInt(4, club.getCategoryId());
-            st.setString(5, club.getStatus());
-            if (club.getApprovedByUserId() != null) {
-                st.setInt(6, club.getApprovedByUserId());
-            } else {
-                st.setNull(6, java.sql.Types.INTEGER);
-            }
+            st.setString(3, club.getLogo());
+            st.setString(4, club.getClubTypes());
+            st.setInt(5, club.getCreatedBy());
+            st.setString(6, club.getStatus());
             st.setInt(7, club.getClubId());
             
             int rowsAffected = st.executeUpdate();
@@ -241,6 +352,12 @@ public class ClubDAO extends DBContext {
      * @return true nếu thành công, false nếu thất bại
      */
     public boolean deleteClub(int clubId) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot delete club.");
+            return false;
+        }
+        
         try {
             String sql = "DELETE FROM Clubs WHERE ClubID = ?";
             PreparedStatement st = connection.prepareStatement(sql);
@@ -256,11 +373,17 @@ public class ClubDAO extends DBContext {
     }
 
     /**
-     * Đếm số lượng clubs theo status
-     * @param status Status cần đếm
-     * @return Số lượng clubs
+     * Count clubs by status
+     * @param status Status to count
+     * @return Number of clubs
      */
     public int countClubsByStatus(String status) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot count clubs by status.");
+            return 0;
+        }
+        
         String sql = "SELECT COUNT(*) FROM Clubs WHERE Status = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -277,10 +400,16 @@ public class ClubDAO extends DBContext {
     }
 
     /**
-     * Đếm tổng số clubs
-     * @return Tổng số clubs
+     * Count total clubs
+     * @return Total number of clubs
      */
     public int getTotalClubsCount() {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot get total clubs count.");
+            return 0;
+        }
+        
         String sql = "SELECT COUNT(*) FROM Clubs";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -294,4 +423,5 @@ public class ClubDAO extends DBContext {
         }
         return 0;
     }
+    
 }
