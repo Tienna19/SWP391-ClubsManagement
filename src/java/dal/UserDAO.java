@@ -153,4 +153,23 @@ public class UserDAO extends DBContext {
         return false;
     }
 
+    // CẬP NHẬT THÔNG TIN PROFILE
+    public boolean updateProfile(User user) {
+        try {
+            String sql = "UPDATE Users SET FullName = ?, PhoneNumber = ?, Address = ?, Gender = ?, ProfileImage = ? WHERE UserID = ?";
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, user.getFullName());
+            st.setString(2, user.getPhoneNumber());
+            st.setString(3, user.getAddress());
+            st.setString(4, user.getGender());
+            st.setString(5, user.getProfileImage());
+            st.setInt(6, user.getUserId());
+            int rows = st.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 }
