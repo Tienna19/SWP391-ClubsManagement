@@ -197,7 +197,7 @@
         <a href="#"><i class="fa fa-bell"></i></a>
             <c:choose>
                 <c:when test="${not empty account}">
-                <a href="profile"><img src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" class="avatar" alt="User"></a>
+                <a href="profile"><img src="${account.profileImage}" class="avatar" alt="User"></a>
                 Hi, <strong>${account.fullName}</strong> 
                 <a href="#" 
                    onclick="if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
