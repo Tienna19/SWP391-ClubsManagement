@@ -54,15 +54,10 @@
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
             <%@ include file="/view/layout/header.jsp" %>
-            <!-- Content -->       
-            <div class="container mt-3">
-                <c:if test="${not empty message}">
-                    <div class="alert alert-success text-center">${message}</div>
-                </c:if>
-                <c:if test="${not empty error}">
-                    <div class="alert alert-danger text-center">${error}</div>
-                </c:if>
-            </div>
+            <!-- Content -->
+            <c:if test="${not empty message}">
+                <div class="alert alert-success">${message}</div>
+            </c:if>
             <div class="page-content bg-white">
                 <div class="content-block">
                     <!-- About Us -->
@@ -105,11 +100,11 @@
                                 <div class="col-lg-9 col-md-8 col-sm-12 m-b30">
                                     <div class="profile-content-bx">
                                         <div class="tab-content">
-                                            <div class="tab-pane active" id="change-password">
+                                            <div class="tab-pane active" id="edit-profile">
                                                 <div class="profile-head">
-                                                    <h3>Change Password</h3>
+                                                    <h3>Profile</h3>
                                                 </div>
-                                                <form class="edit-profile" action="change-password" method="post">
+                                                <form class="edit-profile" action="edit-profile" method="post" enctype="multipart/form-data">
                                                     <div class="">
                                                         <div class="form-group row">
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-9 ml-auto">
@@ -117,21 +112,43 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Current Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Full Name</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="password" name="currentPassword" value="">
+                                                                <input class="form-control" type="text" name="fullName" value="${userInfo.fullName}">
+                                                            </div>
+                                                        </div>
+                                                        <!--                                                        <div class="form-group row">
+                                                                                                                    <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Email</label>
+                                                                                                                    <div class="col-12 col-sm-8 col-md-8 col-lg-7">
+                                                                                                                        <input class="form-control" type="text" value="${userInfo.email}" readonly=""> 
+                                                                                                                    </div>
+                                                                                                                </div>-->
+                                                        <div class="form-group row">
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Phone</label>
+                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
+                                                                <input class="form-control" type="number" name="phoneNumber" value="${userInfo.phoneNumber}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">New Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Address</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="password" name="newPassword" value="">
+                                                                <input class="form-control" type="text" name="address" value="${userInfo.address}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Re Type New Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Gender</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="password" name="confirmPassword" value="">
+                                                                <select name="gender" class="form-control">
+                                                                    <option value="Male" ${userInfo.gender == 'Male' ? 'selected' : ''}>Male</option>
+                                                                    <option value="Female" ${userInfo.gender == 'Female' ? 'selected' : ''}>Female</option>
+                                                                    <option value="Other" ${userInfo.gender == 'Other' ? 'selected' : ''}>Other</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
+                                                                <input type="file" name="profileImage" class="form-control-file">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -143,7 +160,6 @@
                                                             <a href="profile" class="btn-secondry">Cancel</a>
                                                         </div>
                                                     </div>
-
                                                 </form>
                                             </div>
                                         </div>
