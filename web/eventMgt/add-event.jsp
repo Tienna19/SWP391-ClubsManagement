@@ -594,6 +594,7 @@ $(document).ready(function() {
     // Real-time validation
     $('#startTime').on('change input blur', function() {
         validateEventDate();
+        validateRegistrationDates(); // Re-validate registration dates when event start changes
     });
 
     $('#endTime').on('change input blur', function() {
@@ -743,25 +744,40 @@ function validateEventForm() {
     // Validate registration dates if provided
     if ($('#regStartTime').val() || $('#regEndTime').val()) {
         var startDate = new Date($('#startTime').val());
+        var now = new Date();
         var regStart = $('#regStartTime').val() ? new Date($('#regStartTime').val()) : null;
         var regEnd = $('#regEndTime').val() ? new Date($('#regEndTime').val()) : null;
         
-        if (regStart && regStart >= startDate) {
-            $('#regStartTime').addClass('is-invalid');
-            $('#regStartTimeError').text('Registration start must be before event start date');
-            isValid = false;
-        } else {
-            $('#regStartTime').removeClass('is-invalid');
-            $('#regStartTimeError').text('');
+        // Validate registration start
+        if (regStart) {
+            if (regStart <= now) {
+                $('#regStartTime').addClass('is-invalid');
+                $('#regStartTimeError').text('Registration start must be after today');
+                isValid = false;
+            } else if (regStart >= startDate) {
+                $('#regStartTime').addClass('is-invalid');
+                $('#regStartTimeError').text('Registration start must be before event start date');
+                isValid = false;
+            } else {
+                $('#regStartTime').removeClass('is-invalid');
+                $('#regStartTimeError').text('');
+            }
         }
         
-        if (regEnd && regEnd >= startDate) {
-            $('#regEndTime').addClass('is-invalid');
-            $('#regEndTimeError').text('Registration end must be before event start date');
-            isValid = false;
-        } else {
-            $('#regEndTime').removeClass('is-invalid');
-            $('#regEndTimeError').text('');
+        // Validate registration end
+        if (regEnd) {
+            if (regEnd <= now) {
+                $('#regEndTime').addClass('is-invalid');
+                $('#regEndTimeError').text('Registration end must be after today');
+                isValid = false;
+            } else if (regEnd >= startDate) {
+                $('#regEndTime').addClass('is-invalid');
+                $('#regEndTimeError').text('Registration end must be before event start date');
+                isValid = false;
+            } else {
+                $('#regEndTime').removeClass('is-invalid');
+                $('#regEndTimeError').text('');
+            }
         }
         
         // Cross-validation: reg start should be before reg end
@@ -815,12 +831,17 @@ function validateRegistrationDates() {
     }
     
     var startDate = new Date($('#startTime').val());
+    var now = new Date();
     var regStart = $('#regStartTime').val() ? new Date($('#regStartTime').val()) : null;
     var regEnd = $('#regEndTime').val() ? new Date($('#regEndTime').val()) : null;
     
     // Validate registration start
     if (regStart) {
-        if (regStart >= startDate) {
+        // Check if registration start is after today
+        if (regStart <= now) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Registration start must be after today');
+        } else if (regStart >= startDate) {
             $('#regStartTime').addClass('is-invalid');
             $('#regStartTimeError').text('Registration start must be before event start date');
         } else {
@@ -831,7 +852,11 @@ function validateRegistrationDates() {
     
     // Validate registration end
     if (regEnd) {
-        if (regEnd >= startDate) {
+        // Check if registration end is after today
+        if (regEnd <= now) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Registration end must be after today');
+        } else if (regEnd >= startDate) {
             $('#regEndTime').addClass('is-invalid');
             $('#regEndTimeError').text('Registration end must be before event start date');
         } else {
