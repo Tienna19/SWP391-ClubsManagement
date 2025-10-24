@@ -117,12 +117,12 @@
                                                                 <input class="form-control" type="text" value="${userInfo.fullName}" readonly>
                                                             </div>
                                                         </div>
-<!--                                                        <div class="form-group row">
+                                                        <div class="form-group row">
                                                             <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Email</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="text" value="${userInfo.email}"readonly>
                                                             </div>
-                                                        </div>-->
+                                                        </div>
                                                         <div class="form-group row">
                                                             <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Phone</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
