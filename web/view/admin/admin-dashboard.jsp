@@ -272,13 +272,13 @@
     
     <div class="row mb-4">
         <div class="col-md-3">
-            <a href="${pageContext.request.contextPath}/createClub" class="text-decoration-none">
+            <a href="${pageContext.request.contextPath}/viewClubRequests" class="text-decoration-none">
                 <div class="quick-action-card">
-                    <div class="quick-action-icon text-primary">
-                        <i class="fa fa-plus-circle"></i>
+                    <div class="quick-action-icon text-danger">
+                        <i class="fa fa-bell"></i>
                     </div>
-                    <h5>Tạo CLB mới</h5>
-                    <p class="text-muted small mb-0">Thêm câu lạc bộ vào hệ thống</p>
+                    <h5>Yêu cầu tạo CLB</h5>
+                    <p class="text-muted small mb-0">Phê duyệt yêu cầu tạo CLB</p>
                 </div>
             </a>
         </div>

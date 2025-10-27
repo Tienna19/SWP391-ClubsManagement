@@ -1,7 +1,7 @@
 // src/.../DAO/MemberDAO.java
 package dal;
 
-import com.app.model.MemberDTO;
+import model.MemberDTO;
 import dal.DBContext;
 
 

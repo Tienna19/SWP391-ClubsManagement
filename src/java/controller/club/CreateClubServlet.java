@@ -1,8 +1,11 @@
 package controller.club;
 
 import dal.ClubDAO;
+import dal.MembershipDAO;
+import dal.CreateClubRequestDAO;
 import model.Club;
 import model.Category;
+import model.CreateClubRequest;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -108,24 +111,25 @@ public class CreateClubServlet extends HttpServlet {
 
             String logo = UPLOAD_DIR + "/" + uniqueFileName;
 
-            // ✅ Create Club object
-            Club newClub = new Club();
-            newClub.setClubName(clubName.trim());
-            newClub.setDescription(description.trim());
-            newClub.setLogo(logo);
-            newClub.setClubTypes(clubTypes.trim());
-            newClub.setCreatedBy(createdBy);
-            newClub.setStatus("Active");
-            newClub.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            // ✅ Create Club Request object (NOT directly creating Club)
+            CreateClubRequest clubRequest = new CreateClubRequest(
+                clubName.trim(),
+                description.trim(),
+                logo,
+                clubTypes.trim(),
+                createdBy
+            );
 
-            // ✅ Save to database
-            ClubDAO dao = new ClubDAO();
-            boolean success = dao.insertClub(newClub);
+            // ✅ Save to CreateClubRequests table (Pending status)
+            CreateClubRequestDAO requestDAO = new CreateClubRequestDAO();
+            int requestId = requestDAO.insertRequest(clubRequest);
 
-            if (success) {
+            if (requestId > 0) {
                 // Success - redirect with success message
-                request.getSession().setAttribute("successMessage", "Tạo CLB thành công!");
-                response.sendRedirect(request.getContextPath() + "/viewAllClubs");
+                HttpSession session = request.getSession();
+                session.setAttribute("successMessage", 
+                    "Yêu cầu tạo CLB đã được gửi! Admin sẽ xem xét và phê duyệt.");
+                response.sendRedirect(request.getContextPath() + "/home");
             } else {
                 // Database error - delete uploaded file and show error
                 try {
@@ -133,7 +137,7 @@ public class CreateClubServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.err.println("Could not delete uploaded file: " + ex.getMessage());
                 }
-                throw new Exception("Lỗi khi lưu thông tin CLB vào cơ sở dữ liệu");
+                throw new Exception("Lỗi khi gửi yêu cầu tạo CLB");
             }
 
         } catch (NumberFormatException e) {

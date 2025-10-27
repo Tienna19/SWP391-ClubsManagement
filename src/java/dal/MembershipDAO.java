@@ -128,6 +128,36 @@ public class MembershipDAO extends DBContext {
             stmt.executeUpdate();
         }
     }
+    
+    /**
+     * Add a member to a club
+     * Used when creating a club (auto-add creator as Leader)
+     * or when a user joins a club
+     * 
+     * @param userId User ID to add
+     * @param clubId Club ID
+     * @param roleInClub Role (e.g., "Leader", "Member")
+     * @param status Status (e.g., "Active", "Pending")
+     * @return true if successful, false otherwise
+     */
+    public boolean addMemberToClub(int userId, int clubId, String roleInClub, String status) {
+        String sql = "INSERT INTO Memberships (UserID, ClubID, RoleInClub, JoinDate, Status) " +
+                     "VALUES (?, ?, ?, GETDATE(), ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, clubId);
+            stmt.setString(3, roleInClub);
+            stmt.setString(4, status);
+            
+            int rows = stmt.executeUpdate();
+            System.out.println("✅ Added user " + userId + " to club " + clubId + " as " + roleInClub);
+            return rows > 0;
+        } catch (SQLException e) {
+            System.err.println("❌ Error adding member to club: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
 
 
