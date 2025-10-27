@@ -58,7 +58,9 @@ public class ViewAllClubServlet extends HttpServlet {
             }
             
             // Get filtered clubs directly from DAO
+            System.out.println("[ViewAllClubServlet] Fetching clubs with categoryId: " + categoryId + ", status: " + statusFilter + ", search: " + searchQuery);
             List<Club> allFilteredClubs = dao.getFilteredClubs(categoryId, statusFilter, searchQuery);
+            System.out.println("[ViewAllClubServlet] Retrieved " + allFilteredClubs.size() + " clubs from DAO");
             
             // Calculate pagination
             int totalRecords = allFilteredClubs.size();

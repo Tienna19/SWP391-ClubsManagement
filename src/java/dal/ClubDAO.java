@@ -47,6 +47,9 @@ public class ClubDAO extends DBContext {
         }
         
         sql.append(" ORDER BY c.CreatedAt DESC");
+        
+        System.out.println("[ClubDAO] SQL Query: " + sql.toString());
+        System.out.println("[ClubDAO] Parameters - categoryId: " + categoryId + ", status: " + status + ", keyword: " + keyword);
 
         try {
             PreparedStatement st = connection.prepareStatement(sql.toString());
@@ -60,7 +63,10 @@ public class ClubDAO extends DBContext {
             }
 
             ResultSet rs = st.executeQuery();
+            
+            int rowCount = 0;
             while (rs.next()) {
+                rowCount++;
                 Club c = new Club();
                 c.setClubId(rs.getInt("ClubID"));
                 c.setClubName(rs.getString("ClubName"));
@@ -92,8 +98,11 @@ public class ClubDAO extends DBContext {
                     list.add(c);
                 }
             }
+            
+            System.out.println("[ClubDAO] Total rows from DB: " + rowCount + ", After filtering: " + list.size());
+            
         } catch (Exception e) {
-            System.err.println("Error in getFilteredClubs: " + e.getMessage());
+            System.err.println("[ClubDAO] Error in getFilteredClubs: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
