@@ -170,4 +170,27 @@ public class UserDAO extends DBContext {
         return false;
     }
     
+    // GET ALL USERS (for dropdown, etc.)
+    public java.util.List<User> getAllUsers() {
+        java.util.List<User> userList = new java.util.ArrayList<>();
+        try {
+            String sql = "SELECT UserID, FullName, Email, RoleID FROM Users ORDER BY FullName";
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setFullName(rs.getString("FullName"));
+                user.setEmail(rs.getString("Email"));
+                user.setRoleId(rs.getInt("RoleID"));
+                userList.add(user);
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getAllUsers: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return userList;
+    }
+    
 }
