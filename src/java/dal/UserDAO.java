@@ -53,11 +53,9 @@ public class UserDAO extends DBContext {
     // ĐĂNG KÝ NGƯỜI DÙNG MỚI
     public boolean register(User user) {
         try {
-            String sql = """
-                INSERT INTO Users 
-                (FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage, CreatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """;
+            String sql = "INSERT INTO Users " +
+                         "(FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage, CreatedAt) " +
+                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement st = connection.prepareStatement(sql);
 
             st.setString(1, user.getFullName());

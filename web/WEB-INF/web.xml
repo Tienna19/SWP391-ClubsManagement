@@ -74,6 +74,16 @@
         <url-pattern>/cancelEvent</url-pattern>
     </servlet-mapping>
 
+    <!-- ClubLeaderDashboardServlet -->
+    <servlet>
+        <servlet-name>ClubLeaderDashboardServlet</servlet-name>
+        <servlet-class>controller.club.ClubLeaderDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClubLeaderDashboardServlet</servlet-name>
+        <url-pattern>/clubDashboard</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
