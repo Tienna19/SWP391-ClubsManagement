@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
     <head>
 
         <!-- META ============================================= -->
@@ -53,36 +54,21 @@
     <c:if test="${not empty error}">
         <div class="alert alert-danger">${error}</div>
     </c:if>
-    <c:if test="${not empty message}">
-        <div class="alert alert-success">${message}</div>
-    </c:if>
     <body id="bg">
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
             <div class="account-form">
-                <div class="account-head" style="background-image:url(assets/images/background/bg2.jpg);">
-                    <a href="home"><img src="assets/images/logo-white-2.png" alt=""></a>
-                </div>
                 <div class="account-form-inner">
                     <div class="account-container">
                         <div class="heading-bx left">
-                            <h2 class="title-head">Sign Up <span>Now</span></h2>
-                            <p>Login Your Account <a href="login">Click here</a></p>
+                            <h2 class="title-head">Login as <span>Admin</span></h2>
                         </div>	
-                        <form class="contact-bx" action="register" method="post">
+                        <form class="contact-bx" action="adminlogin" method="post">
                             <div class="row placeani">
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Name</label>
-                                            <input name="fullName" type="text" required="" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your Email Address</label>
+                                            <label>Your Email</label>
                                             <input name="email" type="email" required="" class="form-control">
                                         </div>
                                     </div>
@@ -94,22 +80,11 @@
                                             <input name="passwordHash" type="password" class="form-control" required="">
                                         </div>
                                     </div>
-                                </div>						
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group"> 
-                                            <label>Confirm Password</label>
-                                            <input name="confirmHash" type="password" class="form-control" required="">
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="col-lg-12 m-b30">
-                                    <button name="submit" type="submit" value="Submit" class="btn button-md">Sign Up</button>
-                                </div>
-                                <div class="col-lg-12">
-                                    <h6>Register with Google</h6>
-                                    <div >
-                                        <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google</a>
+                                    <div class="form-group form-forget">
+                                        <button name="submit" type="submit" value="Submit" class="btn button-md">Login</button>
+                                        <a href="login" class="ml-auto">Back to login</a>
                                     </div>
                                 </div>
                             </div>
