@@ -1,754 +1,332 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Danh sách Câu Lạc Bộ</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/images/favicon.png">
-    <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/assets/images/favicon.png">
-    <!-- Prevent browser extension conflicts -->
-    <meta name="referrer" content="no-referrer">
-    <meta name="robots" content="noindex, nofollow">
+    <!-- META ============================================= -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- Simple Error Suppression -->
-    <script>
-        // Suppress browser extension errors
-        (function() {
-            'use strict';
-            
-            const originalError = console.error;
-            const originalWarn = console.warn;
-            
-            console.error = function() {
-                const message = Array.prototype.join.call(arguments, ' ');
-                if (message.includes('runtime.lastError') || 
-                    message.includes('message port closed') ||
-                    message.includes('extension')) {
-                    return;
-                }
-                originalError.apply(console, arguments);
-            };
-            
-            console.warn = function() {
-                const message = Array.prototype.join.call(arguments, ' ');
-                if (message.includes('runtime.lastError') || 
-                    message.includes('message port closed') ||
-                    message.includes('extension')) {
-                    return;
-                }
-                originalWarn.apply(console, arguments);
-            };
-            
-            window.addEventListener('error', function(e) {
-                if (e.message && (
-                    e.message.includes('runtime.lastError') ||
-                    e.message.includes('message port closed')
-                )) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, true);
-            
-        })();
-    </script>
-    <style>
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            margin: 0;
-            background: #f9f9fb;
-            color: #333;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-        }
-        h2 {
-            margin-bottom: 20px;
-            color: #5E35B1;
-            font-size: 24px;
-        }
-
-        /* Bộ lọc */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        .filter-bar select,
-        .filter-bar input[type="text"] {
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            min-width: 180px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .filter-bar select:focus,
-        .filter-bar input:focus {
-            border-color: #5E35B1;
-            box-shadow: 0 0 0 2px rgba(94,53,177,0.2);
-            outline: none;
-        }
-        .filter-bar button {
-            background-color: #5E35B1;
-            color: #fff;
-            border: none;
-            padding: 9px 18px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .filter-bar button:hover {
-            background-color: #4527A0;
-        }
-
-        /* Bảng CLB */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 12px 16px;
-            text-align: left;
-        }
-        th {
-            background: #5E35B1;
-            color: white;
-            font-weight: 600;
-        }
-        tr:nth-child(even) {
-            background: #f8f6fc;
-        }
-        tr:hover {
-            background: #ede7f6;
-            transition: background 0.2s;
-        }
-        img {
-            border-radius: 6px;
-            max-height: 50px;
-        }
-
-        /* Button */
-        a.button {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 10px 18px;
-            background-color: #43a047;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        a.button:hover {
-            background-color: #2e7d32;
-        }
-
-        /* Action buttons */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .action-buttons a {
-            padding: 6px 12px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        .action-buttons a.view {
-            background-color: #2196F3;
-            color: white;
-        }
-        .action-buttons a.view:hover {
-            background-color: #1976D2;
-        }
-        .action-buttons a.join {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .action-buttons a.join:hover {
-            background-color: #388E3C;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 30px;
-            gap: 8px;
-        }
-        .pagination a, .pagination span {
-            display: inline-block;
-            padding: 8px 12px;
-            text-decoration: none;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.2s;
-            min-width: 40px;
-            text-align: center;
-        }
-        .pagination a:hover {
-            background-color: #f5f5f5;
-            border-color: #5E35B1;
-        }
-        .pagination .current {
-            background-color: #5E35B1;
-            color: white;
-            border-color: #5E35B1;
-        }
-        .pagination .disabled {
-            color: #ccc;
-            cursor: not-allowed;
-            background-color: #f9f9f9;
-        }
-
-        /* Status badges */
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        .status-badge.text-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .status-badge.text-warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        .status-badge.text-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .status-badge.text-secondary {
-            background-color: #e2e3e5;
-            color: #383d41;
-        }
-
-        /* Statistics */
-        .stats-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            min-width: 120px;
-            flex: 1;
-        }
-        .stat-card h3 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .stat-card p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            table, th, td {
-                font-size: 14px;
-            }
-            .stats-container {
-                flex-direction: column;
-            }
-            .action-buttons {
-                flex-direction: column;
-                gap: 4px;
-            }
-        }
-    </style>
+    <!-- FAVICONS ICON ============================================= -->
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" type="image/x-icon" />
+    
+    <!-- PAGE TITLE ============================================= -->
+    <title>Danh sách Câu Lạc Bộ - Student Club Management</title>
+    
+    <!-- All PLUGINS CSS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+    
+    <!-- TYPOGRAPHY ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
+    
+    <!-- SHORTCODES ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
+    
+    <!-- STYLESHEETS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+    <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
+    
 </head>
-<body>
-
-    <!-- ✅ Include header -->
-    <jsp:include page="../layout/header.jsp" />
-
-    <div class="container">
-        <h2>📋 Danh sách Câu Lạc Bộ</h2>
-
-        <!-- 📊 Thống kê -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <h3>${totalClubs}</h3>
-                <p>Tổng CLB</p>
+<body class="ttr-opened-sidebar ttr-pinned-sidebar">
+    
+    <!-- Header start -->
+    <jsp:include page="../layout/header.jsp"/>
+    <!-- Header end -->
+    
+    <!-- Left sidebar menu start -->
+    <div class="ttr-sidebar">
+        <div class="ttr-sidebar-wrapper content-scroll">
+            <!-- side menu logo start -->
+            <div class="ttr-sidebar-logo">
+                <a href="${pageContext.request.contextPath}/home">
+                    <img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
+                </a>
+                <div class="ttr-sidebar-toggle-button">
+                    <i class="ti-arrow-left"></i>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>${activeClubs}</h3>
-                <p>CLB Hoạt động</p>
-            </div>
-            <div class="stat-card">
-                <h3>${inactiveClubs}</h3>
-                <p>Không hoạt động</p>
-            </div>
+            <!-- side menu logo end -->
+            <!-- sidebar menu start -->
+            <nav class="ttr-sidebar-navi">
+                <ul>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/home" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-home"></i></span>
+                            <span class="ttr-label">Trang chủ</span>
+                        </a>
+                    </li>
+                    <li class="show">
+                        <a href="${pageContext.request.contextPath}/viewAllClubs" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-layout-list-post"></i></span>
+                            <span class="ttr-label">Danh sách CLB</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-calendar"></i></span>
+                            <span class="ttr-label">Sự kiện</span>
+                        </a>
+                    </li>
+                    <c:if test="${sessionScope.roleId == 1 || sessionScope.roleId == 2}">
+                    <li>
+                        <a href="${pageContext.request.contextPath}/createClub" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-plus"></i></span>
+                            <span class="ttr-label">Tạo CLB mới</span>
+                        </a>
+                    </li>
+                    </c:if>
+                    <li class="ttr-seperate"></li>
+                </ul>
+            </nav>
+            <!-- sidebar menu end -->
         </div>
-
-        <!-- 🔍 Bộ lọc -->
-        <form method="get" action="<c:url value='/viewAllClubs'/>" class="filter-bar">
-            <!-- Lọc theo Category -->
-            <select name="category">
-                <option value="">Tất cả Category</option>
-                <c:forEach var="cat" items="${categories}">
-                    <option value="${cat.id}" <c:if test="${param.category eq cat.id}">selected</c:if>>
-                        ${cat.name}
-                    </option>
-                </c:forEach>
-            </select>
-
-            <!-- Lọc theo Status -->
-            <select name="status">
-                <option value="">-- Tất cả Trạng thái --</option>
-                <option value="Active" <c:if test="${param.status eq 'Active'}">selected</c:if>>Active</option>
-                <option value="Inactive" <c:if test="${param.status eq 'Inactive'}">selected</c:if>>Inactive</option>
-                <option value="Rejected" <c:if test="${param.status eq 'Rejected'}">selected</c:if>>Rejected</option>
-            </select>
-
-            <!-- Ô tìm kiếm -->
-            <input type="text" name="search" placeholder="Tìm kiếm theo tên CLB..."
-                   value="${param.search != null ? param.search : ''}"/>
-
-            <button type="submit">Lọc</button>
-        </form>
-
-        <!-- 📋 Danh sách CLB -->
-        <table>
-            <tr>
-                <th>
-                    <a href="?sort=id&order=${param.order == 'asc' ? 'desc' : 'asc'}&category=${param.category}&status=${param.status}&search=${param.search}" 
-                       style="text-decoration: none; color: inherit;">
-                        ID 
-                        <c:choose>
-                            <c:when test="${param.sort == 'id' && param.order == 'asc'}">↑</c:when>
-                            <c:when test="${param.sort == 'id' && param.order == 'desc'}">↓</c:when>
-                            <c:otherwise>↕</c:otherwise>
-                        </c:choose>
-                    </a>
-                </th>
-                <th>Logo</th>
-                <th>Tên CLB</th>
-                <th>Thể loại</th>
-                <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-                <th>Actions</th>
-            </tr>
-
-            <c:choose>
-                <c:when test="${not empty clubs}">
-                    <c:forEach var="c" items="${clubs}">
-                        <tr>
-                            <td>${c.clubId}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${not empty c.logo}">
-                                        <img src="${pageContext.request.contextPath}/${c.logo}" 
-                                             alt="Logo ${c.clubName}" 
-                                             style="max-width: 50px; max-height: 50px; border-radius: 6px;"
-                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 6px; display: none; align-items: center; justify-content: center; color: #999;">
-                                            <i class="fas fa-image"></i>
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999;">
-                                            <i class="fas fa-image"></i>
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <strong>${c.clubName != null ? c.clubName : 'N/A'}</strong>
-                                <c:if test="${not empty c.description}">
-                                    <br><small style="color: #666;">
-                                        <c:choose>
-                                            <c:when test="${c.description.length() > 50}">
-                                                ${c.description.substring(0, 47)}...
-                                            </c:when>
-                                            <c:otherwise>
-                                                ${c.description}
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </small>
-                                </c:if>
-                            </td>
-                            <td>${c.clubTypes != null ? c.clubTypes : 'N/A'}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${c.status == 'Active'}">
-                                        <span class="status-badge text-success">Active</span>
-                                    </c:when>
-                                    <c:when test="${c.status == 'Inactive'}">
-                                        <span class="status-badge text-danger">Inactive</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="status-badge text-secondary">${c.status != null ? c.status : 'Unknown'}</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${c.createdAt != null}">
-                                        <fmt:formatDate value="${c.createdAt}" pattern="MMM dd, yyyy"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        Unknown
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="<c:url value='/clubDetail'><c:param name='clubId' value='${c.clubId}'/></c:url>" class="view">View</a>
-                                    <c:if test="${c.status != null && c.status == 'Active'}">
-                                        <a href="<c:url value='/joinClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="join">Join</a>
-                                    </c:if>
-                                </div>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <tr>
-                        <td colspan="7" style="text-align:center; color:#999; font-style:italic; padding: 40px;">
-                            <i class="fas fa-club" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
-                            Không có CLB nào được tìm thấy.
-                            <br><small>Thử thay đổi bộ lọc hoặc tạo CLB mới.</small>
-                        </td>
-                    </tr>
-                </c:otherwise>
-            </c:choose>
-        </table>
-
-        <!-- Phân trang -->
-        <c:if test="${totalPages > 1}">
-            <div class="pagination">
-                <!-- Nút Previous -->
-                <c:choose>
-                    <c:when test="${currentPage > 1}">
-                        <a href="<c:url value='/viewAllClubs'>
-                            <c:param name='page' value='${currentPage - 1}'/>
-                            <c:param name='category' value='${param.category}'/>
-                            <c:param name='status' value='${param.status}'/>
-                            <c:param name='search' value='${param.search}'/>
-                        </c:url>">&laquo; Trước</a>
-                    </c:when>
-                    <c:otherwise>
-                        <span class="disabled">&laquo; Trước</span>
-                    </c:otherwise>
-                </c:choose>
-
-                <!-- Các số trang -->
-                <c:set var="startPage" value="${currentPage - 2}"/>
-                <c:set var="endPage" value="${currentPage + 2}"/>
-                
-                <c:if test="${startPage < 1}">
-                    <c:set var="startPage" value="1"/>
-                </c:if>
-                
-                <c:if test="${endPage > totalPages}">
-                    <c:set var="endPage" value="${totalPages}"/>
-                </c:if>
-
-                <c:forEach begin="${startPage}" end="${endPage}" var="pageNum">
-                    <c:choose>
-                        <c:when test="${pageNum == currentPage}">
-                            <span class="current">${pageNum}</span>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="<c:url value='/viewAllClubs'>
-                                <c:param name='page' value='${pageNum}'/>
-                                <c:param name='category' value='${param.category}'/>
-                                <c:param name='status' value='${param.status}'/>
-                                <c:param name='search' value='${param.search}'/>
-                            </c:url>">${pageNum}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
-
-                <!-- Nút Next -->
-                <c:choose>
-                    <c:when test="${currentPage < totalPages}">
-                        <a href="<c:url value='/viewAllClubs'>
-                            <c:param name='page' value='${currentPage + 1}'/>
-                            <c:param name='category' value='${param.category}'/>
-                            <c:param name='status' value='${param.status}'/>
-                            <c:param name='search' value='${param.search}'/>
-                        </c:url>">Sau &raquo;</a>
-                    </c:when>
-                    <c:otherwise>
-                        <span class="disabled">Sau &raquo;</span>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-            
-            <!-- Thông tin phân trang -->
-            <div style="text-align: center; margin-top: 10px; color: #666; font-size: 14px;">
-                Trang ${currentPage} / ${totalPages} - Tổng ${totalClubs} CLB
-            </div>
-        </c:if>
-
-        <a href="<c:url value='/createClub'/>" class="button">+ Tạo CLB mới</a>
     </div>
+    <!-- Left sidebar menu end -->
 
-    <!-- ✅ Include footer -->
-    <jsp:include page="../layout/footer.jsp" />
-
-    <script>
-        // Ultimate browser extension error suppression
-        (function() {
-            'use strict';
+    <!--Main container start -->
+    <main class="ttr-wrapper">
+        <div class="container-fluid">
+            <div class="db-breadcrumb">
+                <h4 class="breadcrumb-title">Danh sách Câu Lạc Bộ</h4>
+                <ul class="db-breadcrumb-list">
+                    <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+                    <li>Danh sách CLB</li>
+                </ul>
+            </div>    
             
-            // Store original methods
-            const originalError = console.error;
-            const originalWarn = console.warn;
-            const originalLog = console.log;
+            <!-- Filters -->
+            <div class="row">
+                <div class="col-lg-12 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Bộ lọc tìm kiếm</h4>
+                        </div>
+                        <div class="widget-inner">
+                            <form action="${pageContext.request.contextPath}/viewAllClubs" method="GET" class="edit-profile">
+                                <div class="row">
+                                    <div class="col-12 col-sm-4 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Tìm kiếm</label>
+                                            <div>
+                                                <input class="form-control" type="text" name="search" 
+                                                       value="${param.search}" placeholder="Nhập tên CLB...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-3 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Loại CLB</label>
+                                            <div>
+                                                <select class="form-control" name="category">
+                                                    <option value="">Tất cả</option>
+                                                    <c:forEach items="${categories}" var="cat">
+                                                        <option value="${cat.id}" 
+                                                                ${param.category == cat.id ? 'selected' : ''}>
+                                                            ${cat.name}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-3 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Trạng thái</label>
+                                            <div>
+                                                <select class="form-control" name="status">
+                                                    <option value="">Tất cả</option>
+                                                    <option value="Active" ${param.status == 'Active' ? 'selected' : ''}>Active</option>
+                                                    <option value="Inactive" ${param.status == 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-2 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">&nbsp;</label>
+                                            <div>
+                                                <button type="submit" class="btn btn-primary btn-block">
+                                                    <i class="fa fa-search"></i> Tìm kiếm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            // Override console.error
-            console.error = function() {
-                const args = Array.prototype.slice.call(arguments);
-                const message = args.join(' ');
-                
-                // Ignore ALL browser extension errors
-                if (message.includes('message port closed') || 
-                    message.includes('faviconV2') ||
-                    message.includes('content.js') ||
-                    message.includes('extension') ||
-                    message.includes('Unchecked runtime.lastError') ||
-                    message.includes('runtime.lastError') ||
-                    message.includes('chrome-extension') ||
-                    message.includes('moz-extension') ||
-                    message.includes('safari-extension')) {
-                    return;
-                }
-                
-                originalError.apply(console, arguments);
-            };
+            <!-- Clubs List -->
+            <div class="row">
+                <div class="col-lg-12 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Kết quả: ${totalClubs} CLB</h4>
+                        </div>
+                        <div class="widget-inner">
+                            
+                            <c:if test="${not empty clubs}">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th width="60">Logo</th>
+                                                <th>Tên CLB</th>
+                                                <th>Loại</th>
+                                                <th>Mô tả</th>
+                                                <th width="100">Trạng thái</th>
+                                                <th width="150">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach items="${clubs}" var="club">
+                                                <tr>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${not empty club.logo}">
+                                                                <img src="${pageContext.request.contextPath}/${club.logo}" 
+                                                                     alt="${club.clubName}" width="50" height="50" 
+                                                                     class="rounded">
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <div class="d-flex align-items-center justify-content-center bg-light rounded" 
+                                                                     style="width: 50px; height: 50px;">
+                                                                    <i class="fa fa-users fa-2x text-muted"></i>
+                                                                </div>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>
+                                                        <strong>${club.clubName}</strong>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            <i class="fa fa-calendar"></i> ${club.createdAt}
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-info">${club.clubTypes}</span>
+                                                    </td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${not empty club.description}">
+                                                                ${club.description.length() > 100 ? 
+                                                                  club.description.substring(0, 100).concat('...') : 
+                                                                  club.description}
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="text-muted">Chưa có mô tả</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>
+                                                        <c:choose>
+                                                            <c:when test="${club.status == 'Active'}">
+                                                                <span class="badge badge-success">Active</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge badge-secondary">Inactive</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td>
+                                                        <a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}" 
+                                                           class="btn btn-primary btn-sm" title="Xem chi tiết">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                        
+                                                        <c:if test="${sessionScope.roleId == 1 || sessionScope.roleId == 2}">
+                                                            <a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" 
+                                                               class="btn btn-warning btn-sm" title="Chỉnh sửa">
+                                                                <i class="fa fa-edit"></i>
+                                                            </a>
+                                                        </c:if>
+                                                        
+                                                        <c:if test="${club.status == 'Active'}">
+                                                            <a href="${pageContext.request.contextPath}/joinClub?clubId=${club.clubId}" 
+                                                               class="btn btn-success btn-sm" title="Tham gia">
+                                                                <i class="fa fa-user-plus"></i>
+                                                            </a>
+                                                        </c:if>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <c:if test="${totalPages > 1}">
+                                    <div class="pagination-bx text-center m-t30">
+                                        <ul class="pagination">
+                                            <c:if test="${currentPage > 1}">
+                                                <li class="page-item">
+                                                    <a href="?page=${currentPage - 1}&search=${param.search}&category=${param.category}&status=${param.status}" 
+                                                       class="page-link">
+                                                        <i class="ti-arrow-left"></i> Trước
+                                                    </a>
+                                                </li>
+                                            </c:if>
+                                            
+                                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                                <c:choose>
+                                                    <c:when test="${currentPage eq i}">
+                                                        <li class="page-item active">
+                                                            <span class="page-link">${i}</span>
+                                                        </li>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <li class="page-item">
+                                                            <a href="?page=${i}&search=${param.search}&category=${param.category}&status=${param.status}" 
+                                                               class="page-link">${i}</a>
+                                                        </li>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
+                                            
+                                            <c:if test="${currentPage < totalPages}">
+                                                <li class="page-item">
+                                                    <a href="?page=${currentPage + 1}&search=${param.search}&category=${param.category}&status=${param.status}" 
+                                                       class="page-link">
+                                                        Sau <i class="ti-arrow-right"></i>
+                                                    </a>
+                                                </li>
+                                            </c:if>
+                                        </ul>
+                                    </div>
+                                </c:if>
+                            </c:if>
+                            
+                            <c:if test="${empty clubs}">
+                                <div class="text-center p-5">
+                                    <i class="fa fa-search fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Không tìm thấy CLB nào phù hợp</p>
+                                    <a href="${pageContext.request.contextPath}/viewAllClubs" class="btn btn-primary">
+                                        Xem tất cả CLB
+                                    </a>
+                                </div>
+                            </c:if>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            // Override console.warn
-            console.warn = function() {
-                const args = Array.prototype.slice.call(arguments);
-                const message = args.join(' ');
-                
-                // Ignore ALL browser extension warnings
-                if (message.includes('message port closed') || 
-                    message.includes('faviconV2') ||
-                    message.includes('content.js') ||
-                    message.includes('extension') ||
-                    message.includes('Unchecked runtime.lastError') ||
-                    message.includes('runtime.lastError') ||
-                    message.includes('chrome-extension') ||
-                    message.includes('moz-extension') ||
-                    message.includes('safari-extension')) {
-                    return;
-                }
-                
-                originalWarn.apply(console, arguments);
-            };
-            
-            // Override console.log
-            console.log = function() {
-                const args = Array.prototype.slice.call(arguments);
-                const message = args.join(' ');
-                
-                // Ignore ALL browser extension logs
-                if (message.includes('message port closed') || 
-                    message.includes('faviconV2') ||
-                    message.includes('content.js') ||
-                    message.includes('extension') ||
-                    message.includes('Unchecked runtime.lastError') ||
-                    message.includes('runtime.lastError') ||
-                    message.includes('chrome-extension') ||
-                    message.includes('moz-extension') ||
-                    message.includes('safari-extension')) {
-                    return;
-                }
-                
-                originalLog.apply(console, arguments);
-            };
-        })();
+        </div>
+    </main>
+    <div class="ttr-overlay"></div>
 
-        // Auto-hide alerts after 5 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                const alerts = document.querySelectorAll('.alert');
-                if (alerts && alerts.length > 0) {
-                    alerts.forEach(function(alert) {
-                        if (alert) {
-                            setTimeout(function() {
-                                if (alert && alert.style) {
-                                    alert.style.opacity = '0';
-                                    setTimeout(function() {
-                                        if (alert && alert.style) {
-                                            alert.style.display = 'none';
-                                        }
-                                    }, 300);
-                                }
-                            }, 5000);
-                        }
-                    });
-                }
-            } catch (e) {
-                // Silently ignore errors
-            }
-        });
-
-        // Form validation
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                const filterForm = document.querySelector('.filter-bar');
-                if (filterForm) {
-                    filterForm.addEventListener('submit', function(e) {
-                        try {
-                            // Clear any previous error states
-                            const inputs = filterForm.querySelectorAll('input, select');
-                            if (inputs && inputs.length > 0) {
-                                inputs.forEach(input => {
-                                    if (input && input.classList) {
-                                        input.classList.remove('is-invalid');
-                                    }
-                                });
-                            }
-                        } catch (e) {
-                            // Silently ignore errors
-                        }
-                    });
-                }
-            } catch (e) {
-                // Silently ignore errors
-            }
-        });
-
-        // Smooth scrolling for pagination
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                const paginationLinks = document.querySelectorAll('.pagination a');
-                if (paginationLinks && paginationLinks.length > 0) {
-                    paginationLinks.forEach(link => {
-                        if (link) {
-                            link.addEventListener('click', function(e) {
-                                try {
-                                    // Add loading state
-                                    if (this && this.style) {
-                                        this.style.opacity = '0.6';
-                                        this.style.pointerEvents = 'none';
-                                    }
-                                } catch (e) {
-                                    // Silently ignore errors
-                                }
-                            });
-                        }
-                    });
-                }
-            } catch (e) {
-                // Silently ignore errors
-            }
-        });
-
-        // Ultimate global error handlers
-        window.addEventListener('error', function(e) {
-            if (e.message && (
-                e.message.includes('message port closed') ||
-                e.message.includes('faviconV2') ||
-                e.message.includes('content.js') ||
-                e.message.includes('extension') ||
-                e.message.includes('Unchecked runtime.lastError') ||
-                e.message.includes('runtime.lastError') ||
-                e.message.includes('chrome-extension') ||
-                e.message.includes('moz-extension') ||
-                e.message.includes('safari-extension')
-            )) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            }
-        }, true);
-
-        // Prevent unhandled promise rejections from extensions
-        window.addEventListener('unhandledrejection', function(e) {
-            if (e.reason && (
-                e.reason.toString().includes('message port closed') ||
-                e.reason.toString().includes('faviconV2') ||
-                e.reason.toString().includes('content.js') ||
-                e.reason.toString().includes('extension') ||
-                e.reason.toString().includes('Unchecked runtime.lastError') ||
-                e.reason.toString().includes('runtime.lastError') ||
-                e.reason.toString().includes('chrome-extension') ||
-                e.reason.toString().includes('moz-extension') ||
-                e.reason.toString().includes('safari-extension')
-            )) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            }
-        }, true);
-
-        // Override window.onerror
-        window.onerror = function(message, source, lineno, colno, error) {
-            if (message && (
-                message.includes('message port closed') ||
-                message.includes('faviconV2') ||
-                message.includes('content.js') ||
-                message.includes('extension') ||
-                message.includes('Unchecked runtime.lastError') ||
-                message.includes('runtime.lastError') ||
-                message.includes('chrome-extension') ||
-                message.includes('moz-extension') ||
-                message.includes('safari-extension')
-            )) {
-                return true; // Prevent default error handling
-            }
-            return false; // Let other errors through
-        };
-
-        // Override window.onunhandledrejection
-        window.onunhandledrejection = function(event) {
-            if (event.reason && (
-                event.reason.toString().includes('message port closed') ||
-                event.reason.toString().includes('faviconV2') ||
-                event.reason.toString().includes('content.js') ||
-                event.reason.toString().includes('extension') ||
-                event.reason.toString().includes('Unchecked runtime.lastError') ||
-                event.reason.toString().includes('runtime.lastError') ||
-                event.reason.toString().includes('chrome-extension') ||
-                event.reason.toString().includes('moz-extension') ||
-                event.reason.toString().includes('safari-extension')
-            )) {
-                event.preventDefault();
-                return true;
-            }
-            return false;
-        };
-    </script>
-
+    <!-- External JavaScripts -->
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
 </body>
 </html>
+

@@ -34,7 +34,32 @@ public class DeleteClubServlet extends HttpServlet {
                 return;
             }
             
-            // TODO: Check if user is leader or admin (when login is implemented)
+            // ✅ CHECK PERMISSIONS: Only Admin or Club Leader can delete
+            HttpSession session = request.getSession(false);
+            
+            // Check if user is logged in
+            if (session == null || session.getAttribute("userId") == null) {
+                response.sendRedirect(request.getContextPath() + "/login?error=login_required");
+                return;
+            }
+            
+            Integer userId = (Integer) session.getAttribute("userId");
+            Integer roleId = (Integer) session.getAttribute("roleId");
+            
+            // Check permissions
+            boolean hasPermission = false;
+            if (roleId == 1) {
+                hasPermission = true; // Admin can delete any club
+            } else if (roleId == 2 || roleId == 3) {
+                if (club.getCreatedBy() == userId) {
+                    hasPermission = true; // Club Leader can delete their own club
+                }
+            }
+            
+            if (!hasPermission) {
+                response.sendRedirect(request.getContextPath() + "/clubDetail?clubId=" + clubId + "&error=no_permission");
+                return;
+            }
             
             if ("deactivate".equals(action)) {
                 // Vô hiệu hóa CLB (set status = Inactive)
