@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,6 +63,12 @@
 		.text-danger {
 			color: #dc3545 !important;
 		}
+			
+			/* Smaller error text directly under form fields */
+			.form-control + .text-danger {
+				font-size: 12px;
+				margin-top: 4px;
+			}
 		
 		.alert {
 			margin-bottom: 20px;
@@ -128,7 +137,7 @@
 				<!-- header left menu start -->
 				<ul class="ttr-header-navigation">
 					<li>
-						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">HOME</a>
+						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">DASHBOARD</a>
 					</li>
 					<li>
 						<a href="#" class="ttr-material-button ttr-submenu-toggle">CLUBS <i class="fa fa-angle-down"></i></a>
@@ -405,7 +414,7 @@
 			<div class="db-breadcrumb">
 				<h4 class="breadcrumb-title">Add New Event</h4>
 				<ul class="db-breadcrumb-list">
-					<li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+					<li><a href="#"><i class="fa fa-home"></i>Dashboard</a></li>
 					<li>Events</li>
 					<li>Add New Event</li>
 				</ul>
@@ -418,7 +427,7 @@
 							<h4>Add New Event</h4>
 						</div>
 						<div class="widget-inner">
-							<form class="edit-profile m-b30" id="addEventForm" action="addNewEvent" method="post">
+							<form class="edit-profile m-b30" id="addEventForm" action="addNewEvent" method="post" novalidate>
 								<div class="row">
 									<div class="col-12">
 										<div class="ml-auto">
@@ -428,25 +437,30 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Event Title <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="text" name="title" id="eventTitle" required maxlength="200" placeholder="Enter event title">
+								<input class="form-control" type="text" name="eventName" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${param.eventName}">
+								<div class="text-danger" id="eventTitleError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Club <span class="text-danger">*</span></label>
 										<div>
-											<select class="form-control" name="clubId" id="clubId" required>
+								<select class="form-control" name="clubId" id="clubId" required>
 												<option value="">Select a club</option>
-												<option value="1" selected>Default Club (Hardcoded)</option>
-												<!-- Additional options will be populated dynamically when club management is implemented -->
+												<c:forEach var="club" items="${clubs}">
+													<option value="${club.clubId}" ${param.clubId == club.clubId ? 'selected' : ''}>
+														${club.clubName}
+													</option>
+												</c:forEach>
 											</select>
+								<div class="text-danger" id="clubIdError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">Status</label>
 										<div>
 											<select class="form-control" name="status" id="eventStatus">
-												<option value="Draft">Draft</option>
-												<option value="Published">Published</option>
+												<option value="Draft" ${param.status == 'Draft' ? 'selected' : ''}>Draft</option>
+												<option value="Published" ${param.status == 'Published' ? 'selected' : ''}>Published</option>
 											</select>
 										</div>
 									</div>
@@ -460,13 +474,21 @@
 									<div class="form-group col-12">
 										<label class="col-form-label">Description</label>
 										<div>
-											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description"></textarea>
+											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description">${param.description}</textarea>
 										</div>
 									</div>
-									<div class="form-group col-12">
-										<label class="col-form-label">Location</label>
+									<div class="form-group col-6">
+										<label class="col-form-label">Location <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location">
+											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location" value="${param.location}" required>
+											<div class="text-danger" id="locationError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Capacity <span class="text-danger">*</span></label>
+										<div>
+											<input class="form-control" type="number" name="capacity" id="eventCapacity" min="1" max="1000" placeholder="Enter capacity" value="${param.capacity}" required>
+											<div class="text-danger" id="capacityError"></div>
 										</div>
 									</div>
 									<div class="seperator"></div>
@@ -479,27 +501,57 @@
 									<div class="form-group col-6">
 										<label class="col-form-label">Start Date & Time <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="startTime" id="startTime" required>
+											<input class="form-control" type="datetime-local" name="startDate" id="startTime" required value="${param.startDate}">
+											<div class="text-danger" id="startTimeError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
 										<label class="col-form-label">End Date & Time <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="endTime" id="endTime" required>
+											<input class="form-control" type="datetime-local" name="endDate" id="endTime" required value="${param.endDate}">
+											<div class="text-danger" id="endTimeError"></div>
+										</div>
+									</div>
+									<div class="col-12 m-t20">
+										<div class="ml-auto m-b5">
+											<h3>4. Registration Period</h3>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Registration Start</label>
+										<div>
+											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${param.registrationStart}">
+											<div class="text-danger" id="regStartTimeError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Registration End</label>
+										<div>
+											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${param.registrationEnd}">
+											<div class="text-danger" id="regEndTimeError"></div>
 										</div>
 									</div>
 									<div class="col-12">
-										<div class="alert alert-info">
-											<i class="fa fa-info-circle"></i> <strong>Note:</strong> Please ensure the end time is after the start time.
-										</div>
+							<div class="alert alert-info">
+								<i class="fa fa-info-circle"></i> <strong>Note:</strong> Event date must be at least 3 days from today.
+							</div>
 									</div>
 									<div class="col-12 m-t20">
 										<button type="submit" class="btn btn-primary m-r5"><i class="fa fa-save"></i> Create Event</button>
 										<button type="reset" class="btn btn-secondary"><i class="fa fa-refresh"></i> Reset Form</button>
-										<a href="events.html" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Back to Events</a>
+										<a href="listEvents" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Back to Events</a>
 									</div>
 								</div>
 							</form>
+							<!-- Display success/error messages if any at the bottom of the form -->
+							<c:if test="${not empty message}">
+								<div class="alert alert-${messageType} alert-dismissible fade show" role="alert">
+									${message}
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+							</c:if>
 						</div>
 					</div>
 				</div>
@@ -540,93 +592,286 @@ $(document).ready(function() {
     });
     
     // Real-time validation
-    $('#startTime, #endTime').on('change', function() {
-        validateDateTime();
+    $('#startTime').on('change input blur', function() {
+        validateEventDate();
+        validateRegistrationDates(); // Re-validate registration dates when event start changes
+    });
+
+    $('#endTime').on('change input blur', function() {
+        validateEndDate();
+    });
+
+    $('#regStartTime, #regEndTime').on('change input blur', function() {
+        validateRegistrationDates();
+    });
+
+    // Real-time validation for title and club
+    $('#eventTitle').on('input blur', function() {
+        if (!$(this).val().trim()) {
+            $('#eventTitle').addClass('is-invalid');
+            $('#eventTitleError').text('Event title is required');
+        } else {
+            $('#eventTitle').removeClass('is-invalid');
+            $('#eventTitleError').text('');
+        }
+    });
+
+    $('#clubId').on('change blur', function() {
+        if (!$(this).val()) {
+            $('#clubId').addClass('is-invalid');
+            $('#clubIdError').text('Please select a club');
+        } else {
+            $('#clubId').removeClass('is-invalid');
+            $('#clubIdError').text('');
+        }
+    });
+
+    $('#eventLocation').on('input blur', function() {
+        if (!$(this).val().trim()) {
+            $('#eventLocation').addClass('is-invalid');
+            $('#locationError').text('Location is required');
+        } else {
+            $('#eventLocation').removeClass('is-invalid');
+            $('#locationError').text('');
+        }
+    });
+
+    $('#eventCapacity').on('input blur', function() {
+        var capacity = parseInt($(this).val());
+        if (!$(this).val() || capacity <= 0) {
+            $('#eventCapacity').addClass('is-invalid');
+            $('#capacityError').text('Capacity must be greater than 0');
+        } else {
+            $('#eventCapacity').removeClass('is-invalid');
+            $('#capacityError').text('');
+        }
     });
     
-    // Load clubs (this would typically come from your backend)
-    loadClubs();
+    // Clubs are loaded from server via servlet
 });
 
 function validateEventForm() {
     var isValid = true;
     var errors = [];
     
+    // Clear previous inline errors
+    $('#eventTitleError').text('');
+    $('#clubIdError').text('');
+    $('#startTimeError').text('');
+    $('#endTimeError').text('');
+    $('#locationError').text('');
+    $('#capacityError').text('');
+    $('#regStartTimeError').text('');
+    $('#regEndTimeError').text('');
+    
     // Check required fields
     if (!$('#eventTitle').val().trim()) {
-        errors.push('Event title is required');
         $('#eventTitle').addClass('is-invalid');
+        $('#eventTitleError').text('Event title is required');
         isValid = false;
     } else {
         $('#eventTitle').removeClass('is-invalid');
+        $('#eventTitleError').text('');
     }
     
     if (!$('#clubId').val()) {
-        errors.push('Please select a club');
         $('#clubId').addClass('is-invalid');
+        $('#clubIdError').text('Please select a club');
         isValid = false;
     } else {
         $('#clubId').removeClass('is-invalid');
+        $('#clubIdError').text('');
+    }
+    
+    if (!$('#eventLocation').val().trim()) {
+        $('#eventLocation').addClass('is-invalid');
+        $('#locationError').text('Location is required');
+        isValid = false;
+    } else {
+        $('#eventLocation').removeClass('is-invalid');
+        $('#locationError').text('');
+    }
+    
+    var capacity = parseInt($('#eventCapacity').val());
+    if (!$('#eventCapacity').val() || capacity <= 0) {
+        $('#eventCapacity').addClass('is-invalid');
+        $('#capacityError').text('Capacity must be greater than 0');
+        isValid = false;
+    } else {
+        $('#eventCapacity').removeClass('is-invalid');
+        $('#capacityError').text('');
     }
     
     if (!$('#startTime').val()) {
-        errors.push('Start time is required');
         $('#startTime').addClass('is-invalid');
+        $('#startTimeError').text('Start date is required');
         isValid = false;
     } else {
-        $('#startTime').removeClass('is-invalid');
-    }
-    
-    if (!$('#endTime').val()) {
-        errors.push('End time is required');
-        $('#endTime').addClass('is-invalid');
-        isValid = false;
-    } else {
-        $('#endTime').removeClass('is-invalid');
-    }
-    
-    // Validate date/time
-    if ($('#startTime').val() && $('#endTime').val()) {
-        var startTime = new Date($('#startTime').val());
-        var endTime = new Date($('#endTime').val());
-        
-        if (endTime <= startTime) {
-            errors.push('End time must be after start time');
-            $('#endTime').addClass('is-invalid');
+        // Check event date >= today + 3 days
+        var eventDate = new Date($('#startTime').val());
+        var now = new Date();
+        var minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        minDate.setDate(minDate.getDate() + 3);
+
+        if (eventDate < minDate) {
+            $('#startTime').addClass('is-invalid');
+            $('#startTimeError').text('Start date must be at least 3 days from today');
             isValid = false;
         } else {
-            $('#endTime').removeClass('is-invalid');
+            $('#startTime').removeClass('is-invalid');
+            $('#startTimeError').text('');
         }
     }
     
-    // Show errors if any
-    if (errors.length > 0) {
-        showAlert('Please fix the following errors:<br>• ' + errors.join('<br>• '), 'error');
+    if (!$('#endTime').val()) {
+        $('#endTime').addClass('is-invalid');
+        $('#endTimeError').text('End date is required');
+        isValid = false;
+    } else {
+        var endDate = new Date($('#endTime').val());
+        var startDate = new Date($('#startTime').val());
+        
+        if (endDate <= startDate) {
+            $('#endTime').addClass('is-invalid');
+            $('#endTimeError').text('End date must be after start date');
+            isValid = false;
+        } else {
+            $('#endTime').removeClass('is-invalid');
+            $('#endTimeError').text('');
+        }
+    }
+    
+    // Validate registration dates if provided
+    if ($('#regStartTime').val() || $('#regEndTime').val()) {
+        var startDate = new Date($('#startTime').val());
+        var now = new Date();
+        var regStart = $('#regStartTime').val() ? new Date($('#regStartTime').val()) : null;
+        var regEnd = $('#regEndTime').val() ? new Date($('#regEndTime').val()) : null;
+        
+        // Validate registration start
+        if (regStart) {
+            if (regStart <= now) {
+                $('#regStartTime').addClass('is-invalid');
+                $('#regStartTimeError').text('Registration start must be after today');
+                isValid = false;
+            } else if (regStart >= startDate) {
+                $('#regStartTime').addClass('is-invalid');
+                $('#regStartTimeError').text('Registration start must be before event start date');
+                isValid = false;
+            } else {
+                $('#regStartTime').removeClass('is-invalid');
+                $('#regStartTimeError').text('');
+            }
+        }
+        
+        // Validate registration end
+        if (regEnd) {
+            if (regEnd <= now) {
+                $('#regEndTime').addClass('is-invalid');
+                $('#regEndTimeError').text('Registration end must be after today');
+                isValid = false;
+            } else if (regEnd >= startDate) {
+                $('#regEndTime').addClass('is-invalid');
+                $('#regEndTimeError').text('Registration end must be before event start date');
+                isValid = false;
+            } else {
+                $('#regEndTime').removeClass('is-invalid');
+                $('#regEndTimeError').text('');
+            }
+        }
+        
+        // Cross-validation: reg start should be before reg end
+        if (regStart && regEnd && regStart >= regEnd) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Registration end must be after registration start');
+            isValid = false;
+        }
     }
     
     return isValid;
 }
 
-function validateDateTime() {
-    if ($('#startTime').val() && $('#endTime').val()) {
-        var startTime = new Date($('#startTime').val());
-        var endTime = new Date($('#endTime').val());
-        
-        if (endTime <= startTime) {
-            $('#endTime').addClass('is-invalid');
-            showAlert('End time must be after start time', 'warning');
-        } else {
-            $('#endTime').removeClass('is-invalid');
-        }
+function validateEventDate() {
+    if (!$('#startTime').val()) {
+        return;
+    }
+    var eventDate = new Date($('#startTime').val());
+    var now = new Date();
+    var minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    minDate.setDate(minDate.getDate() + 3);
+
+    if (eventDate < minDate) {
+        $('#startTime').addClass('is-invalid');
+        $('#startTimeError').text('Start date must be at least 3 days from today');
+    } else {
+        $('#startTime').removeClass('is-invalid');
+        $('#startTimeError').text('');
     }
 }
 
-function loadClubs() {
-    // Club management is not yet implemented, so we're using a hardcoded default club
-    // The default option is already set in the HTML
-    // This function is kept for future implementation when club management is added
-    console.log('Using hardcoded club for now. Club management will be implemented later.');
+function validateEndDate() {
+    if (!$('#endTime').val() || !$('#startTime').val()) {
+        return;
+    }
+    var endDate = new Date($('#endTime').val());
+    var startDate = new Date($('#startTime').val());
+    
+    if (endDate <= startDate) {
+        $('#endTime').addClass('is-invalid');
+        $('#endTimeError').text('End date must be after start date');
+    } else {
+        $('#endTime').removeClass('is-invalid');
+        $('#endTimeError').text('');
+    }
 }
+
+function validateRegistrationDates() {
+    if (!$('#startTime').val()) {
+        return;
+    }
+    
+    var startDate = new Date($('#startTime').val());
+    var now = new Date();
+    var regStart = $('#regStartTime').val() ? new Date($('#regStartTime').val()) : null;
+    var regEnd = $('#regEndTime').val() ? new Date($('#regEndTime').val()) : null;
+    
+    // Validate registration start
+    if (regStart) {
+        // Check if registration start is after today
+        if (regStart <= now) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Registration start must be after today');
+        } else if (regStart >= startDate) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Registration start must be before event start date');
+        } else {
+            $('#regStartTime').removeClass('is-invalid');
+            $('#regStartTimeError').text('');
+        }
+    }
+    
+    // Validate registration end
+    if (regEnd) {
+        // Check if registration end is after today
+        if (regEnd <= now) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Registration end must be after today');
+        } else if (regEnd >= startDate) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Registration end must be before event start date');
+        } else {
+            $('#regEndTime').removeClass('is-invalid');
+            $('#regEndTimeError').text('');
+        }
+    }
+    
+    // Cross-validation: reg start should be before reg end
+    if (regStart && regEnd && regStart >= regEnd) {
+        $('#regEndTime').addClass('is-invalid');
+        $('#regEndTimeError').text('Registration end must be after registration start');
+    }
+}
+
 
 function showAlert(message, type) {
     var alertClass = type === 'success' ? 'alert-success' : 

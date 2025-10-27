@@ -20,10 +20,10 @@ import model.Event;
 import model.Club;
 
 /**
- * Servlet for handling Add New Event functionality
+ * Servlet for handling Edit Event functionality
  * @author admin
  */
-public class AddNewEventServlet extends HttpServlet {
+public class EditEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
     private ClubDAO clubDAO;
@@ -36,7 +36,7 @@ public class AddNewEventServlet extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP <code>GET</code> method - forwards to the add event form
+     * Handles the HTTP <code>GET</code> method - shows the edit event form
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -46,16 +46,44 @@ public class AddNewEventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
+            // Get event ID from request
+            String eventIdStr = request.getParameter("eventId");
+            if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
+                request.setAttribute("message", "Event ID is required");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+
+            int eventId = Integer.parseInt(eventIdStr);
+            
+            // Get the event to edit
+            Event event = eventDAO.getEventById(eventId);
+            if (event == null) {
+                request.setAttribute("message", "Event not found");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+
             // Get all clubs for dropdown
             List<Club> clubs = clubDAO.getAllClubs();
+            
+            // Set attributes for JSP
+            request.setAttribute("event", event);
             request.setAttribute("clubs", clubs);
             
-            // Forward to the add event JSP form
-            request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+            // Forward to the edit event JSP form
+            request.getRequestDispatcher("/eventMgt/edit-event.jsp").forward(request, response);
+            
+        } catch (NumberFormatException e) {
+            request.setAttribute("message", "Invalid event ID format");
+            request.setAttribute("messageType", "danger");
+            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
         } catch (Exception e) {
-            // Handle error
-            request.setAttribute("error", "Error loading clubs: " + e.getMessage());
-            request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+            request.setAttribute("message", "Error loading event: " + e.getMessage());
+            request.setAttribute("messageType", "danger");
+            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
             e.printStackTrace();
         }
     }
@@ -71,6 +99,17 @@ public class AddNewEventServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
+            // Get event ID from request
+            String eventIdStr = request.getParameter("eventId");
+            if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
+                request.setAttribute("message", "Event ID is required");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+
+            int eventId = Integer.parseInt(eventIdStr);
+            
             // Get form parameters
             String eventName = request.getParameter("eventName");
             String clubIdStr = request.getParameter("clubId");
@@ -109,7 +148,6 @@ public class AddNewEventServlet extends HttpServlet {
             if (endDateStr == null || endDateStr.trim().isEmpty()) {
                 errors.append("End date is required.<br>");
             }
-
 
             // Parse and validate data types
             int clubId = 1; // Default hardcoded club ID as requested
@@ -189,7 +227,6 @@ public class AddNewEventServlet extends HttpServlet {
                 errors.append("Registration start date must be before registration end date.<br>");
             }
 
-
             // Set default values for optional fields
             if (status == null || status.trim().isEmpty()) {
                 status = "Upcoming"; // Use database default status
@@ -207,39 +244,82 @@ public class AddNewEventServlet extends HttpServlet {
             if (errors.length() > 0) {
                 request.setAttribute("message", errors.toString());
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+                
+                // Re-populate form data
+                request.setAttribute("eventName", eventName);
+                request.setAttribute("clubId", clubIdStr);
+                request.setAttribute("status", status);
+                request.setAttribute("description", description);
+                request.setAttribute("location", location);
+                request.setAttribute("capacity", capacityStr);
+                request.setAttribute("startDate", startDateStr);
+                request.setAttribute("endDate", endDateStr);
+                request.setAttribute("registrationStart", registrationStartStr);
+                request.setAttribute("registrationEnd", registrationEndStr);
+                
+                // Get clubs for dropdown
+                List<Club> clubs = clubDAO.getAllClubs();
+                request.setAttribute("clubs", clubs);
+                
+                request.getRequestDispatcher("/eventMgt/edit-event.jsp").forward(request, response);
                 return;
             }
 
-            // Create Event object
-            Event event = new Event(clubId, eventName, description, location, capacity, 
+            // Create Event object for update
+            Event event = new Event(eventId, clubId, eventName, description, location, capacity, 
                                   startDate, endDate, registrationStart, registrationEnd, 1, status);
 
-            // Insert event into database
-            int eventId = eventDAO.insertEvent(event);
+            // Update event in database
+            boolean success = eventDAO.updateEvent(event);
 
-            if (eventId > 0) {
-                // Success - redirect to success page or show success message
-                request.setAttribute("message", "Event '" + escapeHtml(eventName) + "' has been created successfully with ID: " + eventId);
+            if (success) {
+                // Success - redirect back to edit form with success message
+                request.setAttribute("message", "Event '" + escapeHtml(eventName) + "' has been updated successfully");
                 request.setAttribute("messageType", "success");
-                request.setAttribute("eventId", eventId);
-                request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+                
+                // Re-load the updated event and clubs for the form
+                Event updatedEvent = eventDAO.getEventById(eventId);
+                List<Club> clubs = clubDAO.getAllClubs();
+                request.setAttribute("event", updatedEvent);
+                request.setAttribute("clubs", clubs);
+                
+                request.getRequestDispatcher("/eventMgt/edit-event.jsp").forward(request, response);
             } else {
                 // Database error
-                request.setAttribute("message", "Failed to create event. Please try again.");
+                request.setAttribute("message", "Failed to update event. Please try again.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+                
+                // Re-populate form data
+                request.setAttribute("eventName", eventName);
+                request.setAttribute("clubId", clubIdStr);
+                request.setAttribute("status", status);
+                request.setAttribute("description", description);
+                request.setAttribute("location", location);
+                request.setAttribute("capacity", capacityStr);
+                request.setAttribute("startDate", startDateStr);
+                request.setAttribute("endDate", endDateStr);
+                request.setAttribute("registrationStart", registrationStartStr);
+                request.setAttribute("registrationEnd", registrationEndStr);
+                
+                // Get clubs for dropdown
+                List<Club> clubs = clubDAO.getAllClubs();
+                request.setAttribute("clubs", clubs);
+                
+                request.getRequestDispatcher("/eventMgt/edit-event.jsp").forward(request, response);
             }
 
+        } catch (NumberFormatException e) {
+            request.setAttribute("message", "Invalid event ID format");
+            request.setAttribute("messageType", "danger");
+            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
         } catch (Exception e) {
             // Handle unexpected errors
             request.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/eventMgt/add-event.jsp").forward(request, response);
+            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
             e.printStackTrace();
         }
     }
-
 
     /**
      * Escape HTML characters to prevent XSS
@@ -259,6 +339,6 @@ public class AddNewEventServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Servlet for adding new events to the club management system";
+        return "Servlet for editing events in the club management system";
     }
 }
