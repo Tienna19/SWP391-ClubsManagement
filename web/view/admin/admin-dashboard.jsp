@@ -342,7 +342,7 @@
                                     <span class="ms-2">${club.clubTypes}</span>
                                 </p>
                             </div>
-                            <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}" 
+                            <a href="${pageContext.request.contextPath}/clubDashboard" 
                                class="btn btn-sm btn-outline-primary">
                                 <i class="fa fa-eye"></i>
                             </a>

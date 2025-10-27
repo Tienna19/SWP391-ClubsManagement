@@ -38,8 +38,8 @@ public class EventDAO extends DBContext {
         }
 
         String sql = "INSERT INTO Events (ClubID, EventName, Description, Location, Capacity, " +
-                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status, Image) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, event.getClubID());
@@ -53,6 +53,7 @@ public class EventDAO extends DBContext {
             st.setTimestamp(9, event.getRegistrationEnd());
             st.setInt(10, event.getCreatedBy());
             st.setString(11, event.getStatus());
+            st.setString(12, event.getImage());
 
             System.out.println("Executing SQL: " + sql);
             System.out.println("Parameters: ClubID=" + event.getClubID() +
@@ -155,7 +156,7 @@ public class EventDAO extends DBContext {
         }
         
         String sql = "SELECT EventID, ClubID, EventName, Description, Location, Capacity, " +
-                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status, Image " +
                      "FROM Events ORDER BY StartDate DESC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -173,7 +174,8 @@ public class EventDAO extends DBContext {
                     rs.getTimestamp("RegistrationStart"),
                     rs.getTimestamp("RegistrationEnd"),
                     rs.getInt("CreatedBy"),
-                    rs.getString("Status")
+                    rs.getString("Status"),
+                    rs.getString("Image")
                 );
                 events.add(event);
             }
@@ -191,7 +193,7 @@ public class EventDAO extends DBContext {
      */
     public Event getEventById(int eventID) {
         String sql = "SELECT EventID, ClubID, EventName, Description, Location, Capacity, " +
-                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status, Image " +
                      "FROM Events WHERE EventID = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -210,7 +212,8 @@ public class EventDAO extends DBContext {
                     rs.getTimestamp("RegistrationStart"),
                     rs.getTimestamp("RegistrationEnd"),
                     rs.getInt("CreatedBy"),
-                    rs.getString("Status")
+                    rs.getString("Status"),
+                    rs.getString("Image")
                 );
             }
         } catch (SQLException e) {
@@ -228,7 +231,7 @@ public class EventDAO extends DBContext {
     public List<Event> getEventsByClubId(int clubID) {
         List<Event> events = new ArrayList<>();
         String sql = "SELECT EventID, ClubID, EventName, Description, Location, Capacity, " +
-                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status " +
+                     "StartDate, EndDate, RegistrationStart, RegistrationEnd, CreatedBy, Status, Image " +
                      "FROM Events WHERE ClubID = ? ORDER BY StartDate ASC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -247,7 +250,8 @@ public class EventDAO extends DBContext {
                     rs.getTimestamp("RegistrationStart"),
                     rs.getTimestamp("RegistrationEnd"),
                     rs.getInt("CreatedBy"),
-                    rs.getString("Status")
+                    rs.getString("Status"),
+                    rs.getString("Image")
                 );
                 events.add(event);
             }
@@ -272,7 +276,7 @@ public class EventDAO extends DBContext {
         
         String sql = "UPDATE Events SET ClubID = ?, EventName = ?, Description = ?, Location = ?, " +
                      "Capacity = ?, StartDate = ?, EndDate = ?, RegistrationStart = ?, " +
-                     "RegistrationEnd = ?, Status = ? WHERE EventID = ?";
+                     "RegistrationEnd = ?, Status = ?, Image = ? WHERE EventID = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, event.getClubID());
@@ -285,7 +289,8 @@ public class EventDAO extends DBContext {
             st.setTimestamp(8, event.getRegistrationStart());
             st.setTimestamp(9, event.getRegistrationEnd());
             st.setString(10, event.getStatus());
-            st.setInt(11, event.getEventID());
+            st.setString(11, event.getImage());
+            st.setInt(12, event.getEventID());
 
             System.out.println("Executing SQL: " + sql);
             System.out.println("Parameters: EventID=" + event.getEventID() +

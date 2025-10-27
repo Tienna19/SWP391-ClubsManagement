@@ -9,6 +9,8 @@ import java.io.IOException;
 import model.Club;
 import model.Event;
 import model.MemberDTO;
+import model.User;
+import com.app.model.MemberDTO;
 import java.util.List;
 
 /**
@@ -20,32 +22,43 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // TODO: Uncomment this when login is implemented
-        /*
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        
-        // Get user info from session
-        Integer userId = (Integer) session.getAttribute("userID");
-        */
-        
         try {
-            // TEMPORARY: For testing without login - remove this when login is ready
-            Integer userId = 1; // Mock user ID
+            HttpSession session = request.getSession(false);
             
-            // Get clubId from parameter
-            String clubIdParam = request.getParameter("clubId");
+            // Check if user is logged in
+            if (session == null || session.getAttribute("account") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+            
+            // Get user from session
+            User user = (User) session.getAttribute("account");
+            
+            // Try to get clubId from session first (set by login), then from parameter
             Integer clubId = null;
+            Object currentClubId = session.getAttribute("currentClubId");
+            if (currentClubId != null) {
+                clubId = (Integer) currentClubId;
+            } else {
+                String clubIdParam = request.getParameter("clubId");
+                if (clubIdParam != null && !clubIdParam.isEmpty()) {
+                    clubId = Integer.parseInt(clubIdParam);
+                }
+            }
             
-            if (clubIdParam != null && !clubIdParam.isEmpty()) {
-                clubId = Integer.parseInt(clubIdParam);
+            // If still no clubId, try to get from user's clubs
+            if (clubId == null) {
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+                
+                if (!clubIds.isEmpty()) {
+                    clubId = clubIds.get(0); // Use first club
+                    session.setAttribute("currentClubId", clubId);
+                }
             }
             
             if (clubId == null) {
-                request.setAttribute("error", "Vui lòng cung cấp clubId. Ví dụ: /clubDashboard?clubId=1");
+                request.setAttribute("error", "Bạn chưa có CLB nào để quản lý.");
                 request.getRequestDispatcher("/view/error.jsp").forward(request, response);
                 return;
             }
@@ -99,7 +112,7 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             request.setAttribute("recentEvents", recentEvents);
             
             // Forward to dashboard JSP
-            request.getRequestDispatcher("/view/club/club-leader-dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/club/club-leader-dashboard-new.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Club ID không hợp lệ.");

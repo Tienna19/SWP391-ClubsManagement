@@ -2,33 +2,25 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
-<!-- Student Club Management System - Add Event Page -->
+<!-- Student Club Management System - Edit Event Page -->
 <head>
 
 	<!-- META ============================================= -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="keywords" content="" />
-	<meta name="author" content="" />
-	<meta name="robots" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<!-- DESCRIPTION -->
-	<meta name="description" content="Student Club Management System - Manage your clubs and events efficiently" />
-	
-	<!-- OG -->
-	<meta property="og:title" content="Student Club Management System" />
-	<meta property="og:description" content="Student Club Management System - Manage your clubs and events efficiently" />
-	<meta property="og:image" content="" />
-	<meta name="format-detection" content="telephone=no">
+	<meta name="description" content="Hệ thống Quản lý Câu lạc bộ Sinh viên - Chỉnh sửa sự kiện" />
 	
 	<!-- FAVICONS ICON ============================================= -->
-	<link rel="icon" href="error-404.html" type="image/x-icon" />
-	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
+	<link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" type="image/x-icon" />
+	<link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
 	<!-- PAGE TITLE HERE ============================================= -->
-	<title>Add New Event - Student Club Management System</title>
+	<title>Chỉnh sửa Sự kiện - Hệ thống Quản lý CLB Sinh viên</title>
 
 	<!-- MOBILE SPECIFIC ============================================= -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,19 +31,19 @@
 	<![endif]-->
 
 	<!-- All PLUGINS CSS ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/assets.css">
-	<link rel="stylesheet" type="text/css" href="assets/vendors/calendar/fullcalendar.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
 
 	<!-- TYPOGRAPHY ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/typography.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
 
 	<!-- SHORTCODES ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
 
 	<!-- STYLESHEETS ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
-	<link rel="stylesheet" type="text/css" href="assets/css/dashboard.css">
-	<link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+	<link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
 	
 	<!-- Custom styles for event form -->
 	<style>
@@ -121,14 +113,9 @@
 			<!--logo start -->
 			<div class="ttr-logo-box">
 				<div>
-					<a href="index.html" class="ttr-logo" style="text-decoration: none;">
-						<div style="display: flex; align-items: center; color: white;">
-							<div style="margin-right: 10px; font-size: 24px;">🎓</div>
-							<div>
-								<div style="font-size: 20px; font-weight: bold; line-height: 1;">Student Club</div>
-								<div style="font-size: 14px; opacity: 0.9;">Management System</div>
-							</div>
-						</div>
+					<a href="${pageContext.request.contextPath}/home" class="ttr-logo">
+						<img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/assets/images/logo-mobile.png" width="30" height="30">
+						<img class="ttr-logo-desktop" alt="" src="${pageContext.request.contextPath}/assets/images/logo-white.png" width="160" height="27">
 					</a>
 				</div>
 			</div>
@@ -137,25 +124,17 @@
 				<!-- header left menu start -->
 				<ul class="ttr-header-navigation">
 					<li>
-						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">DASHBOARD</a>
+						<a href="${pageContext.request.contextPath}/home" class="ttr-material-button ttr-submenu-toggle">TRANG CHỦ</a>
 					</li>
 					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">CLUBS <i class="fa fa-angle-down"></i></a>
+						<a href="#" class="ttr-material-button ttr-submenu-toggle">MENU NHANH <i class="fa fa-angle-down"></i></a>
 						<div class="ttr-header-submenu">
 							<ul>
-								<li><a href="clubs.html">All Clubs</a></li>
-								<li><a href="my-clubs.html">My Clubs</a></li>
-								<li><a href="create-club.html">Create Club</a></li>
-							</ul>
-						</div>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">EVENTS <i class="fa fa-angle-down"></i></a>
-						<div class="ttr-header-submenu">
-							<ul>
-								<li><a href="events.html">All Events</a></li>
-								<li><a href="addNewEvent">Add Event</a></li>
-								<li><a href="my-events.html">My Events</a></li>
+								<li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
+								<li><a href="${pageContext.request.contextPath}/listEvents">Sự kiện</a></li>
+								<c:if test="${not empty club}">
+								<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
+								</c:if>
 							</ul>
 						</div>
 					</li>
@@ -169,117 +148,19 @@
 						<a href="#" class="ttr-material-button ttr-search-toggle"><i class="fa fa-search"></i></a>
 					</li>
 					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle"><i class="fa fa-bell"></i></a>
-						<div class="ttr-header-submenu noti-menu">
-							<div class="ttr-notify-header">
-								<span class="ttr-notify-text-top">9 New</span>
-								<span class="ttr-notify-text">User Notifications</span>
-							</div>
-							<div class="noti-box-list">
-								<ul>
-									<li>
-										<span class="notification-icon dashbg-gray">
-											<i class="fa fa-check"></i>
-										</span>
-										<span class="notification-text">
-											<span>Sneha Jogi</span> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 02:14</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-yellow">
-											<i class="fa fa-shopping-cart"></i>
-										</span>
-										<span class="notification-text">
-											<a href="#">Your order is placed</a> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 7 Min</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-red">
-											<i class="fa fa-bullhorn"></i>
-										</span>
-										<span class="notification-text">
-											<span>Your item is shipped</span> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 2 May</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-green">
-											<i class="fa fa-comments-o"></i>
-										</span>
-										<span class="notification-text">
-											<a href="#">Sneha Jogi</a> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 14 July</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-primary">
-											<i class="fa fa-file-word-o"></i>
-										</span>
-										<span class="notification-text">
-											<span>Sneha Jogi</span> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 15 Min</span>
-										</span>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32"></span></a>
+						<a href="#" class="ttr-material-button ttr-submenu-toggle">
+							<span class="ttr-user-avatar">
+								<img alt="" src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" width="32" height="32">
+							</span>
+						</a>
 						<div class="ttr-header-submenu">
 							<ul>
-								<li><a href="user-profile.html">My Profile</a></li>
-								<li><a href="my-clubs.html">My Clubs</a></li>
-								<li><a href="my-events.html">My Events</a></li>
-								<li><a href="settings.html">Settings</a></li>
-								<li><a href="login.html">Logout</a></li>
+								<li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
+								<c:if test="${not empty club}">
+								<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
+								</c:if>
+								<li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
 							</ul>
-						</div>
-					</li>
-					<li class="ttr-hide-on-mobile">
-						<a href="#" class="ttr-material-button"><i class="ti-layout-grid3-alt"></i></a>
-						<div class="ttr-header-submenu ttr-extra-menu">
-							<a href="clubs.html">
-								<i class="fa fa-users"></i>
-								<span>Clubs</span>
-							</a>
-							<a href="events.html">
-								<i class="fa fa-calendar"></i>
-								<span>Events</span>
-							</a>
-							<a href="members.html">
-								<i class="fa fa-user"></i>
-								<span>Members</span>
-							</a>
-							<a href="reports.html">
-								<i class="fa fa-bar-chart"></i>
-								<span>Reports</span>
-							</a>
-							<a href="settings.html">
-								<i class="fa fa-cog"></i>
-								<span>Settings</span>
-							</a>
-							<a href="help.html">
-								<i class="fa fa-question-circle"></i>
-								<span>Help</span>
-							</a>
 						</div>
 					</li>
 				</ul>
@@ -289,7 +170,7 @@
 			<div class="ttr-search-bar">
 				<form class="ttr-search-form">
 					<div class="ttr-search-input-wrapper">
-						<input type="text" name="qq" placeholder="search something..." class="ttr-search-input">
+						<input type="text" name="qq" placeholder="Tìm kiếm..." class="ttr-search-input">
 						<button type="submit" name="search" class="ttr-search-submit"><i class="ti-arrow-right"></i></button>
 					</div>
 					<span class="ttr-search-close ttr-search-toggle">
@@ -306,19 +187,9 @@
 		<div class="ttr-sidebar-wrapper content-scroll">
 			<!-- side menu logo start -->
 			<div class="ttr-sidebar-logo">
-				<a href="#" style="text-decoration: none;">
-					<div style="display: flex; align-items: center; color: #333;">
-						<div style="margin-right: 8px; font-size: 20px;">🎓</div>
-						<div>
-							<div style="font-size: 16px; font-weight: bold; line-height: 1;">Student Club</div>
-							<div style="font-size: 12px; opacity: 0.8;">Management</div>
-						</div>
-					</div>
+				<a href="${pageContext.request.contextPath}/home">
+					<img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
 				</a>
-				<!-- <div class="ttr-sidebar-pin-button" title="Pin/Unpin Menu">
-					<i class="material-icons ttr-fixed-icon">gps_fixed</i>
-					<i class="material-icons ttr-not-fixed-icon">gps_not_fixed</i>
-				</div> -->
 				<div class="ttr-sidebar-toggle-button">
 					<i class="ti-arrow-left"></i>
 				</div>
@@ -327,79 +198,70 @@
 			<!-- sidebar menu start -->
 			<nav class="ttr-sidebar-navi">
 				<ul>
+					<li class="ttr-seperate"></li>
 					<li>
-						<a href="index.html" class="ttr-material-button">
+						<a href="${pageContext.request.contextPath}/clubDashboard" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-home"></i></span>
-		                	<span class="ttr-label">Dashboard</span>
-		                </a>
-		            </li>
+							<span class="ttr-label">Dashboard</span>
+						</a>
+					</li>
 					<li>
-						<a href="clubs.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-layout-grid2"></i></span>
-		                	<span class="ttr-label">Clubs</span>
-		                </a>
-		            </li>
+						<a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-info-alt"></i></span>
+							<span class="ttr-label">Thông tin CLB</span>
+						</a>
+					</li>
 					<li>
-						<a href="events.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-		                	<span class="ttr-label">Events</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="members.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-		                	<span class="ttr-label">Members</span>
-		                </a>
-		            </li>
+						<a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-pencil"></i></span>
+							<span class="ttr-label">Chỉnh sửa CLB</span>
+						</a>
+					</li>
 					<li>
 						<a href="#" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-user"></i></span>
+							<span class="ttr-label">Thành viên</span>
+							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+						</a>
+						<ul>
+							<li>
+								<a href="${pageContext.request.contextPath}/memberList?clubId=${club.clubId}" class="ttr-material-button">
+									<span class="ttr-label">Danh sách TV</span>
+								</a>
+							</li>
+							<li>
+								<a href="${pageContext.request.contextPath}/addMember?clubId=${club.clubId}" class="ttr-material-button">
+									<span class="ttr-label">Thêm thành viên</span>
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li class="show">
+						<a href="#" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-		                	<span class="ttr-label">Calendar</span>
-		                	<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-		                </a>
-		                <ul>
-		                	<li>
-		                		<a href="basic-calendar.html" class="ttr-material-button"><span class="ttr-label">Basic Calendar</span></a>
-		                	</li>
-		                	<li>
-		                		<a href="list-view-calendar.html" class="ttr-material-button"><span class="ttr-label">List View</span></a>
-		                	</li>
-		                </ul>
-		            </li>
+							<span class="ttr-label">Sự kiện</span>
+							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+						</a>
+						<ul>
+							<li>
+								<a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
+									<span class="ttr-label">Danh sách sự kiện</span>
+								</a>
+							</li>
+							<li>
+								<a href="${pageContext.request.contextPath}/addNewEvent" class="ttr-material-button">
+									<span class="ttr-label">Tạo sự kiện mới</span>
+								</a>
+							</li>
+						</ul>
+					</li>
 					<li>
-						<a href="reports.html" class="ttr-material-button">
+						<a href="${pageContext.request.contextPath}/clubStatistics?clubId=${club.clubId}" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-		                	<span class="ttr-label">Reports</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="settings.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-settings"></i></span>
-		                	<span class="ttr-label">Settings</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="addNewEvent" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-		                	<span class="ttr-label">Add Event</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-		                	<span class="ttr-label">My Profile</span>
-		                	<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-		                </a>
-		                <ul>
-		                	<li>
-		                		<a href="user-profile.html" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
-		                	</li>
-		                	<li>
-		                		<a href="teacher-profile.html" class="ttr-material-button"><span class="ttr-label">Teacher Profile</span></a>
-		                	</li>
-		                </ul>
-		            </li>
-		            <li class="ttr-seperate"></li>
+							<span class="ttr-label">Thống kê</span>
+						</a>
+					</li>
+					<li class="ttr-seperate"></li>
 				</ul>
 				<!-- sidebar menu end -->
 			</nav>
@@ -412,11 +274,11 @@
 	<main class="ttr-wrapper">
 		<div class="container-fluid">
 			<div class="db-breadcrumb">
-				<h4 class="breadcrumb-title">Add New Event</h4>
+				<h4 class="breadcrumb-title">Chỉnh sửa Sự kiện</h4>
 				<ul class="db-breadcrumb-list">
-					<li><a href="#"><i class="fa fa-home"></i>Dashboard</a></li>
-					<li>Events</li>
-					<li>Add New Event</li>
+					<li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+					<li>Sự kiện</li>
+					<li>Chỉnh sửa sự kiện</li>
 				</ul>
 			</div>	
 			<div class="row">
@@ -424,126 +286,10 @@
 				<div class="col-lg-12 m-b30">
 					<div class="widget-box">
 						<div class="wc-title">
-							<h4>Add New Event</h4>
+							<h4>Chỉnh sửa Sự kiện: ${event.eventName}</h4>
 						</div>
 						<div class="widget-inner">
-							<form class="edit-profile m-b30" id="addEventForm" action="addNewEvent" method="post" novalidate>
-								<div class="row">
-									<div class="col-12">
-										<div class="ml-auto">
-											<h3>1. Basic Information</h3>
-										</div>
-									</div>
-									<div class="form-group col-12">
-										<label class="col-form-label">Event Title <span class="text-danger">*</span></label>
-										<div>
-								<input class="form-control" type="text" name="eventName" id="eventTitle" required maxlength="200" placeholder="Enter event title" value="${param.eventName}">
-								<div class="text-danger" id="eventTitleError"></div>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Club <span class="text-danger">*</span></label>
-										<div>
-								<select class="form-control" name="clubId" id="clubId" required>
-												<option value="">Select a club</option>
-												<c:forEach var="club" items="${clubs}">
-													<option value="${club.clubId}" ${param.clubId == club.clubId ? 'selected' : ''}>
-														${club.clubName}
-													</option>
-												</c:forEach>
-											</select>
-								<div class="text-danger" id="clubIdError"></div>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Status</label>
-										<div>
-											<select class="form-control" name="status" id="eventStatus">
-												<option value="Draft" ${param.status == 'Draft' ? 'selected' : ''}>Draft</option>
-												<option value="Published" ${param.status == 'Published' ? 'selected' : ''}>Published</option>
-											</select>
-										</div>
-									</div>
-									<div class="seperator"></div>
-									
-									<div class="col-12 m-t20">
-										<div class="ml-auto m-b5">
-											<h3>2. Event Details</h3>
-										</div>
-									</div>
-									<div class="form-group col-12">
-										<label class="col-form-label">Description</label>
-										<div>
-											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Enter event description">${param.description}</textarea>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Location <span class="text-danger">*</span></label>
-										<div>
-											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Enter event location" value="${param.location}" required>
-											<div class="text-danger" id="locationError"></div>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Capacity <span class="text-danger">*</span></label>
-										<div>
-											<input class="form-control" type="number" name="capacity" id="eventCapacity" min="1" max="1000" placeholder="Enter capacity" value="${param.capacity}" required>
-											<div class="text-danger" id="capacityError"></div>
-										</div>
-									</div>
-									<div class="seperator"></div>
-									
-									<div class="col-12 m-t20">
-										<div class="ml-auto m-b5">
-											<h3>3. Date & Time</h3>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Start Date & Time <span class="text-danger">*</span></label>
-										<div>
-											<input class="form-control" type="datetime-local" name="startDate" id="startTime" required value="${param.startDate}">
-											<div class="text-danger" id="startTimeError"></div>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">End Date & Time <span class="text-danger">*</span></label>
-										<div>
-											<input class="form-control" type="datetime-local" name="endDate" id="endTime" required value="${param.endDate}">
-											<div class="text-danger" id="endTimeError"></div>
-										</div>
-									</div>
-									<div class="col-12 m-t20">
-										<div class="ml-auto m-b5">
-											<h3>4. Registration Period</h3>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Registration Start</label>
-										<div>
-											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${param.registrationStart}">
-											<div class="text-danger" id="regStartTimeError"></div>
-										</div>
-									</div>
-									<div class="form-group col-6">
-										<label class="col-form-label">Registration End</label>
-										<div>
-											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${param.registrationEnd}">
-											<div class="text-danger" id="regEndTimeError"></div>
-										</div>
-									</div>
-									<div class="col-12">
-							<div class="alert alert-info">
-								<i class="fa fa-info-circle"></i> <strong>Note:</strong> Event date must be at least 3 days from today.
-							</div>
-									</div>
-									<div class="col-12 m-t20">
-										<button type="submit" class="btn btn-primary m-r5"><i class="fa fa-save"></i> Create Event</button>
-										<button type="reset" class="btn btn-secondary"><i class="fa fa-refresh"></i> Reset Form</button>
-										<a href="listEvents" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Back to Events</a>
-									</div>
-								</div>
-							</form>
-							<!-- Display success/error messages if any at the bottom of the form -->
+							<!-- Display success/error messages if any at the top of the form -->
 							<c:if test="${not empty message}">
 								<div class="alert alert-${messageType} alert-dismissible fade show" role="alert">
 									${message}
@@ -552,6 +298,150 @@
 									</button>
 								</div>
 							</c:if>
+							<form class="edit-profile m-b30" id="editEventForm" action="editEvent" method="post" enctype="multipart/form-data" novalidate>
+								<input type="hidden" name="eventId" value="${event.eventID}">
+								<div class="row">
+									<div class="col-12">
+										<div class="ml-auto">
+											<h3>1. Thông tin cơ bản</h3>
+										</div>
+									</div>
+									<div class="form-group col-12">
+										<label class="col-form-label">Tên sự kiện <span class="text-danger">*</span></label>
+										<div>
+											<input class="form-control" type="text" name="eventName" id="eventTitle" required maxlength="200" placeholder="Nhập tên sự kiện" value="${not empty param.eventName ? param.eventName : event.eventName}">
+											<div class="text-danger" id="eventTitleError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Câu lạc bộ <span class="text-danger">*</span></label>
+										<div>
+											<select class="form-control" name="clubId" id="clubId" required>
+												<option value="">Chọn câu lạc bộ</option>
+												<c:forEach var="club" items="${clubs}">
+													<option value="${club.clubId}" ${(not empty param.clubId ? param.clubId : event.clubID) == club.clubId ? 'selected' : ''}>
+														${club.clubName}
+													</option>
+												</c:forEach>
+											</select>
+											<div class="text-danger" id="clubIdError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Trạng thái</label>
+										<div>
+											<select class="form-control" name="status" id="eventStatus">
+												<option value="Draft" ${(not empty param.status ? param.status : event.status) == 'Draft' ? 'selected' : ''}>Bản nháp</option>
+												<option value="Published" ${(not empty param.status ? param.status : event.status) == 'Published' ? 'selected' : ''}>Công bố</option>
+												<option value="Upcoming" ${(not empty param.status ? param.status : event.status) == 'Upcoming' ? 'selected' : ''}>Sắp tới</option>
+											</select>
+										</div>
+									</div>
+									<div class="seperator"></div>
+									
+									<div class="col-12 m-t20">
+										<div class="ml-auto m-b5">
+											<h3>2. Chi tiết sự kiện</h3>
+										</div>
+									</div>
+									<div class="form-group col-12">
+										<label class="col-form-label">Mô tả</label>
+										<div>
+											<textarea class="form-control" name="description" id="eventDescription" rows="4" maxlength="1000" placeholder="Nhập mô tả sự kiện">${not empty param.description ? param.description : event.description}</textarea>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Địa điểm <span class="text-danger">*</span></label>
+										<div>
+											<input class="form-control" type="text" name="location" id="eventLocation" maxlength="300" placeholder="Nhập địa điểm sự kiện" value="${not empty param.location ? param.location : event.location}" required>
+											<div class="text-danger" id="locationError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Sức chứa <span class="text-danger">*</span></label>
+										<div>
+											<input class="form-control" type="number" name="capacity" id="eventCapacity" min="1" max="1000" placeholder="Nhập sức chứa" value="${not empty param.capacity ? param.capacity : event.capacity}" required>
+											<div class="text-danger" id="capacityError"></div>
+										</div>
+									</div>
+									<div class="seperator"></div>
+									
+									<div class="col-12 m-t20">
+										<div class="ml-auto m-b5">
+											<h3>3. Ngày giờ</h3>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Bắt đầu <span class="text-danger">*</span></label>
+										<div>
+											<input class="form-control" type="datetime-local" name="startDate" id="startTime" required value="${not empty param.startDate ? param.startDate : event.startDate}">
+											<div class="text-danger" id="startTimeError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Kết thúc <span class="text-danger">*</span></label>
+										<div>
+											<input class="form-control" type="datetime-local" name="endDate" id="endTime" required value="${not empty param.endDate ? param.endDate : event.endDate}">
+											<div class="text-danger" id="endTimeError"></div>
+										</div>
+									</div>
+									<div class="col-12 m-t20">
+										<div class="ml-auto m-b5">
+											<h3>4. Thời gian đăng ký</h3>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Bắt đầu đăng ký</label>
+										<div>
+											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${not empty param.registrationStart ? param.registrationStart : event.registrationStart}">
+											<div class="text-danger" id="regStartTimeError"></div>
+										</div>
+									</div>
+									<div class="form-group col-6">
+										<label class="col-form-label">Kết thúc đăng ký</label>
+										<div>
+											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${not empty param.registrationEnd ? param.registrationEnd : event.registrationEnd}">
+											<div class="text-danger" id="regEndTimeError"></div>
+										</div>
+									</div>
+									<div class="col-12 m-t20">
+										<div class="ml-auto m-b5">
+											<h3>5. Hình ảnh sự kiện</h3>
+										</div>
+									</div>
+									<div class="form-group col-12">
+										<label class="col-form-label">Hình ảnh hiện tại</label>
+										<div>
+											<c:choose>
+												<c:when test="${not empty event.image}">
+													<img src="${pageContext.request.contextPath}/${event.image}" alt="Event Image" style="max-width: 300px; max-height: 300px; border: 1px solid #ddd; border-radius: 4px; padding: 5px; margin-bottom: 10px;">
+												</c:when>
+												<c:otherwise>
+													<p class="text-muted">Chưa có hình ảnh</p>
+												</c:otherwise>
+											</c:choose>
+										</div>
+									</div>
+									<div class="form-group col-12">
+										<label class="col-form-label">Thay đổi hình ảnh</label>
+										<div>
+											<input class="form-control" type="file" name="eventImage" id="eventImage" accept="image/*">
+											<small class="form-text text-muted">Chấp nhận file ảnh định dạng: JPG, JPEG, PNG, GIF. Kích thước tối đa: 5MB. Để trống nếu không muốn thay đổi.</small>
+											<div id="imagePreview" style="margin-top: 10px;"></div>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="alert alert-info">
+											<i class="fa fa-info-circle"></i> <strong>Lưu ý:</strong> Ngày sự kiện phải cách ngày hiện tại ít nhất 3 ngày.
+										</div>
+									</div>
+									<div class="col-12 m-t20">
+										<button type="submit" class="btn btn-primary m-r5"><i class="fa fa-save"></i> Cập nhật sự kiện</button>
+										<button type="reset" class="btn btn-secondary"><i class="fa fa-refresh"></i> Đặt lại</button>
+										<a href="${pageContext.request.contextPath}/listEvents" class="btn btn-outline-secondary"><i class="fa fa-arrow-left"></i> Về danh sách</a>
+									</div>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -562,27 +452,27 @@
 	<div class="ttr-overlay"></div>
 
 <!-- External JavaScripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/vendors/bootstrap/js/popper.min.js"></script>
-<script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-<script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-<script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
-<script src="assets/vendors/counter/waypoints-min.js"></script>
-<script src="assets/vendors/counter/counterup.min.js"></script>
-<script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
-<script src="assets/vendors/masonry/masonry.js"></script>
-<script src="assets/vendors/masonry/filter.js"></script>
-<script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
-<script src='assets/vendors/scroll/scrollbar.min.js'></script>
-<script src="assets/js/functions.js"></script>
-<script src="assets/vendors/chart/chart.min.js"></script>
-<script src="assets/js/admin.js"></script>
-<script src='assets/vendors/switcher/switcher.js'></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/magnific-popup/magnific-popup.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/counter/waypoints-min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/counter/counterup.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/imagesloaded/imagesloaded.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
+<script src='${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js'></script>
+<script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
+<script src='${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js'></script>
 <script>
 $(document).ready(function() {
     // Form validation and submission
-    $('#addEventForm').on('submit', function(e) {
+    $('#editEventForm').on('submit', function(e) {
         // Validate form before submission
         if (!validateEventForm()) {
             e.preventDefault(); // Only prevent submission if validation fails
@@ -752,11 +642,11 @@ function validateEventForm() {
         if (regStart) {
             if (regStart <= now) {
                 $('#regStartTime').addClass('is-invalid');
-                $('#regStartTimeError').text('Registration start must be after today');
+                $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải sau hôm nay');
                 isValid = false;
             } else if (regStart >= startDate) {
                 $('#regStartTime').addClass('is-invalid');
-                $('#regStartTimeError').text('Registration start must be before event start date');
+                $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải trước ngày sự kiện');
                 isValid = false;
             } else {
                 $('#regStartTime').removeClass('is-invalid');
@@ -768,11 +658,11 @@ function validateEventForm() {
         if (regEnd) {
             if (regEnd <= now) {
                 $('#regEndTime').addClass('is-invalid');
-                $('#regEndTimeError').text('Registration end must be after today');
+                $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau hôm nay');
                 isValid = false;
             } else if (regEnd >= startDate) {
                 $('#regEndTime').addClass('is-invalid');
-                $('#regEndTimeError').text('Registration end must be before event start date');
+                $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải trước ngày sự kiện');
                 isValid = false;
             } else {
                 $('#regEndTime').removeClass('is-invalid');
@@ -783,7 +673,7 @@ function validateEventForm() {
         // Cross-validation: reg start should be before reg end
         if (regStart && regEnd && regStart >= regEnd) {
             $('#regEndTime').addClass('is-invalid');
-            $('#regEndTimeError').text('Registration end must be after registration start');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau thời gian bắt đầu');
             isValid = false;
         }
     }
@@ -840,10 +730,10 @@ function validateRegistrationDates() {
         // Check if registration start is after today
         if (regStart <= now) {
             $('#regStartTime').addClass('is-invalid');
-            $('#regStartTimeError').text('Registration start must be after today');
+            $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải sau hôm nay');
         } else if (regStart >= startDate) {
             $('#regStartTime').addClass('is-invalid');
-            $('#regStartTimeError').text('Registration start must be before event start date');
+            $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải trước ngày sự kiện');
         } else {
             $('#regStartTime').removeClass('is-invalid');
             $('#regStartTimeError').text('');
@@ -855,10 +745,10 @@ function validateRegistrationDates() {
         // Check if registration end is after today
         if (regEnd <= now) {
             $('#regEndTime').addClass('is-invalid');
-            $('#regEndTimeError').text('Registration end must be after today');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau hôm nay');
         } else if (regEnd >= startDate) {
             $('#regEndTime').addClass('is-invalid');
-            $('#regEndTimeError').text('Registration end must be before event start date');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải trước ngày sự kiện');
         } else {
             $('#regEndTime').removeClass('is-invalid');
             $('#regEndTimeError').text('');
@@ -868,29 +758,29 @@ function validateRegistrationDates() {
     // Cross-validation: reg start should be before reg end
     if (regStart && regEnd && regStart >= regEnd) {
         $('#regEndTime').addClass('is-invalid');
-        $('#regEndTimeError').text('Registration end must be after registration start');
+        $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau thời gian bắt đầu');
     }
 }
 
 
 function showAlert(message, type) {
-    var alertClass = type === 'success' ? 'alert-success' : 
-                    type === 'error' ? 'alert-danger' : 
+    var alertClass = type === 'success' ? 'alert-success' :
+                    type === 'error' ? 'alert-danger' :
                     type === 'warning' ? 'alert-warning' : 'alert-info';
-    
+
     var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert">' +
                    message +
                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                    '<span aria-hidden="true">&times;</span>' +
                    '</button>' +
                    '</div>';
-    
+
     // Remove existing alerts
     $('.alert').remove();
-    
+
     // Add new alert
-    $('#addEventForm').before(alertHtml);
-    
+    $('#editEventForm').before(alertHtml);
+
     // Auto-hide after 5 seconds for success messages
     if (type === 'success') {
         setTimeout(function() {
@@ -898,8 +788,42 @@ function showAlert(message, type) {
         }, 5000);
     }
 }
+
+// Image preview functionality
+document.getElementById('eventImage').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('imagePreview');
+
+    if (file) {
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Kích thước file không được vượt quá 5MB');
+            e.target.value = '';
+            preview.innerHTML = '';
+            return;
+        }
+
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            alert('Chỉ chấp nhận file ảnh định dạng: JPG, JPEG, PNG, GIF');
+            e.target.value = '';
+            preview.innerHTML = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<p class="text-success"><strong>Ảnh mới:</strong></p><img src="' + e.target.result + '" style="max-width: 300px; max-height: 300px; border: 1px solid #ddd; border-radius: 4px; padding: 5px;">';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '';
+    }
+});
 </script>
 </body>
 
-<!-- Student Club Management System - Add Event Page -->
+<!-- Student Club Management System - Edit Event Page -->
 </html>
