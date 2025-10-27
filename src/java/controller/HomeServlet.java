@@ -40,12 +40,12 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("totalEvents", events.size());
 
             // Chuyển tiếp yêu cầu đến trang JSP
-            request.getRequestDispatcher("view/home/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/home/index.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             // Show error page or redirect to error page
             request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
-            request.getRequestDispatcher("view/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/error.jsp").forward(request, response);
         }
     }
     

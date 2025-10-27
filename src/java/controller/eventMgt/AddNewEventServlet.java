@@ -262,3 +262,4 @@ public class AddNewEventServlet extends HttpServlet {
         return "Servlet for adding new events to the club management system";
     }
 }
+
