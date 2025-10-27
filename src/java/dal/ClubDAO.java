@@ -310,17 +310,24 @@ public class ClubDAO extends DBContext {
      * @param club Club object để insert
      * @return true nếu thành công, false nếu thất bại
      */
-    public boolean insertClub(Club club) {
+    /**
+     * Insert Club and return generated ClubID
+     * 
+     * @param club Club object to insert
+     * @return ClubID if successful, -1 if failed
+     */
+    public int insertClubAndGetId(Club club) {
         // Check if database connection is available
         if (connection == null) {
             System.err.println("Database connection is null. Cannot insert club.");
-            return false;
+            return -1;
         }
 
         try {
             String sql = "INSERT INTO Clubs (ClubName, Description, Logo, ClubTypes, CreatedBy, CreatedAt, Status) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement st = connection.prepareStatement(sql);
+            // Use RETURN_GENERATED_KEYS to get the ClubID
+            PreparedStatement st = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             st.setString(1, club.getClubName());
             st.setString(2, club.getDescription());
             st.setString(3, club.getLogo());
@@ -330,12 +337,33 @@ public class ClubDAO extends DBContext {
             st.setString(7, club.getStatus());
 
             int rowsAffected = st.executeUpdate();
-            return rowsAffected > 0;
+            if (rowsAffected > 0) {
+                // Get generated ClubID
+                ResultSet rs = st.getGeneratedKeys();
+                if (rs.next()) {
+                    int clubId = rs.getInt(1);
+                    System.out.println("✅ Club created successfully with ID: " + clubId);
+                    return clubId;
+                }
+            }
+            return -1;
         } catch (Exception e) {
-            System.err.println("Error in insertClub: " + e.getMessage());
+            System.err.println("❌ Error in insertClubAndGetId: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return -1;
         }
+    }
+    
+    /**
+     * Insert Club (legacy method for backward compatibility)
+     * 
+     * @param club Club object to insert
+     * @return true if successful, false if failed
+     * @deprecated Use insertClubAndGetId() instead
+     */
+    @Deprecated
+    public boolean insertClub(Club club) {
+        return insertClubAndGetId(club) > 0;
     }
 
     /**

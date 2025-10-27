@@ -124,6 +124,26 @@
         <url-pattern>/deleteClub</url-pattern>
     </servlet-mapping>
 
+    <!-- ViewClubRequestsServlet (Admin) -->
+    <servlet>
+        <servlet-name>ViewClubRequestsServlet</servlet-name>
+        <servlet-class>controller.admin.ViewClubRequestsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewClubRequestsServlet</servlet-name>
+        <url-pattern>/viewClubRequests</url-pattern>
+    </servlet-mapping>
+
+    <!-- ApproveClubRequestServlet (Admin) -->
+    <servlet>
+        <servlet-name>ApproveClubRequestServlet</servlet-name>
+        <servlet-class>controller.admin.ApproveClubRequestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApproveClubRequestServlet</servlet-name>
+        <url-pattern>/approveClubRequest</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->

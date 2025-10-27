@@ -8,6 +8,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import model.Club;
 import model.Event;
+import model.MemberDTO;
 import model.User;
 import com.app.model.MemberDTO;
 import java.util.List;

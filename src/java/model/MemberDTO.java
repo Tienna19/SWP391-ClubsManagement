@@ -1,8 +1,13 @@
-package com.app.model;
+package model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Data Transfer Object for displaying member information
+ * Used when we need to JOIN Memberships with Users table
+ * Contains display-ready data (fullName, profileImage)
+ */
 public class MemberDTO {
     private int userId;
     private String fullName;
