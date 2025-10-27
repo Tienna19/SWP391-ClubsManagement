@@ -508,5 +508,4 @@ public class ClubDAO extends DBContext {
      * @return true if successful, false otherwise
      */
     
-
 }

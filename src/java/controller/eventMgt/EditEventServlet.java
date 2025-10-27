@@ -436,7 +436,7 @@ public class EditEventServlet extends HttpServlet {
                 
                 request.getRequestDispatcher("/view/eventMgt/edit-event.jsp").forward(request, response);
             } else {
-                // Database error
+                //.r
                 request.setAttribute("message", "Failed to update event. Please try again.");
                 request.setAttribute("messageType", "danger");
                 

@@ -56,31 +56,63 @@
 </head>
 <body>
     <div class="error-container">
-        <div class="error-icon">⚠️</div>
-        <h1>Oops! Something went wrong</h1>
-        <p>We're sorry, but an error occurred while processing your request.</p>
+        <!-- Check if it's a 403 Permission Error -->
+        <c:choose>
+            <c:when test="${errorCode == '403'}">
+                <div class="error-icon">🚫</div>
+                <h1 style="color: #dc3545;">Không có quyền truy cập</h1>
+                <p>Bạn không có quyền thực hiện thao tác này.</p>
+                
+                <div class="error-message" style="background-color: #fff3cd; color: #856404; border-color: #ffeeba;">
+                    <strong>⚠️ Lý do:</strong><br>
+                    ${errorMessage != null ? errorMessage : 'Chỉ Admin hoặc Club Leader mới có quyền chỉnh sửa/xóa CLB.'}
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 4px;">
+                    <p style="margin: 0;"><strong>💡 Gợi ý:</strong></p>
+                    <ul style="text-align: left; margin: 10px 0;">
+                        <li>Nếu bạn là thành viên CLB, liên hệ Club Leader để được hỗ trợ</li>
+                        <li>Nếu bạn là Club Leader, đăng nhập lại để kiểm tra quyền</li>
+                        <li>Nếu bạn cần quyền Admin, liên hệ quản trị viên hệ thống</li>
+                    </ul>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="error-icon">⚠️</div>
+                <h1>Oops! Something went wrong</h1>
+                <p>We're sorry, but an error occurred while processing your request.</p>
+                
+                <c:if test="${not empty errorMessage}">
+                    <div class="error-message">
+                        <strong>Error Details:</strong><br>
+                        ${errorMessage}
+                    </div>
+                </c:if>
+                
+                <c:if test="${not empty error}">
+                    <div class="error-message">
+                        <strong>Error:</strong><br>
+                        ${error}
+                    </div>
+                </c:if>
+                
+                <c:if test="${not empty requestScope['javax.servlet.error.message']}">
+                    <div class="error-message">
+                        <strong>Technical Details:</strong><br>
+                        ${requestScope['javax.servlet.error.message']}
+                    </div>
+                </c:if>
+            </c:otherwise>
+        </c:choose>
         
-        <c:if test="${not empty errorMessage}">
-            <div class="error-message">
-                <strong>Error Details:</strong><br>
-                ${errorMessage}
-            </div>
-        </c:if>
-        
-        <c:if test="${not empty requestScope['javax.servlet.error.message']}">
-            <div class="error-message">
-                <strong>Technical Details:</strong><br>
-                ${requestScope['javax.servlet.error.message']}
-            </div>
-        </c:if>
-        
-        <div>
-            <a href="${pageContext.request.contextPath}/home" class="btn">Go to Home</a>
-            <a href="javascript:history.back()" class="btn">Go Back</a>
+        <div style="margin-top: 20px;">
+            <a href="${pageContext.request.contextPath}/home" class="btn">🏠 Về Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/viewAllClubs" class="btn">📋 Danh sách CLB</a>
+            <a href="javascript:history.back()" class="btn" style="background-color: #6c757d;">↩️ Quay lại</a>
         </div>
         
         <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
-            If this problem persists, please contact the system administrator.
+            Nếu vấn đề vẫn tiếp diễn, vui lòng liên hệ quản trị viên hệ thống.
         </p>
     </div>
 </body>
