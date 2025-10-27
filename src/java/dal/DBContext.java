@@ -31,4 +31,18 @@ public class DBContext {
             connection = null;
         }
     }
+    
+    /**
+     * Close the database connection
+     */
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("Database connection closed successfully.");
+            } catch (SQLException e) {
+                System.err.println("Error closing database connection: " + e.getMessage());
+            }
+        }
+    }
 }
