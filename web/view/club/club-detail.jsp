@@ -72,7 +72,7 @@
                     <a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" class="btn btn-warning">
                         <i class="fa fa-edit"></i> Chỉnh sửa
                     </a>
-                    <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}" class="btn btn-info">
+                    <a href="${pageContext.request.contextPath}/clubDashboard" class="btn btn-info">
                         <i class="fa fa-dashboard"></i> Dashboard
                     </a>
                     <button onclick="confirmDelete()" class="btn btn-danger">

@@ -129,7 +129,7 @@
                 <ul>
                     <li class="ttr-seperate"></li>
                     <li>
-                        <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}" class="ttr-material-button">
+                        <a href="${pageContext.request.contextPath}/clubDashboard" class="ttr-material-button">
                             <span class="ttr-icon"><i class="ti-home"></i></span>
                             <span class="ttr-label">Dashboard</span>
                         </a>
@@ -173,12 +173,12 @@
                         </a>
                         <ul>
                             <li>
-                                <a href="${pageContext.request.contextPath}/listEvents?clubId=${club.clubId}" class="ttr-material-button">
+                                <a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
                                     <span class="ttr-label">Danh sách sự kiện</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/addEvent?clubId=${club.clubId}" class="ttr-material-button">
+                                <a href="${pageContext.request.contextPath}/addNewEvent" class="ttr-material-button">
                                     <span class="ttr-label">Tạo sự kiện mới</span>
                                 </a>
                             </li>

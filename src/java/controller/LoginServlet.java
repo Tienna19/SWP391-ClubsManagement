@@ -1,10 +1,12 @@
 package controller;
 
+import dal.MemberDAO;
 import dal.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.util.List;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -27,7 +29,19 @@ public class LoginServlet extends HttpServlet {
         UserDAO dao = new UserDAO();
         User user = dao.getUserByEmail(email);
 
-        if (user != null && BCrypt.checkpw(passwordHash, user.getPasswordHash())) {
+        // Check password - support both BCrypt hashes and plain text (for backward compatibility)
+        boolean passwordValid = false;
+        if (user != null && user.getPasswordHash() != null) {
+            // If stored password is a BCrypt hash, verify with BCrypt
+            if (user.getPasswordHash().startsWith("$2a$")) {
+                passwordValid = BCrypt.checkpw(passwordHash, user.getPasswordHash());
+            } else {
+                // For backward compatibility, allow plain text password if stored password is plain text
+                passwordValid = passwordHash.equals(user.getPasswordHash());
+            }
+        }
+
+        if (user != null && passwordValid) {
             HttpSession session = request.getSession();
             
             // Set user information in session
@@ -42,6 +56,9 @@ public class LoginServlet extends HttpServlet {
             String clubId = request.getParameter("clubId");
             String eventId = request.getParameter("eventId");
             
+            // Check user role and redirect accordingly
+            int roleId = user.getRoleId();
+            
             if ("clubDetail".equals(redirect) && clubId != null) {
                 // Redirect back to club detail page
                 String redirectUrl = "clubDetail?clubId=" + clubId;
@@ -49,8 +66,24 @@ public class LoginServlet extends HttpServlet {
                     redirectUrl += "&eventId=" + eventId;
                 }
                 response.sendRedirect(redirectUrl);
+            } else if (roleId == 3) {
+                // RoleID 3 = ClubLeader - redirect to club leader dashboard
+                // Store club ID in session
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+                
+                if (!clubIds.isEmpty()) {
+                    // Store first club ID in session
+                    session.setAttribute("currentClubId", clubIds.get(0));
+                    System.out.println("Redirecting ClubLeader to dashboard with club: " + clubIds.get(0));
+                    response.sendRedirect("clubDashboard");
+                } else {
+                    // No clubs found, redirect to home
+                    System.out.println("ClubLeader has no clubs, redirecting to home");
+                    response.sendRedirect("home");
+                }
             } else {
-                // Default redirect to home
+                // Default redirect to home for other roles
                 response.sendRedirect("home");
             }
         } else {

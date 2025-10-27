@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <!-- Student Club Management System - Events List Page -->
 <head>
@@ -10,25 +10,17 @@
 	<!-- META ============================================= -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="keywords" content="" />
-	<meta name="author" content="" />
-	<meta name="robots" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<!-- DESCRIPTION -->
-	<meta name="description" content="Student Club Management System - View and manage all events" />
-	
-	<!-- OG -->
-	<meta property="og:title" content="Student Club Management System" />
-	<meta property="og:description" content="Student Club Management System - View and manage all events" />
-	<meta property="og:image" content="" />
-	<meta name="format-detection" content="telephone=no">
+	<meta name="description" content="Hệ thống Quản lý Câu lạc bộ Sinh viên - Danh sách sự kiện" />
 	
 	<!-- FAVICONS ICON ============================================= -->
-	<link rel="icon" href="error-404.html" type="image/x-icon" />
-	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
+	<link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" type="image/x-icon" />
+	<link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
 
 	<!-- PAGE TITLE HERE ============================================= -->
-	<title>Events List - Student Club Management System</title>
+	<title>Danh sách Sự kiện - Hệ thống Quản lý CLB Sinh viên</title>
 
 	<!-- MOBILE SPECIFIC ============================================= -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,19 +31,19 @@
 	<![endif]-->
 
 	<!-- All PLUGINS CSS ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/assets.css">
-	<link rel="stylesheet" type="text/css" href="assets/vendors/calendar/fullcalendar.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
 
 	<!-- TYPOGRAPHY ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/typography.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
 
 	<!-- SHORTCODES ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/shortcodes/shortcodes.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
 
 	<!-- STYLESHEETS ============================================= -->
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
-	<link rel="stylesheet" type="text/css" href="assets/css/dashboard.css">
-	<link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+	<link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
 	
 	<!-- Custom styles for events list -->
 	<style>
@@ -275,14 +267,9 @@
 			<!--logo start -->
 			<div class="ttr-logo-box">
 				<div>
-					<a href="index.html" class="ttr-logo" style="text-decoration: none;">
-						<div style="display: flex; align-items: center; color: white;">
-							<div style="margin-right: 10px; font-size: 24px;">🎓</div>
-							<div>
-								<div style="font-size: 20px; font-weight: bold; line-height: 1;">Student Club</div>
-								<div style="font-size: 14px; opacity: 0.9;">Management System</div>
-							</div>
-						</div>
+					<a href="${pageContext.request.contextPath}/home" class="ttr-logo">
+						<img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/assets/images/logo-mobile.png" width="30" height="30">
+						<img class="ttr-logo-desktop" alt="" src="${pageContext.request.contextPath}/assets/images/logo-white.png" width="160" height="27">
 					</a>
 				</div>
 			</div>
@@ -291,25 +278,17 @@
 				<!-- header left menu start -->
 				<ul class="ttr-header-navigation">
 					<li>
-						<a href="index.html" class="ttr-material-button ttr-submenu-toggle">DASHBOARD</a>
+						<a href="${pageContext.request.contextPath}/home" class="ttr-material-button ttr-submenu-toggle">TRANG CHỦ</a>
 					</li>
 					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">CLUBS <i class="fa fa-angle-down"></i></a>
+						<a href="#" class="ttr-material-button ttr-submenu-toggle">MENU NHANH <i class="fa fa-angle-down"></i></a>
 						<div class="ttr-header-submenu">
 							<ul>
-								<li><a href="clubs.html">All Clubs</a></li>
-								<li><a href="my-clubs.html">My Clubs</a></li>
-								<li><a href="create-club.html">Create Club</a></li>
-							</ul>
-						</div>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">EVENTS <i class="fa fa-angle-down"></i></a>
-						<div class="ttr-header-submenu">
-							<ul>
-								<li><a href="listEvents">All Events</a></li>
-								<li><a href="addNewEvent">Add Event</a></li>
-								<li><a href="my-events.html">My Events</a></li>
+								<li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
+								<li><a href="${pageContext.request.contextPath}/listEvents">Sự kiện</a></li>
+								<c:if test="${not empty club}">
+								<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
+								</c:if>
 							</ul>
 						</div>
 					</li>
@@ -323,117 +302,19 @@
 						<a href="#" class="ttr-material-button ttr-search-toggle"><i class="fa fa-search"></i></a>
 					</li>
 					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle"><i class="fa fa-bell"></i></a>
-						<div class="ttr-header-submenu noti-menu">
-							<div class="ttr-notify-header">
-								<span class="ttr-notify-text-top">9 New</span>
-								<span class="ttr-notify-text">User Notifications</span>
-							</div>
-							<div class="noti-box-list">
-								<ul>
-									<li>
-										<span class="notification-icon dashbg-gray">
-											<i class="fa fa-check"></i>
-										</span>
-										<span class="notification-text">
-											<span>Sneha Jogi</span> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 02:14</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-yellow">
-											<i class="fa fa-shopping-cart"></i>
-										</span>
-										<span class="notification-text">
-											<a href="#">Your order is placed</a> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 7 Min</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-red">
-											<i class="fa fa-bullhorn"></i>
-										</span>
-										<span class="notification-text">
-											<span>Your item is shipped</span> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 2 May</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-green">
-											<i class="fa fa-comments-o"></i>
-										</span>
-										<span class="notification-text">
-											<a href="#">Sneha Jogi</a> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 14 July</span>
-										</span>
-									</li>
-									<li>
-										<span class="notification-icon dashbg-primary">
-											<i class="fa fa-file-word-o"></i>
-										</span>
-										<span class="notification-text">
-											<span>Sneha Jogi</span> sent you a message.
-										</span>
-										<span class="notification-time">
-											<a href="#" class="fa fa-close"></a>
-											<span> 15 Min</span>
-										</span>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32"></span></a>
+						<a href="#" class="ttr-material-button ttr-submenu-toggle">
+							<span class="ttr-user-avatar">
+								<img alt="" src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" width="32" height="32">
+							</span>
+						</a>
 						<div class="ttr-header-submenu">
 							<ul>
-								<li><a href="user-profile.html">My Profile</a></li>
-								<li><a href="my-clubs.html">My Clubs</a></li>
-								<li><a href="my-events.html">My Events</a></li>
-								<li><a href="settings.html">Settings</a></li>
-								<li><a href="login.html">Logout</a></li>
+								<li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
+								<c:if test="${not empty club}">
+								<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
+								</c:if>
+								<li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
 							</ul>
-						</div>
-					</li>
-					<li class="ttr-hide-on-mobile">
-						<a href="#" class="ttr-material-button"><i class="ti-layout-grid3-alt"></i></a>
-						<div class="ttr-header-submenu ttr-extra-menu">
-							<a href="clubs.html">
-								<i class="fa fa-users"></i>
-								<span>Clubs</span>
-							</a>
-							<a href="listEvents">
-								<i class="fa fa-calendar"></i>
-								<span>Events</span>
-							</a>
-							<a href="members.html">
-								<i class="fa fa-user"></i>
-								<span>Members</span>
-							</a>
-							<a href="reports.html">
-								<i class="fa fa-bar-chart"></i>
-								<span>Reports</span>
-							</a>
-							<a href="settings.html">
-								<i class="fa fa-cog"></i>
-								<span>Settings</span>
-							</a>
-							<a href="help.html">
-								<i class="fa fa-question-circle"></i>
-								<span>Help</span>
-							</a>
 						</div>
 					</li>
 				</ul>
@@ -443,7 +324,7 @@
 			<div class="ttr-search-bar">
 				<form class="ttr-search-form">
 					<div class="ttr-search-input-wrapper">
-						<input type="text" name="qq" placeholder="search something..." class="ttr-search-input">
+						<input type="text" name="qq" placeholder="Tìm kiếm..." class="ttr-search-input">
 						<button type="submit" name="search" class="ttr-search-submit"><i class="ti-arrow-right"></i></button>
 					</div>
 					<span class="ttr-search-close ttr-search-toggle">
@@ -460,14 +341,8 @@
 		<div class="ttr-sidebar-wrapper content-scroll">
 			<!-- side menu logo start -->
 			<div class="ttr-sidebar-logo">
-				<a href="#" style="text-decoration: none;">
-					<div style="display: flex; align-items: center; color: #333;">
-						<div style="margin-right: 8px; font-size: 20px;">🎓</div>
-						<div>
-							<div style="font-size: 16px; font-weight: bold; line-height: 1;">Student Club</div>
-							<div style="font-size: 12px; opacity: 0.8;">Management</div>
-						</div>
-					</div>
+				<a href="${pageContext.request.contextPath}/home">
+					<img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
 				</a>
 				<div class="ttr-sidebar-toggle-button">
 					<i class="ti-arrow-left"></i>
@@ -477,79 +352,70 @@
 			<!-- sidebar menu start -->
 			<nav class="ttr-sidebar-navi">
 				<ul>
+					<li class="ttr-seperate"></li>
 					<li>
-						<a href="index.html" class="ttr-material-button">
+						<a href="${pageContext.request.contextPath}/clubDashboard" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-home"></i></span>
-		                	<span class="ttr-label">Dashboard</span>
-		                </a>
-		            </li>
+							<span class="ttr-label">Dashboard</span>
+						</a>
+					</li>
 					<li>
-						<a href="clubs.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-layout-grid2"></i></span>
-		                	<span class="ttr-label">Clubs</span>
-		                </a>
-		            </li>
+						<a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-info-alt"></i></span>
+							<span class="ttr-label">Thông tin CLB</span>
+						</a>
+					</li>
 					<li>
-						<a href="listEvents" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-		                	<span class="ttr-label">Events</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="members.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-		                	<span class="ttr-label">Members</span>
-		                </a>
-		            </li>
+						<a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-pencil"></i></span>
+							<span class="ttr-label">Chỉnh sửa CLB</span>
+						</a>
+					</li>
 					<li>
 						<a href="#" class="ttr-material-button">
+							<span class="ttr-icon"><i class="ti-user"></i></span>
+							<span class="ttr-label">Thành viên</span>
+							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+						</a>
+						<ul>
+							<li>
+								<a href="${pageContext.request.contextPath}/memberList?clubId=${club.clubId}" class="ttr-material-button">
+									<span class="ttr-label">Danh sách TV</span>
+								</a>
+							</li>
+							<li>
+								<a href="${pageContext.request.contextPath}/addMember?clubId=${club.clubId}" class="ttr-material-button">
+									<span class="ttr-label">Thêm thành viên</span>
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li class="show">
+						<a href="#" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-		                	<span class="ttr-label">Calendar</span>
-		                	<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-		                </a>
-		                <ul>
-		                	<li>
-		                		<a href="basic-calendar.html" class="ttr-material-button"><span class="ttr-label">Basic Calendar</span></a>
-		                	</li>
-		                	<li>
-		                		<a href="list-view-calendar.html" class="ttr-material-button"><span class="ttr-label">List View</span></a>
-		                	</li>
-		                </ul>
-		            </li>
+							<span class="ttr-label">Sự kiện</span>
+							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+						</a>
+						<ul>
+							<li>
+								<a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
+									<span class="ttr-label">Danh sách sự kiện</span>
+								</a>
+							</li>
+							<li>
+								<a href="${pageContext.request.contextPath}/addNewEvent" class="ttr-material-button">
+									<span class="ttr-label">Tạo sự kiện mới</span>
+								</a>
+							</li>
+						</ul>
+					</li>
 					<li>
-						<a href="reports.html" class="ttr-material-button">
+						<a href="${pageContext.request.contextPath}/clubStatistics?clubId=${club.clubId}" class="ttr-material-button">
 							<span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-		                	<span class="ttr-label">Reports</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="settings.html" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-settings"></i></span>
-		                	<span class="ttr-label">Settings</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="addNewEvent" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-		                	<span class="ttr-label">Add Event</span>
-		                </a>
-		            </li>
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-		                	<span class="ttr-label">My Profile</span>
-		                	<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-		                </a>
-		                <ul>
-		                	<li>
-		                		<a href="user-profile.html" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
-		                	</li>
-		                	<li>
-		                		<a href="teacher-profile.html" class="ttr-material-button"><span class="ttr-label">Teacher Profile</span></a>
-		                	</li>
-		                </ul>
-		            </li>
-		            <li class="ttr-seperate"></li>
+							<span class="ttr-label">Thống kê</span>
+						</a>
+					</li>
+					<li class="ttr-seperate"></li>
 				</ul>
 				<!-- sidebar menu end -->
 			</nav>
@@ -562,11 +428,11 @@
 	<main class="ttr-wrapper">
 		<div class="container-fluid">
 			<div class="db-breadcrumb">
-				<h4 class="breadcrumb-title">Events Management</h4>
+				<h4 class="breadcrumb-title">Quản lý Sự kiện</h4>
 				<ul class="db-breadcrumb-list">
-					<li><a href="#"><i class="fa fa-home"></i>Dashboard</a></li>
-					<li>Events</li>
-					<li>All Events</li>
+					<li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+					<li>Sự kiện</li>
+					<li>Danh sách sự kiện</li>
 				</ul>
 			</div>	
 			
@@ -646,33 +512,33 @@
 						<div class="col-lg-5 col-md-5 col-sm-12">
 							<div class="form-group">
 								<input type="text" class="form-control" name="search" id="searchInput" 
-									   placeholder="Search events by title, description, or location..." 
+									   placeholder="Tìm kiếm sự kiện theo tên, mô tả, hoặc địa điểm..." 
 									   value="${searchTerm}">
 							</div>
 						</div>
 						<div class="col-lg-2 col-md-2 col-sm-6 col-12">
 							<div class="form-group">
 								<select class="form-control" name="status" id="statusFilter">
-									<option value="">All Status</option>
-									<option value="Draft" ${statusFilter == 'Draft' ? 'selected' : ''}>Draft</option>
-									<option value="Pending" ${statusFilter == 'Pending' ? 'selected' : ''}>Pending</option>
-									<option value="Approved" ${statusFilter == 'Approved' ? 'selected' : ''}>Approved</option>
-									<option value="Rejected" ${statusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
-									<option value="Published" ${statusFilter == 'Published' ? 'selected' : ''}>Published</option>
+									<option value="">Tất cả trạng thái</option>
+									<option value="Draft" ${statusFilter == 'Draft' ? 'selected' : ''}>Bản nháp</option>
+									<option value="Pending" ${statusFilter == 'Pending' ? 'selected' : ''}>Đang chờ</option>
+									<option value="Approved" ${statusFilter == 'Approved' ? 'selected' : ''}>Đã duyệt</option>
+									<option value="Rejected" ${statusFilter == 'Rejected' ? 'selected' : ''}>Từ chối</option>
+									<option value="Published" ${statusFilter == 'Published' ? 'selected' : ''}>Đã công bố</option>
 								</select>
 							</div>
 						</div>
 						<div class="col-lg-2 col-md-2 col-sm-6 col-12">
 							<div class="form-group">
 								<button type="submit" class="btn btn-primary btn-block">
-									<i class="fa fa-search"></i> Search
+									<i class="fa fa-search"></i> Tìm kiếm
 								</button>
 							</div>
 						</div>
 						<div class="col-lg-3 col-md-3 col-sm-12">
 							<div class="form-group">
-								<a href="addNewEvent" class="btn btn-success btn-block">
-									<i class="fa fa-plus"></i> Add New Event
+								<a href="${pageContext.request.contextPath}/addNewEvent" class="btn btn-success btn-block">
+									<i class="fa fa-plus"></i> Tạo sự kiện mới
 								</a>
 							</div>
 						</div>
@@ -682,8 +548,8 @@
 						<div class="row" style="margin-top: 10px;">
 							<div class="col-lg-12">
 								<div class="form-group">
-									<a href="listEvents" class="btn btn-secondary">
-										<i class="fa fa-refresh"></i> Clear Filters
+									<a href="${pageContext.request.contextPath}/listEvents" class="btn btn-secondary">
+										<i class="fa fa-refresh"></i> Xóa bộ lọc
 									</a>
 								</div>
 							</div>
@@ -692,12 +558,80 @@
 				</form>
 			</div>
 			
+			<!-- Pending Approval Events Section -->
+			<c:if test="${not empty pendingEvents}">
+			<div class="row m-b30">
+				<div class="col-lg-12">
+					<div class="widget-box">
+						<div class="wc-title">
+							<h4>Sự kiện đang chờ phê duyệt</h4>
+						</div>
+						<div class="widget-inner">
+							<c:forEach var="event" items="${pendingEvents}">
+								<div class="card-courses-list admin-courses event-card">
+									<div class="card-courses-media">
+										<c:choose>
+											<c:when test="${not empty event.image}">
+												<img src="${pageContext.request.contextPath}/${event.image}" alt="${event.eventName}" style="width: 100%; height: 150px; object-fit: cover;">
+											</c:when>
+											<c:otherwise>
+												<div style="background: #f0f0f0; height: 150px; display: flex; align-items: center; justify-content: center;">
+													<i class="fa fa-calendar" style="font-size: 48px; color: #ccc;"></i>
+												</div>
+											</c:otherwise>
+										</c:choose>
+									</div>
+									<div class="card-courses-full-dec">
+										<div class="card-courses-title">
+											<h4>${event.eventName}</h4>
+											<span class="status-badge status-pending">Đang chờ duyệt</span>
+										</div>
+										<div class="card-courses-list-bx">
+											<ul class="card-courses-view">
+												<li>
+													<h5>Bắt đầu</h5>
+													<h4><fmt:formatDate value="${event.startDate}" pattern="dd/MM/yyyy HH:mm" /></h4>
+												</li>
+												<li>
+													<h5>Kết thúc</h5>
+													<h4><fmt:formatDate value="${event.endDate}" pattern="dd/MM/yyyy HH:mm" /></h4>
+												</li>
+												<li>
+													<h5>Địa điểm</h5>
+													<h4>${not empty event.location ? event.location : 'Chưa cập nhật'}</h4>
+												</li>
+											</ul>
+										</div>
+										<div class="row card-courses-dec">
+											<div class="col-md-12">
+												<div class="event-actions">
+													<a href="viewEvent?eventId=${event.eventID}" class="btn btn-info btn-sm">
+														<i class="fa fa-eye"></i> Xem chi tiết
+													</a>
+													<!-- Show edit button if: (Admin) OR (Club Leader created this event) -->
+													<c:if test="${sessionScope.account.roleId == 4 or (sessionScope.account.roleId == 3 and sessionScope.account.userId == event.createdBy)}">
+														<a href="editEvent?eventId=${event.eventID}" class="btn btn-warning btn-sm">
+															<i class="fa fa-edit"></i> Chỉnh sửa
+														</a>
+													</c:if>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</c:forEach>
+						</div>
+					</div>
+				</div>
+			</div>
+			</c:if>
+			
 			<div class="row">
 				<!-- Events List -->
 				<div class="col-lg-12 m-b30">
 					<div class="widget-box">
 						<div class="wc-title">
-							<h4>All Events</h4>
+							<h4>Tất cả Sự kiện</h4>
 						</div>
 						<div class="widget-inner">
 							<c:choose>
@@ -706,14 +640,29 @@
 										<c:forEach var="event" items="${events}">
 											<div class="card-courses-list admin-courses event-card" data-title="${event.eventName}" data-status="${event.status}" data-description="${event.description}">
 												<div class="card-courses-media">
-													<div class="event-date">
-														<div class="day">
-															<fmt:formatDate value="${event.startDate}" pattern="dd" />
-														</div>
-														<div class="month">
-															<fmt:formatDate value="${event.startDate}" pattern="MMM" />
-														</div>
-													</div>
+													<c:choose>
+														<c:when test="${not empty event.image}">
+															<img src="${pageContext.request.contextPath}/${event.image}" alt="${event.eventName}" style="width: 100%; height: 200px; object-fit: cover;">
+															<!-- <div class="event-date" style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px;">
+																<div class="day">
+																	<fmt:formatDate value="${event.startDate}" pattern="dd" />
+																</div>
+																<div class="month">
+																	<fmt:formatDate value="${event.startDate}" pattern="MMM" />
+																</div>
+															</div> -->
+														</c:when>
+														<c:otherwise>
+															<div class="event-date">
+																<div class="day">
+																	<fmt:formatDate value="${event.startDate}" pattern="dd" />
+																</div>
+																<div class="month">
+																	<fmt:formatDate value="${event.startDate}" pattern="MMM" />
+																</div>
+															</div>
+														</c:otherwise>
+													</c:choose>
 												</div>
 												<div class="card-courses-full-dec">
 													<div class="card-courses-title">
@@ -751,35 +700,33 @@
 													</div>
 													<div class="row card-courses-dec">
 														<div class="col-md-12">
-															<h6 class="m-b10">Event Description</h6>
-															<p class="event-description">${not empty event.description ? event.description : 'No description provided.'}</p>	
+															<h6 class="m-b10">Mô tả sự kiện</h6>
+															<p class="event-description">${not empty event.description ? event.description : 'Chưa có mô tả.'}</p>	
 														</div>
 														<div class="col-md-12">
 															<div class="event-actions">
 																<a href="viewEvent?eventId=${event.eventID}" class="btn btn-info btn-sm">
-																	<i class="fa fa-eye"></i> View Details
+																	<i class="fa fa-eye"></i> Xem chi tiết
 																</a>
-																<a href="editEvent?eventId=${event.eventID}" class="btn btn-warning btn-sm">
-																	<i class="fa fa-edit"></i> Edit
-																</a>
-																<c:if test="${event.status == 'Draft' or event.status == 'Pending'}">
-																	<a href="publishEvent?eventId=${event.eventID}" class="btn btn-success btn-sm">
-																		<i class="fa fa-check"></i> Publish
+																<!-- Show action buttons if: (Admin) OR (Club Leader created this event) -->
+																<c:if test="${sessionScope.account.roleId == 4 or (sessionScope.account.roleId == 3 and sessionScope.account.userId == event.createdBy)}">
+																	<a href="editEvent?eventId=${event.eventID}" class="btn btn-warning btn-sm">
+																		<i class="fa fa-edit"></i> Chỉnh sửa
+																	</a>
+																	<c:if test="${event.status == 'Draft' or event.status == 'Pending'}">
+																		<a href="publishEvent?eventId=${event.eventID}" class="btn btn-success btn-sm">
+																			<i class="fa fa-check"></i> Công bố
+																		</a>
+																	</c:if>
+																	<c:if test="${event.status == 'Upcoming' or event.status == 'Published'}">
+																		<button type="button" class="btn btn-warning btn-sm" onclick="showCancelEventModal(${event.eventID})">
+																			<i class="fa fa-times"></i> Hủy sự kiện
+																		</button>
+																	</c:if>
+																	<a href="deleteEvent?eventId=${event.eventID}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa sự kiện này?')">
+																		<i class="fa fa-trash"></i> Xóa
 																	</a>
 																</c:if>
-								<c:if test="${event.status == 'Published'}">
-									<a href="unpublishEvent?eventId=${event.eventID}" class="btn btn-secondary btn-sm">
-										<i class="fa fa-pause"></i> Unpublish
-									</a>
-								</c:if>
-								<c:if test="${event.status == 'Upcoming' or event.status == 'Published'}">
-									<button type="button" class="btn btn-warning btn-sm" onclick="showCancelEventModal(${event.eventID}, '${event.eventName}')">
-										<i class="fa fa-times"></i> Cancel Event
-									</button>
-								</c:if>
-								<a href="deleteEvent?eventId=${event.eventID}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this event?')">
-									<i class="fa fa-trash"></i> Delete
-								</a>
 															</div>
 														</div>
 													</div>
@@ -789,12 +736,12 @@
 									</div>
 								</c:when>
 								<c:otherwise>
-									<div class="no-events">
+										<div class="no-events">
 										<i class="fa fa-calendar-times-o"></i>
-										<h3>No Events Found</h3>
-										<p>There are no events to display at the moment.</p>
-										<a href="addNewEvent" class="btn btn-primary">
-											<i class="fa fa-plus"></i> Create Your First Event
+										<h3>Không tìm thấy sự kiện</h3>
+										<p>Hiện tại không có sự kiện nào để hiển thị.</p>
+										<a href="${pageContext.request.contextPath}/addNewEvent" class="btn btn-primary">
+											<i class="fa fa-plus"></i> Tạo sự kiện đầu tiên
 										</a>
 									</div>
 								</c:otherwise>
@@ -810,14 +757,14 @@
 												<c:when test="${currentPage > 1}">
 													<li class="page-item">
 														<a class="page-link" href="listEvents?page=${currentPage - 1}&search=${searchTerm}&status=${statusFilter}">
-															<i class="fa fa-chevron-left"></i> Previous
+															<i class="fa fa-chevron-left"></i> Trước
 														</a>
 													</li>
 												</c:when>
 												<c:otherwise>
 													<li class="page-item disabled">
 														<span class="page-link">
-															<i class="fa fa-chevron-left"></i> Previous
+															<i class="fa fa-chevron-left"></i> Trước
 														</span>
 													</li>
 												</c:otherwise>
@@ -844,14 +791,14 @@
 												<c:when test="${currentPage < totalPages}">
 													<li class="page-item">
 														<a class="page-link" href="listEvents?page=${currentPage + 1}&search=${searchTerm}&status=${statusFilter}">
-															Next <i class="fa fa-chevron-right"></i>
+															Sau <i class="fa fa-chevron-right"></i>
 														</a>
 													</li>
 												</c:when>
 												<c:otherwise>
 													<li class="page-item disabled">
 														<span class="page-link">
-															Next <i class="fa fa-chevron-right"></i>
+															Sau <i class="fa fa-chevron-right"></i>
 														</span>
 													</li>
 												</c:otherwise>
@@ -861,10 +808,10 @@
 									
 									<!-- Pagination info -->
 									<div class="pagination-info" style="margin-top: 15px; color: #666; font-size: 14px;">
-										Showing ${(currentPage - 1) * recordsPerPage + 1} to ${currentPage * recordsPerPage > totalRecords ? totalRecords : currentPage * recordsPerPage} 
-										of ${totalRecords} events
+										Hiển thị ${(currentPage - 1) * recordsPerPage + 1} đến ${currentPage * recordsPerPage > totalRecords ? totalRecords : currentPage * recordsPerPage} 
+										trong tổng số ${totalRecords} sự kiện
 										<c:if test="${not empty searchTerm or not empty statusFilter}">
-											(filtered results)
+											(kết quả đã lọc)
 										</c:if>
 									</div>
 								</div>
@@ -879,23 +826,23 @@
 	<div class="ttr-overlay"></div>
 
 <!-- External JavaScripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/vendors/bootstrap/js/popper.min.js"></script>
-<script src="assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-<script src="assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-<script src="assets/vendors/magnific-popup/magnific-popup.js"></script>
-<script src="assets/vendors/counter/waypoints-min.js"></script>
-<script src="assets/vendors/counter/counterup.min.js"></script>
-<script src="assets/vendors/imagesloaded/imagesloaded.js"></script>
-<script src="assets/vendors/masonry/masonry.js"></script>
-<script src="assets/vendors/masonry/filter.js"></script>
-<script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
-<script src='assets/vendors/scroll/scrollbar.min.js'></script>
-<script src="assets/js/functions.js"></script>
-<script src="assets/vendors/chart/chart.min.js"></script>
-<script src="assets/js/admin.js"></script>
-<script src='assets/vendors/switcher/switcher.js'></script>
+<script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/magnific-popup/magnific-popup.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/counter/waypoints-min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/counter/counterup.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/imagesloaded/imagesloaded.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
+<script src='${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js'></script>
+<script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
+<script src='${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js'></script>
 
 <script>
 $(document).ready(function() {

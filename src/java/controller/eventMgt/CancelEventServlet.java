@@ -6,6 +6,8 @@
 package controller.eventMgt;
 
 import dal.EventDAO;
+import dal.CreateEventRequestDAO;
+import dal.ClubDAO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Event;
+import model.User;
+import model.CreateEventRequest;
 
 /**
  * Servlet for handling Cancel Event functionality
@@ -22,11 +27,15 @@ import model.Event;
 public class CancelEventServlet extends HttpServlet {
 
     private EventDAO eventDAO;
+    private CreateEventRequestDAO createEventRequestDAO;
+    private ClubDAO clubDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         eventDAO = new EventDAO();
+        createEventRequestDAO = new CreateEventRequestDAO();
+        clubDAO = new ClubDAO();
     }
 
     /**
@@ -45,7 +54,7 @@ public class CancelEventServlet extends HttpServlet {
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
                 request.setAttribute("message", "Event ID is required");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
                 return;
             }
 
@@ -56,7 +65,7 @@ public class CancelEventServlet extends HttpServlet {
             if (event == null) {
                 request.setAttribute("message", "Event not found");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
                 return;
             }
 
@@ -64,7 +73,7 @@ public class CancelEventServlet extends HttpServlet {
             if (!"Upcoming".equals(event.getStatus()) && !"Published".equals(event.getStatus())) {
                 request.setAttribute("message", "Only upcoming or published events can be cancelled");
                 request.setAttribute("messageType", "warning");
-                request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
                 return;
             }
 
@@ -83,19 +92,19 @@ public class CancelEventServlet extends HttpServlet {
 
             // Reload events data and forward back to list events
             reloadEventsData(request);
-            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             request.setAttribute("message", "Invalid event ID format");
             request.setAttribute("messageType", "danger");
             reloadEventsData(request);
-            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
         } catch (Exception e) {
             // Handle unexpected errors
             request.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
             request.setAttribute("messageType", "danger");
             reloadEventsData(request);
-            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
             e.printStackTrace();
         }
     }
@@ -105,63 +114,107 @@ public class CancelEventServlet extends HttpServlet {
      */
     private void reloadEventsData(HttpServletRequest request) {
         try {
-            // Get all events from the database
+            // Get current user from session
+            HttpSession session = request.getSession(false);
+            User currentUser = null;
+            if (session != null) {
+                currentUser = (User) session.getAttribute("account");
+            }
+            
+            // Get filtered events from the database
             List<Event> allEvents = eventDAO.getAllEvents();
             
-            // Calculate statistics for all events
-            int totalEvents = allEvents.size();
-            int publishedEvents = 0;
-            int pendingEvents = 0;
-            int draftEvents = 0;
-            int approvedEvents = 0;
-            int rejectedEvents = 0;
-            int cancelledEvents = 0;
+            // Also get event requests from CreateEventRequests table and convert to Event format
+            List<CreateEventRequest> eventRequests = createEventRequestDAO.getAllEventRequests();
             
-            for (Event event : allEvents) {
-                switch (event.getStatus()) {
-                    case "Published":
-                        publishedEvents++;
-                        break;
-                    case "Pending":
-                        pendingEvents++;
-                        break;
-                    case "Draft":
-                        draftEvents++;
-                        break;
-                    case "Approved":
-                        approvedEvents++;
-                        break;
-                    case "Rejected":
-                        rejectedEvents++;
-                        break;
-                    case "Cancelled":
-                        cancelledEvents++;
-                        break;
+            // Separate Pending events first - they will be displayed in separate section
+            List<Event> pendingEventsList = new ArrayList<>();
+            List<Event> otherEvents = new ArrayList<>();
+            
+            // Process event requests and separate Pending from others
+            for (CreateEventRequest eventRequest : eventRequests) {
+                String status = eventRequest.getStatus();
+                if (status == null || status.trim().isEmpty()) {
+                    status = "Pending";
+                }
+                
+                Event event = convertRequestToEvent(eventRequest);
+                
+                // Separate Pending events
+                if ("Pending".equals(status)) {
+                    // Apply creator filter for Pending events
+                    if (currentUser != null && currentUser.getUserId() == eventRequest.getUserID()) {
+                        pendingEventsList.add(event);
+                    }
+                } else {
+                    otherEvents.add(event);
                 }
             }
             
+            // Add non-Pending event requests to allEvents
+            for (Event evt : otherEvents) {
+                allEvents.add(evt);
+            }
+            
+            // Filter events based on status and user role (simplified for cancel)
+            // Just pass all events to the view
+            
             // Set attributes for the JSP
             request.setAttribute("events", allEvents);
-            request.setAttribute("totalEvents", totalEvents);
-            request.setAttribute("publishedEvents", publishedEvents);
-            request.setAttribute("pendingEvents", pendingEvents);
-            request.setAttribute("draftEvents", draftEvents);
-            request.setAttribute("approvedEvents", approvedEvents);
-            request.setAttribute("rejectedEvents", rejectedEvents);
-            request.setAttribute("cancelledEvents", cancelledEvents);
+            request.setAttribute("pendingEvents", pendingEventsList); // List for iteration
+            request.setAttribute("totalEvents", allEvents.size());
+            request.setAttribute("publishedEvents", 0); // Simplified stats
+            request.setAttribute("pendingEventsCount", pendingEventsList.size());
+            request.setAttribute("draftEvents", 0);
+            request.setAttribute("approvedEvents", 0);
+            request.setAttribute("rejectedEvents", 0);
+            
+            // Pagination defaults
+            request.setAttribute("currentPage", 1);
+            request.setAttribute("totalPages", 1);
+            request.setAttribute("totalRecords", allEvents.size());
+            request.setAttribute("recordsPerPage", 10);
             
         } catch (Exception e) {
             // If there's an error loading events, set empty list
             request.setAttribute("events", new ArrayList<Event>());
+            request.setAttribute("pendingEvents", new ArrayList<Event>());
             request.setAttribute("totalEvents", 0);
             request.setAttribute("publishedEvents", 0);
-            request.setAttribute("pendingEvents", 0);
+            request.setAttribute("pendingEventsCount", 0);
             request.setAttribute("draftEvents", 0);
             request.setAttribute("approvedEvents", 0);
             request.setAttribute("rejectedEvents", 0);
-            request.setAttribute("cancelledEvents", 0);
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Convert CreateEventRequest to Event object
+     */
+    private Event convertRequestToEvent(CreateEventRequest request) {
+        String status = request.getStatus();
+        if (status == null || status.trim().isEmpty()) {
+            status = "Pending";
+        }
+        
+        Event event = new Event(
+            request.getClubID(),
+            request.getEventName(),
+            request.getDescription(),
+            request.getLocation(),
+            request.getCapacity(),
+            request.getStartDate(),
+            request.getEndDate(),
+            request.getRegistrationStart(),
+            request.getRegistrationEnd(),
+            request.getUserID(),
+            status,
+            request.getImage()
+        );
+        // Set a special eventID to identify it as a request
+        event.setEventID(-request.getRequestID() - 1000000);
+        return event;
     }
 
     /**
