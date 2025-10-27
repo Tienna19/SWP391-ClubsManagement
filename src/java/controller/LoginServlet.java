@@ -29,8 +29,30 @@ public class LoginServlet extends HttpServlet {
 
         if (user != null && BCrypt.checkpw(passwordHash, user.getPasswordHash())) {
             HttpSession session = request.getSession();
+            
+            // Set user information in session
             session.setAttribute("account", user);
-            response.sendRedirect("home");
+            session.setAttribute("userId", user.getUserId());
+            session.setAttribute("roleId", user.getRoleId());
+            session.setAttribute("fullName", user.getFullName());
+            session.setAttribute("email", user.getEmail());
+            
+            // Check for redirect parameter (for guest → login → back to page)
+            String redirect = request.getParameter("redirect");
+            String clubId = request.getParameter("clubId");
+            String eventId = request.getParameter("eventId");
+            
+            if ("clubDetail".equals(redirect) && clubId != null) {
+                // Redirect back to club detail page
+                String redirectUrl = "clubDetail?clubId=" + clubId;
+                if (eventId != null) {
+                    redirectUrl += "&eventId=" + eventId;
+                }
+                response.sendRedirect(redirectUrl);
+            } else {
+                // Default redirect to home
+                response.sendRedirect("home");
+            }
         } else {
             request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);

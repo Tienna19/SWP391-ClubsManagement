@@ -23,15 +23,8 @@ public class ViewAllClubServlet extends HttpServlet {
             String searchQuery = request.getParameter("search");
             String statusFilter = request.getParameter("status");
             String categoryFilter = request.getParameter("category");
-            String clubIdParam = request.getParameter("clubId");
             String sortBy = request.getParameter("sort");
             String sortOrder = request.getParameter("order");
-            
-            // If clubId is provided, show club details
-            if (clubIdParam != null && !clubIdParam.trim().isEmpty()) {
-                handleClubDetails(request, response, dao, clubIdParam);
-                return;
-            }
             
             // Parse category filter
             Integer categoryId = null;
@@ -127,34 +120,6 @@ public class ViewAllClubServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
-    }
-    
-    /**
-     * Handle club details view
-     */
-    private void handleClubDetails(HttpServletRequest request, HttpServletResponse response, 
-                                 ClubDAO dao, String clubIdParam) 
-            throws ServletException, IOException {
-        try {
-            int clubId = Integer.parseInt(clubIdParam);
-            
-            // Get specific club by ID
-            Club selectedClub = dao.getClubById(clubId);
-            List<Club> allClubs = dao.getAllClubs();
-            
-            if (selectedClub != null) {
-                request.setAttribute("selectedClub", selectedClub);
-                request.setAttribute("clubs", allClubs);
-                request.getRequestDispatcher("/view/club/clubDetails.jsp").forward(request, response);
-            } else {
-                // Club not found, redirect back to all clubs
-                response.sendRedirect("viewAllClubs?error=Club not found");
-            }
-            
-        } catch (NumberFormatException e) {
-            // Invalid club ID, redirect back to all clubs
-            response.sendRedirect("viewAllClubs?error=Invalid club ID");
-        }
     }
     
     /**
