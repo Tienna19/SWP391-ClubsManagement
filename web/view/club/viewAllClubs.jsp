@@ -94,6 +94,17 @@
                     <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
                     <li>Danh sách CLB</li>
                 </ul>
+                <!-- Add New Club Button (for logged-in users) -->
+                <c:if test="${not empty sessionScope.userId}">
+                    <div style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%);">
+                        <a href="${pageContext.request.contextPath}/createClub" 
+                           class="btn btn-primary" 
+                           style="padding: 8px 20px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fa fa-plus-circle"></i>
+                            <span>Tạo CLB mới</span>
+                        </a>
+                    </div>
+                </c:if>
             </div>    
             
             <!-- Filters -->
