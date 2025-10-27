@@ -426,7 +426,7 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="<c:url value='/viewClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="view">View</a>
+                                    <a href="<c:url value='/clubDetail'><c:param name='clubId' value='${c.clubId}'/></c:url>" class="view">View</a>
                                     <c:if test="${c.status != null && c.status == 'Active'}">
                                         <a href="<c:url value='/joinClub'><c:param name='id' value='${c.clubId}'/></c:url>" class="join">Join</a>
                                     </c:if>

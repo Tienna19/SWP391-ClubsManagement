@@ -73,7 +73,14 @@ public class RegisterServlet extends HttpServlet {
 
         if (success) {
             HttpSession session = request.getSession();
+            
+            // Set user information in session
             session.setAttribute("account", newUser);
+            session.setAttribute("userId", newUser.getUserId());
+            session.setAttribute("roleId", newUser.getRoleId());
+            session.setAttribute("fullName", newUser.getFullName());
+            session.setAttribute("email", newUser.getEmail());
+            
             response.sendRedirect("home");
         } else {
             request.setAttribute("error", "Đăng ký thất bại. Vui lòng thử lại!");

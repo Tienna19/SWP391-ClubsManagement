@@ -84,6 +84,46 @@
         <url-pattern>/clubDashboard</url-pattern>
     </servlet-mapping>
 
+    <!-- AdminDashboardServlet -->
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>controller.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/adminDashboard</url-pattern>
+    </servlet-mapping>
+
+    <!-- ViewClubDetailServlet -->
+    <servlet>
+        <servlet-name>ViewClubDetailServlet</servlet-name>
+        <servlet-class>controller.club.ViewClubDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewClubDetailServlet</servlet-name>
+        <url-pattern>/clubDetail</url-pattern>
+    </servlet-mapping>
+
+    <!-- UpdateClubServlet -->
+    <servlet>
+        <servlet-name>UpdateClubServlet</servlet-name>
+        <servlet-class>controller.club.UpdateClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateClubServlet</servlet-name>
+        <url-pattern>/updateClub</url-pattern>
+    </servlet-mapping>
+
+    <!-- DeleteClubServlet -->
+    <servlet>
+        <servlet-name>DeleteClubServlet</servlet-name>
+        <servlet-class>controller.club.DeleteClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteClubServlet</servlet-name>
+        <url-pattern>/deleteClub</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
