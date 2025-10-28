@@ -167,14 +167,14 @@
         </a>
         <nav>
             <ul>
-                <li><a href="${pageContext.request.contextPath}/home">HOME</a></li>
+                <li><a href="${pageContext.request.contextPath}/home">Trang chủ</a></li>
                 <li>
                     <a href="#">CLUBS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
                     <div class="submenu">
                         <ul>
-                            <li><a href="${pageContext.request.contextPath}/viewAllClubs">All Clubs</a></li>
-                            <li><a href="${pageContext.request.contextPath}/myClubs">My Clubs</a></li>
-                            <li><a href="${pageContext.request.contextPath}/createClub">Create Club</a></li>
+                            <li><a href="${pageContext.request.contextPath}/viewAllClubs">Tất cả Câu lạc bộ</a></li>
+                            <li><a href="${pageContext.request.contextPath}/myClubs">Câu lạc bộ của tôi</a></li>
+                            <li><a href="${pageContext.request.contextPath}/createClub">Tạo Câu lạc bộ</a></li>
                         </ul>
                     </div>
                 </li>
@@ -182,9 +182,9 @@
                     <a href="#">EVENTS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
                     <div class="submenu">
                         <ul>
-                            <li><a href="${pageContext.request.contextPath}/viewAllEvents">All Events</a></li>
-                            <li><a href="${pageContext.request.contextPath}/addNewEvent">Add Event</a></li>
-                            <li><a href="${pageContext.request.contextPath}/myEvents">My Events</a></li>
+                            <li><a href="${pageContext.request.contextPath}/viewAllEvents">Tất cả Sự kiện</a></li>
+                            <li><a href="${pageContext.request.contextPath}/addNewEvent">Thêm sự kiện</a></li>
+                            <li><a href="${pageContext.request.contextPath}/myEvents">Sự kiện của tôi</a></li>
                         </ul>
                     </div>
                 </li>
@@ -198,18 +198,18 @@
             <c:choose>
                 <c:when test="${not empty account}">
                 <a href="profile"><img src="${account.profileImage}" class="avatar" alt="User"></a>
-                Hi, <strong>${account.fullName}</strong> 
+                Xin chào, <strong>${account.fullName}</strong> 
                 <a href="#" 
                    onclick="if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
                window.location.href = 'logout';
            }
            return false;">
-                    <i class="fa fa-sign-out"></i> Logout
+                    <i class="fa fa-sign-out"></i> Đăng xuất
                 </a>
             </c:when>
             <c:otherwise>
-                <a href="login">Login</a>
-                <a href="register">Register</a>
+                <a href="login">Đăng nhập</a>
+                <a href="register">Đăng kí</a>
             </c:otherwise>
         </c:choose>
     </div>
