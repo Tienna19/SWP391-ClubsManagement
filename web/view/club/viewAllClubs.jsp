@@ -88,18 +88,20 @@
     <!--Main container start -->
     <main class="ttr-wrapper">
         <div class="container-fluid">
-            <div class="db-breadcrumb">
-                <h4 class="breadcrumb-title">Danh sách Câu Lạc Bộ</h4>
-                <ul class="db-breadcrumb-list">
-                    <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
-                    <li>Danh sách CLB</li>
-                </ul>
+            <div class="db-breadcrumb" style="position: relative; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 class="breadcrumb-title">Danh sách Câu Lạc Bộ</h4>
+                    <ul class="db-breadcrumb-list">
+                        <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+                        <li>Danh sách CLB</li>
+                    </ul>
+                </div>
                 <!-- Add New Club Button (for logged-in users) -->
                 <c:if test="${not empty sessionScope.userId}">
-                    <div style="position: absolute; right: 30px; top: 50%; transform: translateY(-50%);">
+                    <div style="flex-shrink: 0;">
                         <a href="${pageContext.request.contextPath}/createClub" 
                            class="btn btn-primary" 
-                           style="padding: 8px 20px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                           style="padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
                             <i class="fa fa-plus-circle"></i>
                             <span>Tạo CLB mới</span>
                         </a>
