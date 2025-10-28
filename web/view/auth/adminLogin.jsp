@@ -58,52 +58,38 @@
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
             <div class="account-form">
-                <div class="account-head" style="background-image:url(assets/images/background/bg2.jpg);">
-                    <a href="home"><img src="assets/images/logo-white-2.png" alt=""></a>
-                </div>
                 <div class="account-form-inner">
                     <div class="account-container">
                         <div class="heading-bx left">
-                            <h2 class="title-head">Đăng nhập</h2>
-                            <p>Chưa có tài khoản? <a href="register">Đăng kí</a></p>
+                            <h2 class="title-head">Đăng nhập bằng tài khoản Admin cấp</h2>
                         </div>	
-                        <form class="contact-bx" action="login" method="post">
+                        <form class="contact-bx" action="admin-login" method="post">
                             <div class="row placeani">
-                                <form class="contact-bx" action="login" method="post">
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <label>Email</label>
-                                                <input name="email" type="email" required="" class="form-control">
-                                            </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label>Email</label>
+                                            <input name="email" type="email" required="" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <div class="input-group"> 
-                                                <label>Mật khẩu</label>
-                                                <input name="passwordHash" type="password" class="form-control" required="">
-                                            </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <div class="input-group"> 
+                                            <label>Mật khẩu</label>
+                                            <input name="passwordHash" type="password" class="form-control" required="">
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-lg-12 m-b30">
-                                        <div class="form-group form-forget">
-                                            <button name="submit" type="submit" value="Submit" class="btn button-md">Đăng nhập</button>
-                                            <a href="forget-password.html" class="ml-auto">Quên mật khẩu?</a>
-                                        </div>
+                                <div class="col-lg-12 m-b30">
+                                    <div class="form-group form-forget">
+                                        <button name="submit" type="submit" value="Submit" class="btn button-md">Đăng nhập</button>
                                     </div>
-                                    <div class="col-lg-12">
-                                        <h6>Đăng nhập</h6>
-                                        <div class="d-flex">
-                                            <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
-                                            <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google Plus</a>
-                                        </div>
-                                        <h6>Đăng nhập bằng tài khoản Admin cấp</h6>
-                                        <div class="d-flex">
-                                            <a href="admin-login">Bấm vô đây</a>
-                                            </div>
-                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <p>Đã có tài khoản? <a href="login">Đăng nhập</a></p>
+                                </div>
                             </div>
                         </form>
                     </div>
