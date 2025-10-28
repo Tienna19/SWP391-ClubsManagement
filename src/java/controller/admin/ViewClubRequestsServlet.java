@@ -24,13 +24,26 @@ public class ViewClubRequestsServlet extends HttpServlet {
             return;
         }
 
+        Integer userId = (Integer) session.getAttribute("userId");
         Integer roleId = (Integer) session.getAttribute("roleId");
+        String fullName = (String) session.getAttribute("fullName");
+        
+        // DEBUG: Log session info
+        System.out.println("=== VIEW CLUB REQUESTS - SESSION INFO ===");
+        System.out.println("User ID: " + userId);
+        System.out.println("Role ID: " + roleId);
+        System.out.println("Full Name: " + fullName);
+        System.out.println("=========================================");
+        
         if (roleId == null || roleId != 1) {  // RoleID 1 = Admin
+            System.err.println("❌ ACCESS DENIED - Role ID: " + roleId + " (expected: 1)");
             request.setAttribute("error", "Chỉ Admin mới có quyền xem danh sách yêu cầu tạo CLB.");
             request.setAttribute("errorCode", "403");
             request.getRequestDispatcher("/view/error.jsp").forward(request, response);
             return;
         }
+        
+        System.out.println("✅ Admin access granted - Role ID: " + roleId);
 
         try {
             CreateClubRequestDAO dao = new CreateClubRequestDAO();
