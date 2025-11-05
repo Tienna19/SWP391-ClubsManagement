@@ -428,13 +428,20 @@
 	<main class="ttr-wrapper">
 		<div class="container-fluid">
 			<div class="db-breadcrumb">
-				<h4 class="breadcrumb-title">Quản lý Sự kiện</h4>
-				<ul class="db-breadcrumb-list">
-					<li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
-					<li>Sự kiện</li>
-					<li>Danh sách sự kiện</li>
-				</ul>
-			</div>	
+				<div class="d-flex align-items-center justify-content-between" style="width: 100%;">
+					<div class="d-flex align-items-center">
+						<h4 class="breadcrumb-title" style="margin: 0; margin-right: 20px;">Quản lý Sự kiện</h4>
+						<ul class="db-breadcrumb-list" style="margin: 0;">
+							<li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+							<li>Sự kiện</li>
+							<li>Danh sách sự kiện</li>
+						</ul>
+					</div>
+					<a href="${pageContext.request.contextPath}/addNewEvent" class="btn btn-success" style="margin-left: auto;">
+						<i class="fa fa-plus"></i> Tạo sự kiện
+					</a>
+				</div>
+			</div>
 			
 			<!-- Success/Error Message Display -->
 			<c:if test="${not empty message}">
@@ -509,14 +516,14 @@
 			<div class="search-filter-bar">
 				<form method="get" action="listEvents" id="searchFilterForm">
 					<div class="row">
-						<div class="col-lg-5 col-md-5 col-sm-12">
+						<div class="col-lg-6 col-md-6 col-sm-12">
 							<div class="form-group">
-								<input type="text" class="form-control" name="search" id="searchInput" 
-									   placeholder="Tìm kiếm sự kiện theo tên, mô tả, hoặc địa điểm..." 
+								<input type="text" class="form-control" name="search" id="searchInput"
+									   placeholder="Tìm kiếm sự kiện theo tên, mô tả, hoặc địa điểm..."
 									   value="${searchTerm}">
 							</div>
 						</div>
-						<div class="col-lg-2 col-md-2 col-sm-6 col-12">
+						<div class="col-lg-3 col-md-3 col-sm-6 col-12">
 							<div class="form-group">
 								<select class="form-control" name="status" id="statusFilter">
 									<option value="">Tất cả trạng thái</option>
@@ -525,36 +532,26 @@
 									<option value="Approved" ${statusFilter == 'Approved' ? 'selected' : ''}>Đã duyệt</option>
 									<option value="Rejected" ${statusFilter == 'Rejected' ? 'selected' : ''}>Từ chối</option>
 									<option value="Published" ${statusFilter == 'Published' ? 'selected' : ''}>Đã công bố</option>
+									<option value="Cancelled" ${statusFilter == 'Cancelled' ? 'selected' : ''}>Đã hủy</option>
 								</select>
-							</div>
-						</div>
-						<div class="col-lg-2 col-md-2 col-sm-6 col-12">
-							<div class="form-group">
-								<button type="submit" class="btn btn-primary btn-block">
-									<i class="fa fa-search"></i> Tìm kiếm
-								</button>
 							</div>
 						</div>
 						<div class="col-lg-3 col-md-3 col-sm-12">
 							<div class="form-group">
-								<a href="${pageContext.request.contextPath}/addNewEvent" class="btn btn-success btn-block">
-									<i class="fa fa-plus"></i> Tạo sự kiện mới
-								</a>
-							</div>
-						</div>
-					</div>
-					<!-- Clear Filters Row (only show when filters are active) -->
-					<c:if test="${not empty searchTerm or not empty statusFilter}">
-						<div class="row" style="margin-top: 10px;">
-							<div class="col-lg-12">
-								<div class="form-group">
-									<a href="${pageContext.request.contextPath}/listEvents" class="btn btn-secondary">
-										<i class="fa fa-refresh"></i> Xóa bộ lọc
-									</a>
+								<div class="d-flex" style="gap:10px;">
+									<button type="submit" class="btn btn-primary" style="width:auto;">
+										<i class="fa fa-search"></i> Tìm kiếm
+									</button>
+									<c:if test="${not empty searchTerm or not empty statusFilter}">
+										<a href="${pageContext.request.contextPath}/listEvents" class="btn btn-secondary" style="width:auto;">
+											<i class="fa fa-refresh"></i> Xóa bộ lọc
+										</a>
+									</c:if>
 								</div>
 							</div>
 						</div>
-					</c:if>
+					</div>
+					<!-- Clear Filters now inline with search button -->
 				</form>
 			</div>
 			
@@ -620,6 +617,77 @@
 									</div>
 								</div>
 							</c:forEach>
+						</div>
+					</div>
+				</div>
+			</div>
+			</c:if>
+			
+			<!-- Draft Events Section -->
+			<c:if test="${not empty draftEvents}">
+			<div class="row m-b30">
+				<div class="col-lg-12">
+					<div class="widget-box">
+						<div class="wc-title">
+							<h4>Sự kiện bản nháp</h4>
+						</div>
+						<div class="widget-inner">
+							<c:forEach var="event" items="${draftEvents}">
+								<div class="card-courses-list admin-courses event-card">
+									<div class="card-courses-media">
+										<c:choose>
+											<c:when test="${not empty event.image}">
+												<img src="${pageContext.request.contextPath}/${event.image}" alt="${event.eventName}" style="width: 100%; height: 150px; object-fit: cover;">
+											</c:when>
+											<c:otherwise>
+												<div style="background: #f0f0f0; height: 150px; display: flex; align-items: center; justify-content: center;">
+													<i class="fa fa-calendar" style="font-size: 48px; color: #ccc;"></i>
+												</div>
+											</c:otherwise>
+										</c:choose>
+									</div>
+									<div class="card-courses-full-dec">
+										<div class="card-courses-title">
+											<h4>${event.eventName}</h4>
+											<span class="status-badge status-draft">Bản nháp</span>
+										</div>
+										<div class="card-courses-list-bx">
+											<ul class="card-courses-view">
+												<li>
+													<h5>Bắt đầu</h5>
+													<h4><fmt:formatDate value="${event.startDate}" pattern="dd/MM/yyyy HH:mm" /></h4>
+												</li>
+												<li>
+													<h5>Kết thúc</h5>
+													<h4><fmt:formatDate value="${event.endDate}" pattern="dd/MM/yyyy HH:mm" /></h4>
+												</li>
+												<li>
+													<h5>Địa điểm</h5>
+													<h4>${not empty event.location ? event.location : 'Chưa cập nhật'}</h4>
+												</li>
+											</ul>
+										</div>
+										<div class="row card-courses-dec">
+											<div class="col-md-12">
+												<div class="event-actions">
+													<a href="viewEvent?eventId=${event.eventID}" class="btn btn-info btn-sm">
+														<i class="fa fa-eye"></i> Xem chi tiết
+													</a>
+													<!-- Show edit/publish if: (Admin) OR (Club Leader created this event) -->
+													<c:if test="${sessionScope.account.roleId == 4 or (sessionScope.account.roleId == 3 and sessionScope.account.userId == event.createdBy)}">
+														<a href="editEvent?eventId=${event.eventID}" class="btn btn-warning btn-sm">
+															<i class="fa fa-edit"></i> Chỉnh sửa
+														</a>
+														<a href="publishEvent?eventId=${event.eventID}" class="btn btn-success btn-sm">
+															<i class="fa fa-check"></i> Công bố
+														</a>
+													</c:if>
+												</div>
+											</div>
+										</div>
+									</div>
+								</c:forEach>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -718,11 +786,11 @@
 																			<i class="fa fa-check"></i> Công bố
 																		</a>
 																	</c:if>
-																	<c:if test="${event.status == 'Upcoming' or event.status == 'Published'}">
-																		<button type="button" class="btn btn-warning btn-sm" onclick="showCancelEventModal(${event.eventID})">
-																			<i class="fa fa-times"></i> Hủy sự kiện
-																		</button>
-																	</c:if>
+									<c:if test="${event.status == 'Upcoming' or event.status == 'Published'}">
+										<button type="button" class="btn btn-warning btn-sm btn-cancel-event" data-id="${event.eventID}" data-name="<c:out value='${event.eventName}'/>">
+											<i class="fa fa-times"></i> Hủy sự kiện
+										</button>
+									</c:if>
 																	<a href="deleteEvent?eventId=${event.eventID}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa sự kiện này?')">
 																		<i class="fa fa-trash"></i> Xóa
 																	</a>
@@ -902,6 +970,13 @@ $(document).ready(function() {
             $submitBtn.html(originalText);
             $submitBtn.prop('disabled', false);
         }, 5000);
+    });
+
+    // Bind cancel event button click
+    $('.btn-cancel-event').on('click', function() {
+        var eventId = $(this).data('id');
+        var eventName = $(this).data('name');
+        showCancelEventModal(eventId, eventName);
     });
 });
 

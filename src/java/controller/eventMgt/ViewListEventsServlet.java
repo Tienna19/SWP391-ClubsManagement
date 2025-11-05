@@ -103,6 +103,8 @@ public class ViewListEventsServlet extends HttpServlet {
             
             // Separate Pending events first - they will be displayed in separate section
             List<Event> pendingEventsList = new ArrayList<>();
+            // Separate Draft events - displayed in their own section for creators
+            List<Event> draftEventsList = new ArrayList<>();
             List<Event> otherEvents = new ArrayList<>();
             
             // Process event requests and separate Pending from others
@@ -182,10 +184,14 @@ public class ViewListEventsServlet extends HttpServlet {
                                 // This should not happen anymore, but keeping for backward compatibility
                                 pendingEventsList.add(event);
                                 System.out.println("Added Pending event from Events table: " + event.getEventName());
-                            } else if (!"Pending".equals(status)) {
-                                // Other private statuses (Draft, Rejected) - add to filtered list
+                            } else if ("Draft".equals(status)) {
+                                // Put Draft events into separate list for the Draft section
+                                draftEventsList.add(event);
+                                System.out.println("Added to draftEventsList: " + event.getEventName());
+                            } else if ("Rejected".equals(status)) {
+                                // Keep Rejected in the main filtered list (still private to creator)
                                 filteredEventsList.add(event);
-                                System.out.println("Added private event: " + event.getEventName() + " (Status: " + status + ")");
+                                System.out.println("Added private event: " + event.getEventName() + " (Status: Rejected)");
                             } else {
                                 System.out.println("Skipped Pending event (already in pending section): " + event.getEventName());
                             }
@@ -199,32 +205,88 @@ public class ViewListEventsServlet extends HttpServlet {
                 allEvents = filteredEventsList;
                 System.out.println("Total events after filtering (excluding Pending): " + allEvents.size());
                 System.out.println("Total Pending events (including from Events): " + pendingEventsList.size());
+                System.out.println("Total Draft events (creator only): " + draftEventsList.size());
             }
             
-            // Apply search filter
+            // Apply search and status filter to main events
             List<Event> filteredEvents = new ArrayList<>();
             for (Event event : allEvents) {
                 boolean matchesSearch = true;
                 boolean matchesStatus = true;
-                
+
                 // Search filter
                 if (!searchTerm.isEmpty()) {
                     String searchLower = searchTerm.toLowerCase();
                     matchesSearch = (event.getEventName().toLowerCase().contains(searchLower) ||
-                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)));
+                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)) ||
+                                   (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchLower)));
                 }
-                
+
                 // Status filter
                 if (!statusFilter.isEmpty()) {
                     matchesStatus = event.getStatus().equals(statusFilter);
                 }
-                
+
                 if (matchesSearch && matchesStatus) {
                     filteredEvents.add(event);
                 }
             }
-            
+
             System.out.println("Events after search filter: " + filteredEvents.size() + " (searchTerm: '" + searchTerm + "', statusFilter: '" + statusFilter + "')");
+
+            // Apply search and status filter to pending events
+            List<Event> filteredPendingEvents = new ArrayList<>();
+            for (Event event : pendingEventsList) {
+                boolean matchesSearch = true;
+                boolean matchesStatus = true;
+
+                // Search filter
+                if (!searchTerm.isEmpty()) {
+                    String searchLower = searchTerm.toLowerCase();
+                    matchesSearch = (event.getEventName().toLowerCase().contains(searchLower) ||
+                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)) ||
+                                   (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchLower)));
+                }
+
+                // Status filter - for pending events, only show if filter is empty or matches "Pending"
+                if (!statusFilter.isEmpty()) {
+                    matchesStatus = event.getStatus().equals(statusFilter);
+                }
+
+                if (matchesSearch && matchesStatus) {
+                    filteredPendingEvents.add(event);
+                }
+            }
+            pendingEventsList = filteredPendingEvents;
+
+            System.out.println("Pending events after search filter: " + pendingEventsList.size() + " (searchTerm: '" + searchTerm + "', statusFilter: '" + statusFilter + "')");
+
+            // Apply search and status filter to draft events
+            List<Event> filteredDraftEvents = new ArrayList<>();
+            for (Event event : draftEventsList) {
+                boolean matchesSearch = true;
+                boolean matchesStatus = true;
+
+                // Search filter
+                if (!searchTerm.isEmpty()) {
+                    String searchLower = searchTerm.toLowerCase();
+                    matchesSearch = (event.getEventName().toLowerCase().contains(searchLower) ||
+                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)) ||
+                                   (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchLower)));
+                }
+
+                // Status filter - for draft events, only show if filter is empty or matches "Draft"
+                if (!statusFilter.isEmpty()) {
+                    matchesStatus = event.getStatus().equals(statusFilter);
+                }
+
+                if (matchesSearch && matchesStatus) {
+                    filteredDraftEvents.add(event);
+                }
+            }
+            draftEventsList = filteredDraftEvents;
+
+            System.out.println("Draft events after search filter: " + draftEventsList.size() + " (searchTerm: '" + searchTerm + "', statusFilter: '" + statusFilter + "')");
             
             // Calculate pagination
             int totalRecords = filteredEvents.size();
@@ -284,10 +346,11 @@ public class ViewListEventsServlet extends HttpServlet {
             System.out.println("Setting 'pendingEvents' (pending list): " + pendingEventsList.size() + " events");
             request.setAttribute("events", eventsForPage);
             request.setAttribute("pendingEvents", pendingEventsList); // List of pending events
+            request.setAttribute("draftEvents", draftEventsList); // List of draft events
             request.setAttribute("totalEvents", totalEvents);
             request.setAttribute("publishedEvents", publishedEvents);
             request.setAttribute("pendingEventsCount", pendingEvents); // Count only
-            request.setAttribute("draftEvents", draftEvents);
+            request.setAttribute("draftEventsCount", draftEvents);
             request.setAttribute("approvedEvents", approvedEvents);
             request.setAttribute("rejectedEvents", rejectedEvents);
             System.out.println("==========================================");
@@ -308,9 +371,19 @@ public class ViewListEventsServlet extends HttpServlet {
             
         } catch (Exception e) {
             // Handle unexpected errors
-            request.setAttribute("error", "An error occurred while loading events: " + e.getMessage());
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
             e.printStackTrace();
+            try {
+                if (!response.isCommitted()) {
+                    request.setAttribute("error", "An error occurred while loading events: " + e.getMessage());
+                    request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                } else {
+                    // Response already committed (likely error during JSP render). Send error status.
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading events");
+                }
+            } catch (IllegalStateException ise) {
+                // As a last resort, log and do nothing
+                System.err.println("Response already committed; cannot forward. Message: " + ise.getMessage());
+            }
         }
     }
 
