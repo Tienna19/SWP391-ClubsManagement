@@ -288,8 +288,8 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            <div><i class="fa fa-check-circle text-success me-2"></i>Hệ thống hoạt động ổn định</div>
-            <div class="mt-2"><i class="fa fa-life-ring me-2"></i>Hỗ trợ: support@stuclub.vn</div>
+            <div><i class="fa fa-check-circle text-success mr-2"></i>Hệ thống hoạt động ổn định</div>
+            <div class="mt-2"><i class="fa fa-life-ring mr-2"></i>Hỗ trợ: support@stuclub.vn</div>
         </div>
     </aside>
 
