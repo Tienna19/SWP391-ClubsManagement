@@ -310,3 +310,13 @@ yarn.lock
 !.gitkeep
 !README.md
 !LICENSE
+/nbproject
+*.md
+*.sql
+/nbproject/private
+/nbproject/private
+/nbproject/private
+nbproject/project.properties
+nbproject/genfiles.properties
+nbproject/private/private.properties
+nbproject/private/private.properties

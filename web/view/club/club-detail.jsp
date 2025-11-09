@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,34 +10,224 @@
     <link href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">
     
     <style>
-        .club-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 30px;
+        body {
+            background: #f7f8fc;
         }
-        .club-logo {
-            width: 150px;
-            height: 150px;
+        .club-hero {
+            position: relative;
+            padding: 100px 0 70px;
+            background: linear-gradient(120deg, rgba(94,53,177,1) 0%, rgba(63,81,181,1) 70%, rgba(33,150,243,1) 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+        .club-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25), transparent 50%),
+                        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.18), transparent 45%);
+            pointer-events: none;
+        }
+        .club-hero .container {
+            position: relative;
+            z-index: 1;
+        }
+        .club-logo-wrapper {
+            width: 160px;
+            height: 160px;
+            border-radius: 28px;
+            padding: 6px;
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 18px 40px rgba(21, 22, 79, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .club-logo-wrapper img,
+        .club-logo-placeholder {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border-radius: 15px;
-            border: 5px solid white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 22px;
+            background: #fff;
         }
-        .stat-box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+        .club-logo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5E35B1;
+            font-size: 48px;
+        }
+        .category-pill,
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-right: 10px;
+        }
+        .category-pill {
+            background: rgba(255,255,255,0.14);
+        }
+        .status-pill.active {
+            background: rgba(76, 175, 80, 0.25);
+            color: #e8ffe9;
+        }
+        .status-pill.inactive {
+            background: rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.85);
+        }
+        .club-meta {
+            margin-top: 18px;
+            color: rgba(255,255,255,0.85);
+            font-size: 14px;
+        }
+        .btn-join {
+            background: #43d17c;
+            border: none;
+            color: #0f5132;
+            font-weight: 600;
+            padding: 12px 26px;
+            border-radius: 50px;
+            box-shadow: 0 16px 35px rgba(67,209,124,0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-join:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 22px 45px rgba(67,209,124,0.45);
+        }
+        .btn-glass {
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.45);
+            color: #fff;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.12);
+            padding: 10px 20px;
+        }
+        .btn-glass:hover {
+            background: rgba(255,255,255,0.22);
+        }
+        .stats-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 22px;
+            padding: 24px 26px;
+            box-shadow: 0 20px 35px rgba(31, 43, 90, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2b2350;
+            line-height: 1.1;
+        }
+        .stat-label {
+            color: #7a8196;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section-card {
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 20px 35px rgba(31, 43, 90, 0.08);
+            margin-bottom: 28px;
+            border: none;
+        }
+        .section-card .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(98, 109, 147, 0.1);
+            padding: 22px 26px;
+        }
+        .section-card .card-body {
+            padding: 24px 26px 28px;
+            color: #4a5170;
+            line-height: 1.7;
+        }
+        .club-tabs .nav-link {
+            border: none;
+            border-radius: 18px;
+            padding: 10px 20px;
+            font-weight: 600;
+            color: #5E35B1;
+        }
+        .club-tabs .nav-link.active {
+            background: rgba(94,53,177,0.12);
+            color: #4527A0;
+        }
+        .table-modern thead {
+            background: rgba(94,53,177,0.08);
+        }
+        .table-modern thead th {
+            border: none;
+            color: #4527A0;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .table-modern tbody tr:hover {
+            background: rgba(94,53,177,0.05);
+        }
+        .label-role {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .label-role.leader {
+            background: rgba(244,67,54,0.15);
+            color: #d32f2f;
+        }
+        .label-role.member {
+            background: rgba(103,58,183,0.12);
+            color: #512DA8;
+        }
+        .event-card {
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 18px 32px rgba(31,43,90,0.1);
+        }
+        .event-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
+        .empty-state {
+            background: rgba(94,53,177,0.05);
+            border-radius: 18px;
+            padding: 40px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #5E35B1;
         }
-        .stat-number {
-            font-size: 36px;
-            font-weight: bold;
-            color: #667eea;
-        }
-        .action-buttons .btn {
-            margin: 5px;
+        @media (max-width: 767px) {
+            .club-logo-wrapper {
+                margin-bottom: 20px;
+            }
+            .stats-wrapper {
+                margin-top: -20px;
+            }
         }
     </style>
 </head>
@@ -45,46 +236,66 @@
 <jsp:include page="../layout/header.jsp"/>
 
 <!-- Club Header -->
-<div class="club-header">
+<c:set var="logoSrc" value="" />
+<c:if test="${not empty club.logo}">
+    <c:choose>
+        <c:when test="${fn:startsWith(club.logo, 'http')}">
+            <c:set var="logoSrc" value="${club.logo}" />
+        </c:when>
+        <c:when test="${fn:startsWith(club.logo, '/')}">
+            <c:set var="logoSrc" value="${pageContext.request.contextPath}${club.logo}" />
+        </c:when>
+        <c:otherwise>
+            <c:set var="logoSrc" value="${pageContext.request.contextPath}/${club.logo}" />
+        </c:otherwise>
+    </c:choose>
+</c:if>
+<div class="club-hero">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-2">
-                <c:if test="${not empty club.logo}">
-                    <img src="${pageContext.request.contextPath}/${club.logo}" alt="${club.clubName}" class="club-logo">
-                </c:if>
-                <c:if test="${empty club.logo}">
-                    <div class="club-logo d-flex align-items-center justify-content-center bg-light text-dark">
-                        <i class="fa fa-users fa-4x"></i>
-                    </div>
-                </c:if>
+        <div class="row align-items-center g-4">
+            <div class="col-lg-2 col-md-3 text-center text-md-start">
+                <div class="club-logo-wrapper">
+                    <c:choose>
+                        <c:when test="${not empty logoSrc}">
+                            <img src="${logoSrc}" alt="${club.clubName}" loading="lazy">
+                        </c:when>
+                        <c:otherwise>
+                            <div class="club-logo-placeholder">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
-            <div class="col-md-7">
-                <h1 class="mb-2">${club.clubName}</h1>
-                <p class="mb-2">
-                    <span class="badge bg-light text-dark"><i class="fa fa-tag"></i> ${club.clubTypes}</span>
-                    <span class="badge bg-${club.status eq 'Active' ? 'success' : 'secondary'} ms-2">${club.status}</span>
-                </p>
-                <p class="mb-0"><i class="fa fa-calendar"></i> Ngày tạo: ${club.createdAt}</p>
+            <div class="col-lg-7 col-md-6">
+                <h1 class="mb-3">${club.clubName}</h1>
+                <div>
+                    <span class="category-pill"><i class="fa fa-tag"></i> ${club.clubTypes}</span>
+                    <span class="status-pill ${club.status eq 'Active' ? 'active' : 'inactive'}">
+                        <i class="fa ${club.status eq 'Active' ? 'fa-check-circle' : 'fa-clock-o'}"></i>
+                        ${club.status}
+                    </span>
+                </div>
+                <div class="club-meta">
+                    <i class="fa fa-calendar-check-o me-1"></i> Ngày tạo: ${club.createdAt}
+                </div>
             </div>
-            <div class="col-md-3 text-end action-buttons">
-                <!-- Only show management buttons for Leader/Admin -->
-                <c:if test="${isLeaderOrAdmin}">
-                    <a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" class="btn btn-warning">
-                        <i class="fa fa-edit"></i> Chỉnh sửa
-                    </a>
-                    <a href="${pageContext.request.contextPath}/clubDashboard" class="btn btn-info">
-                        <i class="fa fa-dashboard"></i> Dashboard
-                    </a>
-                    <button onclick="confirmDelete()" class="btn btn-danger">
-                        <i class="fa fa-trash"></i> Xóa
-                    </button>
-                </c:if>
-                <!-- Join button for regular users -->
-                <c:if test="${!isLeaderOrAdmin && club.status eq 'Active'}">
-                    <button onclick="joinClub()" class="btn btn-success btn-lg">
-                        <i class="fa fa-user-plus"></i> Tham gia CLB
-                    </button>
-                </c:if>
+            <div class="col-lg-3 col-md-3 text-md-end">
+                <div class="d-flex d-md-block flex-wrap justify-content-center gap-2 action-buttons">
+                    <c:if test="${isLeaderOrAdmin}">
+                        <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}" class="btn btn-glass">
+                            <i class="fa fa-dashboard"></i> Dashboard
+                        </a>
+                        <button onclick="confirmDelete()" class="btn btn-glass">
+                            <i class="fa fa-trash"></i> Xóa
+                        </button>
+                    </c:if>
+                    <c:if test="${!isLeaderOrAdmin && club.status eq 'Active'}">
+                        <button onclick="joinClub()" class="btn btn-join">
+                            <i class="fa fa-user-plus"></i> Tham gia CLB
+                        </button>
+                    </c:if>
+                </div>
             </div>
         </div>
     </div>
@@ -117,39 +328,42 @@
     </c:if>
     
     <!-- Statistics -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="stat-box">
-                <div class="stat-number">${totalMembers}</div>
-                <div class="text-muted">Thành viên</div>
+    <div class="stats-wrapper">
+        <div class="stat-card">
+            <span class="stat-icon" style="background:#7C4DFF;"><i class="fa fa-users"></i></span>
+            <div>
+                <div class="stat-value">${totalMembers}</div>
+                <div class="stat-label">Thành viên</div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="stat-box">
-                <div class="stat-number">${totalEvents}</div>
-                <div class="text-muted">Sự kiện</div>
+        <div class="stat-card">
+            <span class="stat-icon" style="background:#29B6F6;"><i class="fa fa-calendar"></i></span>
+            <div>
+                <div class="stat-value">${totalEvents}</div>
+                <div class="stat-label">Sự kiện</div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="stat-box">
-                <div class="stat-number">
+        <div class="stat-card">
+            <span class="stat-icon" style="background:#66BB6A;"><i class="fa fa-bolt"></i></span>
+            <div>
+                <div class="stat-value">
                     <c:choose>
                         <c:when test="${club.status eq 'Active'}">
-                            <i class="fa fa-check-circle text-success"></i>
+                            Hoạt động
                         </c:when>
                         <c:otherwise>
-                            <i class="fa fa-times-circle text-danger"></i>
+                            Tạm ngưng
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div class="text-muted">Trạng thái</div>
+                <div class="stat-label">Trạng thái</div>
             </div>
         </div>
     </div>
     
     <!-- Description -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
+    <div class="card section-card mb-4">
+        <div class="card-header">
             <h5 class="mb-0"><i class="fa fa-info-circle"></i> Mô tả CLB</h5>
         </div>
         <div class="card-body">
@@ -161,7 +375,7 @@
     <c:choose>
         <c:when test="${isLeaderOrAdmin}">
             <!-- Admin/Leader View: Show Members & Events tabs -->
-            <ul class="nav nav-tabs" role="tablist">
+            <ul class="nav nav-tabs club-tabs" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" data-bs-toggle="tab" href="#members">
                         <i class="fa fa-users"></i> Thành viên (${totalMembers})
@@ -174,7 +388,7 @@
                 </li>
             </ul>
             
-            <div class="tab-content p-3 border border-top-0">
+            <div class="tab-content p-3 border border-top-0 section-card">
                 <!-- Members Tab -->
                 <div id="members" class="tab-pane active">
                     <c:if test="${empty members}">
@@ -182,7 +396,7 @@
                     </c:if>
                     
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-modern">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -197,7 +411,7 @@
                                         <td>${member.userId}</td>
                                         <td>${member.fullName}</td>
                                         <td>
-                                            <span class="badge bg-${member.roleInClub eq 'Leader' ? 'danger' : 'primary'}">
+                                            <span class="label-role ${member.roleInClub eq 'Leader' ? 'leader' : 'member'}">
                                                 ${member.roleInClub}
                                             </span>
                                         </td>
@@ -240,8 +454,8 @@
             <div class="row">
                 <!-- Events List -->
                 <div class="col-md-8">
-                    <div class="card mb-4">
-                        <div class="card-header bg-primary text-white">
+                    <div class="card section-card">
+                        <div class="card-header">
                             <h5 class="mb-0"><i class="fa fa-calendar"></i> Sự kiện (${totalEvents})</h5>
                         </div>
                         <div class="card-body">
@@ -250,25 +464,19 @@
                             </c:if>
                             
                             <c:forEach items="${events}" var="event">
-                                <div class="card mb-3 border-left-primary">
+                                <div class="card event-card mb-3">
                                     <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-9">
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                            <div>
                                                 <h5 class="card-title mb-2">${event.eventName}</h5>
-                                                <p class="card-text text-muted mb-1">
-                                                    <i class="fa fa-map-marker text-danger"></i> <strong>Địa điểm:</strong> ${event.location}
-                                                </p>
-                                                <p class="card-text text-muted mb-1">
-                                                    <i class="fa fa-clock-o text-primary"></i> <strong>Bắt đầu:</strong> ${event.startDate}
-                                                </p>
-                                                <p class="card-text text-muted mb-2">
-                                                    <i class="fa fa-calendar-check-o text-success"></i> <strong>Kết thúc:</strong> ${event.endDate}
-                                                </p>
-                                                <span class="badge bg-${event.status eq 'Published' ? 'success' : 'secondary'}">${event.status}</span>
+                                                <p class="text-muted mb-1"><i class="fa fa-map-marker text-danger me-1"></i><strong>Địa điểm:</strong> ${event.location}</p>
+                                                <p class="text-muted mb-1"><i class="fa fa-clock-o text-primary me-1"></i><strong>Bắt đầu:</strong> ${event.startDate}</p>
+                                                <p class="text-muted mb-0"><i class="fa fa-calendar-check-o text-success me-1"></i><strong>Kết thúc:</strong> ${event.endDate}</p>
                                             </div>
-                                            <div class="col-md-3 text-end">
+                                            <div class="text-end">
+                                                <span class="event-status ${event.status eq 'Published' ? 'bg-success text-white' : 'bg-secondary text-white'}">${event.status}</span>
                                                 <c:if test="${event.status eq 'Published'}">
-                                                    <button class="btn btn-sm btn-primary" onclick="registerEvent(${event.eventID})">
+                                                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="registerEvent(${event.eventID})">
                                                         <i class="fa fa-user-plus"></i> Đăng ký
                                                     </button>
                                                 </c:if>
@@ -284,8 +492,8 @@
                 <!-- Sidebar: Club Info -->
                 <div class="col-md-4">
                     <!-- About Club Card -->
-                    <div class="card mb-3">
-                        <div class="card-header bg-light">
+                    <div class="card section-card">
+                        <div class="card-header">
                             <h6 class="mb-0"><i class="fa fa-info-circle"></i> Về CLB này</h6>
                         </div>
                         <div class="card-body">
@@ -298,8 +506,8 @@
                     </div>
                     
                     <!-- Reviews Section -->
-                    <div class="card">
-                        <div class="card-header bg-light">
+                    <div class="card section-card">
+                        <div class="card-header">
                             <h6 class="mb-0"><i class="fa fa-star"></i> Đánh giá</h6>
                         </div>
                         <div class="card-body">

@@ -23,7 +23,89 @@
             --warning-color: #ffc107;
             --info-color: #17a2b8;
         }
-        
+
+        body {
+            background: #f5f6fb;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .admin-sidebar {
+            width: 255px;
+            background: #25124B;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 28px 22px;
+            box-shadow: 0 10px 30px rgba(37,18,75,0.35);
+            position: relative;
+            z-index: 2;
+        }
+
+        .admin-sidebar .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-sidebar .sidebar-title i {
+            font-size: 24px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            padding: 12px 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: background 0.25s ease, transform 0.2s ease;
+        }
+
+        .sidebar-nav a i {
+            font-size: 18px;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateX(4px);
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, #FFB64E 0%, #FF6B83 100%);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(255,107,131,0.35);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .admin-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .admin-header {
             background: var(--primary-gradient);
             color: white;
@@ -31,7 +113,7 @@
             margin-bottom: 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 15px;
@@ -41,18 +123,18 @@
             transition: all 0.3s ease;
             border-left: 5px solid;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
-        
+
         .stat-card.primary { border-left-color: #667eea; }
         .stat-card.success { border-left-color: var(--success-color); }
         .stat-card.danger { border-left-color: var(--danger-color); }
         .stat-card.warning { border-left-color: var(--warning-color); }
         .stat-card.info { border-left-color: var(--info-color); }
-        
+
         .stat-icon {
             font-size: 48px;
             opacity: 0.2;
@@ -61,33 +143,33 @@
             top: 50%;
             transform: translateY(-50%);
         }
-        
+
         .stat-number {
             font-size: 42px;
             font-weight: bold;
             margin: 10px 0;
         }
-        
+
         .stat-label {
             color: #666;
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .stat-details {
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid #eee;
         }
-        
+
         .stat-detail-item {
             display: flex;
             justify-content: space-between;
             margin: 5px 0;
             font-size: 13px;
         }
-        
+
         .quick-action-card {
             background: white;
             border-radius: 10px;
@@ -98,17 +180,17 @@
             cursor: pointer;
             height: 100%;
         }
-        
+
         .quick-action-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         }
-        
+
         .quick-action-icon {
             font-size: 48px;
             margin-bottom: 15px;
         }
-        
+
         .recent-item {
             background: white;
             padding: 15px;
@@ -118,12 +200,12 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: all 0.2s;
         }
-        
+
         .recent-item:hover {
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             transform: translateX(5px);
         }
-        
+
         .section-title {
             font-size: 22px;
             font-weight: 600;
@@ -132,17 +214,43 @@
             display: flex;
             align-items: center;
         }
-        
+
         .section-title i {
             margin-right: 10px;
             color: #667eea;
         }
-        
+
         .chart-container {
             background: white;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        @media (max-width: 991px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+            .admin-sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 18px;
+                gap: 12px;
+            }
+            .sidebar-nav {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 8px;
+            }
+            .sidebar-nav a {
+                flex: 0 0 auto;
+                padding: 10px 16px;
+                border-radius: 30px;
+            }
+            .sidebar-footer {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -150,6 +258,42 @@
 
 <!-- Include Header -->
 <jsp:include page="../layout/header.jsp"/>
+
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-title">
+            <i class="fa fa-shield"></i> Bảng điều khiển
+        </div>
+        <nav class="sidebar-nav">
+            <a href="${pageContext.request.contextPath}/adminDashboard" class="active">
+                <i class="fa fa-tachometer"></i> Dashboard
+            </a>
+            <a href="${pageContext.request.contextPath}/viewClubRequests">
+                <i class="fa fa-bell"></i> Yêu cầu CLB
+            </a>
+            <a href="${pageContext.request.contextPath}/viewAllClubs">
+                <i class="fa fa-users"></i> Quản lý CLB
+            </a>
+            <a href="${pageContext.request.contextPath}/listEvents">
+                <i class="fa fa-calendar"></i> Quản lý sự kiện
+            </a>
+            <a href="${pageContext.request.contextPath}/manageUsers">
+                <i class="fa fa-user-circle"></i> Quản lý người dùng
+            </a>
+            <a href="${pageContext.request.contextPath}/systemReports">
+                <i class="fa fa-bar-chart"></i> Báo cáo
+            </a>
+            <a href="${pageContext.request.contextPath}/systemSettings">
+                <i class="fa fa-cog"></i> Cài đặt hệ thống
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div><i class="fa fa-check-circle text-success mr-2"></i>Hệ thống hoạt động ổn định</div>
+            <div class="mt-2"><i class="fa fa-life-ring mr-2"></i>Hỗ trợ: support@stuclub.vn</div>
+        </div>
+    </aside>
+
+    <div class="admin-content">
 
 <!-- Admin Header -->
 <div class="admin-header">
@@ -161,7 +305,7 @@
                 </h1>
                 <p class="mb-0">Quản lý toàn bộ hệ thống Club Management</p>
             </div>
-            <div class="col-md-4 text-end">
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
                 <span class="badge bg-light text-dark fs-6">
                     <i class="fa fa-user-shield"></i> Administrator
                 </span>
@@ -170,7 +314,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container py-4">
     
     <!-- Statistics Overview -->
     <div class="row">
@@ -430,6 +574,9 @@
         
     </div>
     
+</div>
+
+</div>
 </div>
 
 <!-- Include Footer -->

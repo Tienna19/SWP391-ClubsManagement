@@ -1,6 +1,7 @@
 package controller.club;
 
 import dal.ClubDAO;
+import dal.MemberDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -46,14 +47,14 @@ public class DeleteClubServlet extends HttpServlet {
             Integer userId = (Integer) session.getAttribute("userId");
             Integer roleId = (Integer) session.getAttribute("roleId");
             
+            MemberDAO memberDAO = new MemberDAO();
+            
             // Check permissions
             boolean hasPermission = false;
             if (roleId == 1) {
                 hasPermission = true; // Admin can delete any club
-            } else if (roleId == 2 || roleId == 3) {
-                if (club.getCreatedBy() == userId) {
-                    hasPermission = true; // Club Leader can delete their own club
-                }
+            } else if (roleId == 2) {
+                hasPermission = memberDAO.isClubLeader(userId, clubId);
             }
             
             if (!hasPermission) {
