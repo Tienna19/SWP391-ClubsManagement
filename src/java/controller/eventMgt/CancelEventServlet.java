@@ -69,6 +69,26 @@ public class CancelEventServlet extends HttpServlet {
                 return;
             }
 
+            // Check permissions: Admin can cancel any event, Club Leader can only cancel their own events
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                request.setAttribute("message", "You must be logged in to cancel events.");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+            
+            User user = (User) session.getAttribute("account");
+            int userRoleId = user.getRoleId();
+            
+            // Admin (role 4) can cancel any event, Club Leader (role 3) can only cancel their own events
+            if (userRoleId != 4 && (userRoleId != 3 || event.getCreatedBy() != user.getUserId())) {
+                request.setAttribute("message", "You do not have permission to cancel this event.");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+
             // Check if event can be cancelled (only upcoming events can be cancelled)
             if (!"Upcoming".equals(event.getStatus()) && !"Published".equals(event.getStatus())) {
                 request.setAttribute("message", "Only upcoming or published events can be cancelled");

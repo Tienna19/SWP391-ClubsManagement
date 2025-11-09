@@ -127,12 +127,22 @@ public class ViewListEventsServlet extends HttpServlet {
                 
                 // Separate Pending events
                 if ("Pending".equals(status)) {
-                    // Apply creator filter for Pending events
-                    if (currentUser != null && currentUser.getUserId() == eventRequest.getUserID()) {
-                        pendingEventsList.add(event);
-                        System.out.println("  >>> ✓ ADDED to pendingEventsList <<<");
+                    // Admin (role 4) sees ALL Pending events (to approve/reject)
+                    // Club Leader (role 3) only sees their own Pending events
+                    if (currentUser != null) {
+                        if (currentUser.getRoleId() == 4) {
+                            // Admin sees all Pending events
+                            pendingEventsList.add(event);
+                            System.out.println("  >>> ✓ ADDED to pendingEventsList (Admin sees all) <<<");
+                        } else if (currentUser.getRoleId() == 3 && currentUser.getUserId() == eventRequest.getUserID()) {
+                            // Club Leader only sees their own Pending events
+                            pendingEventsList.add(event);
+                            System.out.println("  >>> ✓ ADDED to pendingEventsList (Club Leader own) <<<");
+                        } else {
+                            System.out.println("  >>> ✗ SKIPPED (not creator or no permission) <<<");
+                        }
                     } else {
-                        System.out.println("  >>> ✗ SKIPPED (not creator or no user session) <<<");
+                        System.out.println("  >>> ✗ SKIPPED (no user session) <<<");
                     }
                 } else {
                     otherEvents.add(event);
@@ -173,9 +183,10 @@ public class ViewListEventsServlet extends HttpServlet {
                         status = "Draft"; // Default status
                     }
                     
-                    // Private statuses - only show if created by current user
+                    // Private statuses - only show if created by current user (both Admin and Club Leader)
                     if ("Draft".equals(status) || "Pending".equals(status) || "Rejected".equals(status)) {
                         System.out.println("Private event - Status: " + status + ", CreatedBy: " + event.getCreatedBy() + ", CurrentUser: " + currentUser.getUserId());
+                        // Both Admin and Club Leader only see their own Draft/Rejected events
                         if (event.getCreatedBy() == currentUser.getUserId()) {
                             // NOTE: Events table no longer has 'Pending' status
                             // 'Pending' events only exist in CreateEventRequests table
@@ -186,6 +197,7 @@ public class ViewListEventsServlet extends HttpServlet {
                                 System.out.println("Added Pending event from Events table: " + event.getEventName());
                             } else if ("Draft".equals(status)) {
                                 // Put Draft events into separate list for the Draft section
+                                // Both Admin and Club Leader only see their own Draft events
                                 draftEventsList.add(event);
                                 System.out.println("Added to draftEventsList: " + event.getEventName());
                             } else if ("Rejected".equals(status)) {

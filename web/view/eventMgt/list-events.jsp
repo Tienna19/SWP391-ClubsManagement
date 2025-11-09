@@ -299,23 +299,40 @@
 				<!-- header right menu start -->
 				<ul class="ttr-header-navigation">
 					<li>
-						<a href="#" class="ttr-material-button ttr-search-toggle"><i class="fa fa-search"></i></a>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">
-							<span class="ttr-user-avatar">
-								<img alt="" src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" width="32" height="32">
-							</span>
-						</a>
-						<div class="ttr-header-submenu">
-							<ul>
-								<li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
-								<c:if test="${not empty club}">
-								<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
-								</c:if>
-								<li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
-							</ul>
-						</div>
+						<c:choose>
+							<c:when test="${not empty sessionScope.account}">
+								<a href="#" class="ttr-material-button ttr-submenu-toggle" style="display: flex; align-items: center; gap: 10px; padding: 5px 15px;">
+									<c:choose>
+										<c:when test="${not empty sessionScope.account.profileImage}">
+											<span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+												<img alt="${sessionScope.account.fullName}" src="${pageContext.request.contextPath}/${sessionScope.account.profileImage}" style="width: 100%; height: 100%; object-fit: cover;">
+											</span>
+										</c:when>
+										<c:otherwise>
+											<span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0;">
+												${not empty sessionScope.account.fullName ? sessionScope.account.fullName.substring(0, 1).toUpperCase() : 'U'}
+											</span>
+										</c:otherwise>
+									</c:choose>
+									<span class="ttr-user-name" style="color: #fff; font-size: 14px; font-weight: 500; white-space: nowrap;">
+										${not empty sessionScope.account.fullName ? sessionScope.account.fullName : 'User'}
+									</span>
+								</a>
+								<div class="ttr-header-submenu">
+									<ul>
+										<li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
+										<c:if test="${not empty club}">
+										<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
+										</c:if>
+										<li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
+									</ul>
+								</div>
+							</c:when>
+							<c:otherwise>
+								<a href="${pageContext.request.contextPath}/login" class="ttr-material-button" style="padding: 5px 15px;">Đăng nhập</a>
+								<a href="${pageContext.request.contextPath}/register" class="ttr-material-button" style="padding: 5px 15px;">Đăng ký</a>
+							</c:otherwise>
+						</c:choose>
 					</li>
 				</ul>
 				<!-- header right menu end -->
@@ -610,6 +627,20 @@
 														<a href="editEvent?eventId=${event.eventID}" class="btn btn-warning btn-sm">
 															<i class="fa fa-edit"></i> Chỉnh sửa
 														</a>
+													</c:if>
+													<!-- Show Approve/Reject buttons for Admin on Pending events -->
+													<c:if test="${sessionScope.account.roleId == 4 and event.status == 'Pending'}">
+														<c:set var="requestId" value="${-(event.eventID + 1000000)}" />
+														<button type="button" class="btn btn-success btn-sm btn-approve-event" 
+														        data-request-id="${requestId}" 
+														        data-event-name="<c:out value='${event.eventName}'/>">
+															<i class="fa fa-check"></i> Phê duyệt
+														</button>
+														<button type="button" class="btn btn-danger btn-sm btn-reject-event" 
+														        data-request-id="${requestId}" 
+														        data-event-name="<c:out value='${event.eventName}'/>">
+															<i class="fa fa-times"></i> Từ chối
+														</button>
 													</c:if>
 												</div>
 											</div>
@@ -978,6 +1009,20 @@ $(document).ready(function() {
         var eventName = $(this).data('name');
         showCancelEventModal(eventId, eventName);
     });
+    
+    // Bind approve event button click
+    $(document).on('click', '.btn-approve-event', function() {
+        var requestId = $(this).data('request-id');
+        var eventName = $(this).data('event-name');
+        showApproveEventModal(requestId, eventName);
+    });
+    
+    // Bind reject event button click
+    $(document).on('click', '.btn-reject-event', function() {
+        var requestId = $(this).data('request-id');
+        var eventName = $(this).data('event-name');
+        showRejectEventModal(requestId, eventName);
+    });
 });
 
 // Cancel Event Modal Functions
@@ -1005,6 +1050,80 @@ function confirmCancelEvent() {
         'type': 'hidden',
         'name': 'eventId',
         'value': eventId
+    }));
+    
+    $('body').append(form);
+    form.submit();
+}
+
+// Approve Event Modal Functions
+function showApproveEventModal(requestId, eventName) {
+    $('#approveRequestId').val(requestId);
+    $('#approveEventName').text(eventName);
+    $('#approveEventModal').modal('show');
+}
+
+function confirmApproveEvent() {
+    var requestId = $('#approveRequestId').val();
+    var eventName = $('#approveEventName').text();
+    
+    // Show loading state
+    $('#approveConfirmBtn').html('<i class="fa fa-spinner fa-spin"></i> Đang phê duyệt...');
+    $('#approveConfirmBtn').prop('disabled', true);
+    
+    // Create form and submit
+    var form = $('<form>', {
+        'method': 'POST',
+        'action': 'approveRejectEvent'
+    });
+    
+    form.append($('<input>', {
+        'type': 'hidden',
+        'name': 'requestId',
+        'value': requestId
+    }));
+    
+    form.append($('<input>', {
+        'type': 'hidden',
+        'name': 'action',
+        'value': 'approve'
+    }));
+    
+    $('body').append(form);
+    form.submit();
+}
+
+// Reject Event Modal Functions
+function showRejectEventModal(requestId, eventName) {
+    $('#rejectRequestId').val(requestId);
+    $('#rejectEventName').text(eventName);
+    $('#rejectEventModal').modal('show');
+}
+
+function confirmRejectEvent() {
+    var requestId = $('#rejectRequestId').val();
+    var eventName = $('#rejectEventName').text();
+    
+    // Show loading state
+    $('#rejectConfirmBtn').html('<i class="fa fa-spinner fa-spin"></i> Đang từ chối...');
+    $('#rejectConfirmBtn').prop('disabled', true);
+    
+    // Create form and submit
+    var form = $('<form>', {
+        'method': 'POST',
+        'action': 'approveRejectEvent'
+    });
+    
+    form.append($('<input>', {
+        'type': 'hidden',
+        'name': 'requestId',
+        'value': requestId
+    }));
+    
+    form.append($('<input>', {
+        'type': 'hidden',
+        'name': 'action',
+        'value': 'reject'
     }));
     
     $('body').append(form);
@@ -1054,6 +1173,90 @@ function confirmCancelEvent() {
 
 <!-- Hidden input to store event ID -->
 <input type="hidden" id="cancelEventId" value="">
+
+<!-- Approve Event Confirmation Modal -->
+<div class="modal fade" id="approveEventModal" tabindex="-1" role="dialog" aria-labelledby="approveEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                <h5 class="modal-title text-white" id="approveEventModalLabel">
+                    <i class="fa fa-check-circle"></i> Phê duyệt Sự kiện
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div class="text-center mb-4">
+                    <div class="success-icon" style="font-size: 48px; color: #28a745; margin-bottom: 20px;">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <h4 style="color: #333; margin-bottom: 15px;">Bạn có chắc chắn muốn phê duyệt sự kiện này?</h4>
+                    <p style="color: #666; font-size: 16px; margin-bottom: 20px;">
+                        Bạn sắp phê duyệt sự kiện: <strong id="approveEventName"></strong>
+                    </p>
+                    <div class="alert alert-info" style="border-left: 4px solid #28a745; background-color: #d1f2eb; border-color: #28a745;">
+                        <i class="fa fa-info-circle"></i>
+                        <strong>Lưu ý:</strong> Sự kiện sẽ được chuyển sang trạng thái "Published" và hiển thị công khai cho tất cả người dùng. 
+                        Bạn có thể chỉnh sửa hoặc hủy sự kiện sau khi phê duyệt.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border: none; padding: 20px 30px; background-color: #f8f9fa;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding: 10px 25px;">
+                    <i class="fa fa-times"></i> Hủy
+                </button>
+                <button type="button" class="btn btn-success" id="approveConfirmBtn" onclick="confirmApproveEvent()" style="padding: 10px 25px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                    <i class="fa fa-check"></i> Xác nhận phê duyệt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Event Confirmation Modal -->
+<div class="modal fade" id="rejectEventModal" tabindex="-1" role="dialog" aria-labelledby="rejectEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); border: none;">
+                <h5 class="modal-title text-white" id="rejectEventModalLabel">
+                    <i class="fa fa-times-circle"></i> Từ chối Sự kiện
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div class="text-center mb-4">
+                    <div class="warning-icon" style="font-size: 48px; color: #dc3545; margin-bottom: 20px;">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 style="color: #333; margin-bottom: 15px;">Bạn có chắc chắn muốn từ chối sự kiện này?</h4>
+                    <p style="color: #666; font-size: 16px; margin-bottom: 20px;">
+                        Bạn sắp từ chối sự kiện: <strong id="rejectEventName"></strong>
+                    </p>
+                    <div class="alert alert-warning" style="border-left: 4px solid #dc3545; background-color: #f8d7da; border-color: #f5c6cb;">
+                        <i class="fa fa-info-circle"></i>
+                        <strong>Lưu ý:</strong> Sự kiện sẽ được chuyển sang trạng thái "Rejected" và chỉ người tạo sự kiện mới có thể xem. 
+                        Người tạo có thể chỉnh sửa và gửi lại yêu cầu phê duyệt.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border: none; padding: 20px 30px; background-color: #f8f9fa;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="padding: 10px 25px;">
+                    <i class="fa fa-times"></i> Hủy
+                </button>
+                <button type="button" class="btn btn-danger" id="rejectConfirmBtn" onclick="confirmRejectEvent()" style="padding: 10px 25px; background: linear-gradient(135deg, #dc3545, #c82333); border: none;">
+                    <i class="fa fa-times"></i> Xác nhận từ chối
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden inputs to store request IDs -->
+<input type="hidden" id="approveRequestId" value="">
+<input type="hidden" id="rejectRequestId" value="">
 
 </body>
 

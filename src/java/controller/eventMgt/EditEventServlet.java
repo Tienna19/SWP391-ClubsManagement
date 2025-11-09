@@ -179,6 +179,26 @@ public class EditEventServlet extends HttpServlet {
                 return;
             }
 
+            // Check permissions: Admin can edit any event, Club Leader can only edit their own events
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                request.setAttribute("message", "You must be logged in to edit events.");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+            
+            User user = (User) session.getAttribute("account");
+            int userRoleId = user.getRoleId();
+            
+            // Admin (role 4) can edit any event, Club Leader (role 3) can only edit their own events
+            if (userRoleId != 4 && (userRoleId != 3 || existingEvent.getCreatedBy() != user.getUserId())) {
+                request.setAttribute("message", "You do not have permission to edit this event.");
+                request.setAttribute("messageType", "danger");
+                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                return;
+            }
+
             // Get form parameters
             String eventName = request.getParameter("eventName");
             String clubIdStr = request.getParameter("clubId");

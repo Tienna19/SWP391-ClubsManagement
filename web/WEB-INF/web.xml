@@ -74,6 +74,16 @@
         <url-pattern>/cancelEvent</url-pattern>
     </servlet-mapping>
 
+    <!-- ApproveRejectEventServlet (Admin) -->
+    <servlet>
+        <servlet-name>ApproveRejectEventServlet</servlet-name>
+        <servlet-class>controller.eventMgt.ApproveRejectEventServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApproveRejectEventServlet</servlet-name>
+        <url-pattern>/approveRejectEvent</url-pattern>
+    </servlet-mapping>
+
     <!-- ClubLeaderDashboardServlet -->
     <servlet>
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>

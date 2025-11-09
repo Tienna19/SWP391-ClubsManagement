@@ -79,9 +79,11 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             
             // Verify permissions: admin or leader of this club
             boolean hasPermission = false;
-            if (user.getRoleId() == 1) {
+            if (user.getRoleId() == 4) {
+                // Admin (RoleID 4) has permission to view any club dashboard
                 hasPermission = true;
-            } else if (user.getRoleId() == 2) {
+            } else if (user.getRoleId() == 3) {
+                // ClubLeader (RoleID 3) - check if user is leader of this club
                 hasPermission = memberDAO.isClubLeader(user.getUserId(), clubId);
             }
             if (!hasPermission) {

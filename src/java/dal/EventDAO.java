@@ -58,10 +58,16 @@ public class EventDAO extends DBContext {
             System.out.println("Executing SQL: " + sql);
             System.out.println("Parameters: ClubID=" + event.getClubID() +
                              ", EventName=" + event.getEventName() +
-                             ", Location=" + event.getLocation() +
+                             ", Description=" + (event.getDescription() != null ? event.getDescription() : "null") +
+                             ", Location=" + (event.getLocation() != null ? event.getLocation() : "null") +
                              ", Capacity=" + event.getCapacity() +
                              ", StartDate=" + event.getStartDate() +
-                             ", EndDate=" + event.getEndDate());
+                             ", EndDate=" + event.getEndDate() +
+                             ", RegistrationStart=" + event.getRegistrationStart() +
+                             ", RegistrationEnd=" + event.getRegistrationEnd() +
+                             ", CreatedBy=" + event.getCreatedBy() +
+                             ", Status=" + event.getStatus() +
+                             ", Image=" + (event.getImage() != null ? event.getImage() : "null"));
 
             int affectedRows = st.executeUpdate();
 
