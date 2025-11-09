@@ -282,21 +282,6 @@
                     <a href="${pageContext.request.contextPath}/login">Login</a>
                     <a href="${pageContext.request.contextPath}/register">Register</a>
                 </div>
-            <c:choose>
-                <c:when test="${not empty account}">
-                <a href="profile"><img src="${account.profileImage}" class="avatar" alt="User"></a>
-                Xin chào, <strong>${account.fullName}</strong> 
-                <a href="#" 
-                   onclick="if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
-               window.location.href = 'logout';
-           }
-           return false;">
-                    <i class="fa fa-sign-out"></i> Đăng xuất
-                </a>
-            </c:when>
-            <c:otherwise>
-                <a href="login">Đăng nhập</a>
-                <a href="register">Đăng kí</a>
             </c:otherwise>
         </c:choose>
     </div>
