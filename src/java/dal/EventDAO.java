@@ -337,4 +337,60 @@ public class EventDAO extends DBContext {
         }
         return false;
     }
+    
+    /**
+     * Get the number of registrations for an event
+     * @param eventID The ID of the event
+     * @return The number of registrations
+     */
+    public int getRegistrationCount(int eventID) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot get registration count.");
+            return 0;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM EventRegistrations WHERE EventID = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, eventID);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting registration count: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    /**
+     * Check if a user is registered for an event
+     * @param eventID The ID of the event
+     * @param userID The ID of the user
+     * @return true if the user is registered, false otherwise
+     */
+    public boolean isUserRegistered(int eventID, int userID) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot check registration.");
+            return false;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM EventRegistrations WHERE EventID = ? AND UserID = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, eventID);
+            st.setInt(2, userID);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking user registration: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

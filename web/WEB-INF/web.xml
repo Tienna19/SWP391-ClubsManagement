@@ -84,6 +84,16 @@
         <url-pattern>/approveRejectEvent</url-pattern>
     </servlet-mapping>
 
+    <!-- ViewEventDetailServlet -->
+    <servlet>
+        <servlet-name>ViewEventDetailServlet</servlet-name>
+        <servlet-class>controller.eventMgt.ViewEventDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewEventDetailServlet</servlet-name>
+        <url-pattern>/viewEvent</url-pattern>
+    </servlet-mapping>
+
     <!-- ClubLeaderDashboardServlet -->
     <servlet>
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
