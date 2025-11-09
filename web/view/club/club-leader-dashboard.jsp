@@ -274,8 +274,8 @@
                             <span class="wc-des">Tình trạng CLB</span>
                             <span class="wc-stats">${club.status}</span>        
                             <div class="progress wc-progress">
-                                <div class="progress-bar" role="progressbar" style="width: ${club.status eq 'Active' ? '100' : '50'}%;" 
-                                     aria-valuenow="${club.status eq 'Active' ? '100' : '50'}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar" role="progressbar" style="width: ${club.status eq 'Active' ? 100 : 50}%;" 
+                                     aria-valuenow="${club.status eq 'Active' ? 100 : 50}" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <span class="wc-progress-bx">
                                 <span class="wc-change">Hoạt động</span>
@@ -431,9 +431,9 @@
             events: [
                 <c:forEach items="${upcomingEvents}" var="event" varStatus="status">
                 {
-                    title: '${event.eventName}',
-                    start: '${event.startDate}',
-                    end: '${event.endDate}',
+                    title: '<c:out value="${event.eventName}" escapeXml="true"/>',
+                    start: '<fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/>',
+                    end: '<fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>',
                     url: '${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}'
                 }<c:if test="${!status.last}">,</c:if>
                 </c:forEach>
