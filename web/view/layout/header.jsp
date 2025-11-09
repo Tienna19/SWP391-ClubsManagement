@@ -236,6 +236,24 @@
                             <li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
                             <li><a href="${pageContext.request.contextPath}/viewAllEvents">Sự kiện</a></li>
                             <li><a href="${pageContext.request.contextPath}/clubDetails">Chi tiết CLB</a></li>
+                <li><a href="${pageContext.request.contextPath}/home">Trang chủ</a></li>
+                <li>
+                    <a href="#">CLUBS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
+                    <div class="submenu">
+                        <ul>
+                            <li><a href="${pageContext.request.contextPath}/viewAllClubs">Tất cả Câu lạc bộ</a></li>
+                            <li><a href="${pageContext.request.contextPath}/myClubs">Câu lạc bộ của tôi</a></li>
+                            <li><a href="${pageContext.request.contextPath}/createClub">Tạo Câu lạc bộ</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#">EVENTS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
+                    <div class="submenu">
+                        <ul>
+                            <li><a href="${pageContext.request.contextPath}/viewAllEvents">Tất cả Sự kiện</a></li>
+                            <li><a href="${pageContext.request.contextPath}/addNewEvent">Thêm sự kiện</a></li>
+                            <li><a href="${pageContext.request.contextPath}/myEvents">Sự kiện của tôi</a></li>
                         </ul>
                     </div>
                 </li>
@@ -264,6 +282,21 @@
                     <a href="${pageContext.request.contextPath}/login">Login</a>
                     <a href="${pageContext.request.contextPath}/register">Register</a>
                 </div>
+            <c:choose>
+                <c:when test="${not empty account}">
+                <a href="profile"><img src="${account.profileImage}" class="avatar" alt="User"></a>
+                Xin chào, <strong>${account.fullName}</strong> 
+                <a href="#" 
+                   onclick="if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
+               window.location.href = 'logout';
+           }
+           return false;">
+                    <i class="fa fa-sign-out"></i> Đăng xuất
+                </a>
+            </c:when>
+            <c:otherwise>
+                <a href="login">Đăng nhập</a>
+                <a href="register">Đăng kí</a>
             </c:otherwise>
         </c:choose>
     </div>

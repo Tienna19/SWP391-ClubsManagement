@@ -1,9 +1,10 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!-- Footer -->
 <footer class="text-center text-white mt-5" style="background-color: #5B2C8E; padding: 20px 0;">
     <div class="container">
         <p class="mb-1">&copy; 2025 Student Club Management System</p>
         <p class="mb-0">
-            <a href="contact.jsp" style="color: #FFD700; text-decoration: none;">Contact Us</a> |
+            <a href="contact.jsp" style="color: #FFD700; text-decoration: none;">Liên hệ</a> |
             <a href="faq.jsp" style="color: #FFD700; text-decoration: none;">FAQ</a>
         </p>
     </div>

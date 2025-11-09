@@ -90,12 +90,12 @@
                                             <ul class="nav nav-tabs">
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="edit-profile">
-                                                        <i class="ti-pencil-alt"></i> Edit Profile
+                                                        <i class="ti-pencil-alt"></i> Chỉnh sửa Hồ sơ
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="change-password">
-                                                        <i class="ti-lock"></i> Change Password
+                                                        <i class="ti-lock"></i> Đổi Mật khẩu
                                                     </a>
                                                 </li>
                                             </ul>
@@ -107,7 +107,7 @@
                                         <div class="tab-content">
                                             <div class="tab-pane active" id="change-password">
                                                 <div class="profile-head">
-                                                    <h3>Change Password</h3>
+                                                    <h3>Đổi Mật khẩu</h3>
                                                 </div>
                                                 <form class="edit-profile" action="change-password" method="post">
                                                     <div class="">
@@ -117,19 +117,19 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Current Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Mật khẩu hiện tại</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="password" name="currentPassword" value="">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">New Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Mật khẩu mới</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="password" name="newPassword" value="">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Re Type New Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Xác nhận Mật khẩu mới</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="password" name="confirmPassword" value="">
                                                             </div>
@@ -139,11 +139,10 @@
                                                         <div class="col-12 col-sm-4 col-md-4 col-lg-3">
                                                         </div>
                                                         <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                            <button type="submit" class="btn">Save changes</button>
-                                                            <a href="profile" class="btn-secondry">Cancel</a>
+                                                            <button type="submit" class="btn">Lưu</button>
+                                                            <a href="profile" class="btn-secondry">Hủy</a>
                                                         </div>
                                                     </div>
-
                                                 </form>
                                             </div>
                                         </div>

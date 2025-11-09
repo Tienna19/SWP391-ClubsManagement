@@ -85,12 +85,12 @@
                                             <ul class="nav nav-tabs">
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="edit-profile">
-                                                        <i class="ti-pencil-alt"></i> Edit Profile
+                                                        <i class="ti-pencil-alt"></i> Chỉnh sửa Hồ sơ
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a class="nav-link" href="change-password">
-                                                        <i class="ti-lock"></i> Change Password
+                                                        <i class="ti-lock"></i> Đổi Mật khẩu
                                                     </a>
                                                 </li>
                                             </ul>
@@ -102,7 +102,7 @@
                                         <div class="tab-content">
                                             <div class="tab-pane active" id="edit-profile">
                                                 <div class="profile-head">
-                                                    <h3>Profile</h3>
+                                                    <h3>Hồ sơ</h3>
                                                 </div>
                                                 <form class="edit-profile" action="edit-profile" method="post" enctype="multipart/form-data">
                                                     <div class="">
@@ -112,7 +112,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Full Name</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Tên</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="text" name="fullName" value="${userInfo.fullName}">
                                                             </div>
@@ -124,29 +124,29 @@
                                                                                                                     </div>
                                                                                                                 </div>-->
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Phone</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Số điện thoại</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="number" name="phoneNumber" value="${userInfo.phoneNumber}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Address</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Địa chỉ</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="text" name="address" value="${userInfo.address}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Gender</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Giới tính</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <select name="gender" class="form-control">
-                                                                    <option value="Male" ${userInfo.gender == 'Male' ? 'selected' : ''}>Male</option>
-                                                                    <option value="Female" ${userInfo.gender == 'Female' ? 'selected' : ''}>Female</option>
-                                                                    <option value="Other" ${userInfo.gender == 'Other' ? 'selected' : ''}>Other</option>
+                                                                    <option value="Male" ${userInfo.gender == 'Male' ? 'selected' : ''}>Nam</option>
+                                                                    <option value="Female" ${userInfo.gender == 'Female' ? 'selected' : ''}>Nữ</option>
+                                                                    <option value="Other" ${userInfo.gender == 'Other' ? 'selected' : ''}>Khác</option>
                                                                 </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Ảnh đại diện</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input type="file" name="profileImage" class="form-control-file">
                                                             </div>
@@ -156,8 +156,8 @@
                                                         <div class="col-12 col-sm-4 col-md-4 col-lg-3">
                                                         </div>
                                                         <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                            <button type="submit" class="btn">Save changes</button>
-                                                            <a href="profile" class="btn-secondry">Cancel</a>
+                                                            <button type="submit" class="btn">Lưu</button>
+                                                            <a href="profile" class="btn-secondry">Hủy</a>
                                                         </div>
                                                     </div>
                                                 </form>

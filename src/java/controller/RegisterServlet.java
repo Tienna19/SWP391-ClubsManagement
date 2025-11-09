@@ -11,7 +11,7 @@ import model.User;
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
 
-    // Regex kiểm tra độ mạnh của passwordHash
+    // Regex kiểm tra độ mạnh của password
     private static final String PASSWORD_REGEX
             = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_REGEX);
@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
 
         // 3️⃣ Kiểm tra email đã tồn tại
         if (dao.checkUserExist(email)) {
-            request.setAttribute("error", "Email đã tồn tại!");
+            request.setAttribute("error", "Email đã tồn tại trong hệ thống!");
             request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
             return;
         }
