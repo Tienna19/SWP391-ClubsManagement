@@ -3,6 +3,7 @@ package controller.club;
 import dal.ClubDAO;
 import dal.EventDAO;
 import dal.MemberDAO;
+import dal.JoinClubRequestDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -66,6 +67,7 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             ClubDAO clubDAO = new ClubDAO();
             EventDAO eventDAO = new EventDAO();
             MemberDAO memberDAO = new MemberDAO();
+            JoinClubRequestDAO joinRequestDAO = new JoinClubRequestDAO();
             
             // Get club details
             Club club = clubDAO.getClubById(clubId);
@@ -75,16 +77,18 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
                 return;
             }
             
-            // TODO: Uncomment this when login is implemented
-            /*
-            // Verify user is leader of this club
-            boolean isLeader = memberDAO.isClubLeader(userId, clubId);
-            if (!isLeader) {
+            // Verify permissions: admin or leader of this club
+            boolean hasPermission = false;
+            if (user.getRoleId() == 1) {
+                hasPermission = true;
+            } else if (user.getRoleId() == 2) {
+                hasPermission = memberDAO.isClubLeader(user.getUserId(), clubId);
+            }
+            if (!hasPermission) {
                 request.setAttribute("error", "Bạn không có quyền quản lý CLB này.");
                 request.getRequestDispatcher("/view/error.jsp").forward(request, response);
                 return;
             }
-            */
             
             // Get dashboard statistics
             // 1. Members count
@@ -99,8 +103,8 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             List<Event> recentEvents = upcomingEvents.size() > 5 ? 
                     upcomingEvents.subList(0, 5) : upcomingEvents;
             
-            // 3. Pending requests count (if you have join requests feature)
-            int pendingRequests = 0; // TODO: implement getPendingJoinRequests()
+            // 3. Pending requests count
+            int pendingRequests = joinRequestDAO.getRequestsByClub(clubId, "Pending").size();
             
             // Set attributes for JSP
             request.setAttribute("club", club);
@@ -109,6 +113,7 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             request.setAttribute("pendingRequests", pendingRequests);
             request.setAttribute("members", members);
             request.setAttribute("recentEvents", recentEvents);
+            request.setAttribute("activeMenu", "dashboard");
             
             // Forward to dashboard JSP
             request.getRequestDispatcher("/view/club/club-leader-dashboard-new.jsp").forward(request, response);

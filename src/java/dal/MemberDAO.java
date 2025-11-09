@@ -31,7 +31,7 @@ public class MemberDAO {
 
    
     public List<MemberDTO> findMembersByClub(int clubId) {
-        String sql = "SELECT u.UserID, u.FullName, u.ProfileImage, " +
+        String sql = "SELECT u.UserID, u.FullName, u.ProfileImage, u.Email, " +
                      "m.RoleInClub, m.JoinDate " +
                      "FROM Memberships m " +
                      "JOIN Users u ON u.UserID = m.UserID " +
@@ -53,7 +53,8 @@ public class MemberDAO {
                         rs.getNString("FullName"),
                         rs.getNString("RoleInClub"),
                         rs.getString("ProfileImage"),
-                        ts != null ? ts.toLocalDateTime() : null
+                        ts != null ? ts.toLocalDateTime() : null,
+                        rs.getString("Email")
                     ));
                 }
             }

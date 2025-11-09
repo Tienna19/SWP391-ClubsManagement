@@ -14,14 +14,16 @@ public class MemberDTO {
     private String roleInClub;
     private String profileImage;
     private LocalDateTime joinDate;
+    private String email;
 
     public MemberDTO(int userId, String fullName, String roleInClub,
-                     String profileImage, LocalDateTime joinDate) {
+                     String profileImage, LocalDateTime joinDate, String email) {
         this.userId = userId;
         this.fullName = fullName;
         this.roleInClub = roleInClub;
         this.profileImage = profileImage;
         this.joinDate = joinDate;
+        this.email = email;
     }
 
     public int getUserId() { return userId; }
@@ -29,6 +31,7 @@ public class MemberDTO {
     public String getRoleInClub() { return roleInClub; }
     public String getProfileImage() { return profileImage; }
     public LocalDateTime getJoinDate() { return joinDate; }
+    public String getEmail() { return email; }
 
   
     public String getJoinDateDisplay() {

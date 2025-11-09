@@ -1,6 +1,7 @@
 package controller.club;
 
 import dal.ClubDAO;
+import dal.MemberDAO;
 import dal.UserDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -63,6 +64,8 @@ public class UpdateClubServlet extends HttpServlet {
             Integer userId = (Integer) session.getAttribute("userId");
             Integer roleId = (Integer) session.getAttribute("roleId");
             
+            MemberDAO memberDAO = new MemberDAO();
+            
             // Check permissions:
             // RoleID: 1 = Admin, 2 = ClubLeader, 3 = Member, 4 = User
             boolean hasPermission = false;
@@ -70,11 +73,9 @@ public class UpdateClubServlet extends HttpServlet {
             if (roleId == 1) {
                 // Admin can edit any club
                 hasPermission = true;
-            } else if (roleId == 2 || roleId == 3) {
-                // Club Leader or Member: check if they are the leader of THIS club
-                if (club.getCreatedBy() == userId) {
-                    hasPermission = true;
-                }
+            } else if (roleId == 2) {
+                // Club Leader: verify leader membership
+                hasPermission = memberDAO.isClubLeader(userId, clubId);
             }
             
             if (!hasPermission) {
@@ -149,10 +150,9 @@ public class UpdateClubServlet extends HttpServlet {
             boolean hasPermission = false;
             if (roleId == 1) {
                 hasPermission = true; // Admin
-            } else if (roleId == 2 || roleId == 3) {
-                if (club.getCreatedBy() == currentUserId) {
-                    hasPermission = true; // Club Leader
-                }
+            } else if (roleId == 2) {
+                MemberDAO memberDAO = new MemberDAO();
+                hasPermission = memberDAO.isClubLeader(currentUserId, clubId);
             }
             
             if (!hasPermission) {

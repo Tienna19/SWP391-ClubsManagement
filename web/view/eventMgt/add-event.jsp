@@ -230,8 +230,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/addMember?clubId=${club.clubId}" class="ttr-material-button">
-                                    <span class="ttr-label">Thêm thành viên</span>
+                                <a href="${pageContext.request.contextPath}/memberApprovals?clubId=${club.clubId}" class="ttr-material-button">
+                                    <span class="ttr-label">Phê duyệt thành viên</span>
                                 </a>
                             </li>
                         </ul>

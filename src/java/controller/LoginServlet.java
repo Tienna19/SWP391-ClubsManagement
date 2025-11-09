@@ -66,25 +66,29 @@ public class LoginServlet extends HttpServlet {
                     redirectUrl += "&eventId=" + eventId;
                 }
                 response.sendRedirect(redirectUrl);
-            } else if (roleId == 3) {
-                // RoleID 3 = ClubLeader - redirect to club leader dashboard
+            } else if (roleId == 1) {
+                // Admin redirect to admin dashboard
+                response.sendRedirect(request.getContextPath() + "/adminDashboard");
+            } else if (roleId == 2) {
+                // RoleID 2 = ClubLeader - redirect to club leader dashboard
                 // Store club ID in session
                 MemberDAO memberDAO = new MemberDAO();
                 List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
                 
                 if (!clubIds.isEmpty()) {
                     // Store first club ID in session
-                    session.setAttribute("currentClubId", clubIds.get(0));
-                    System.out.println("Redirecting ClubLeader to dashboard with club: " + clubIds.get(0));
-                    response.sendRedirect("clubDashboard");
+                    Integer leaderClubId = clubIds.get(0);
+                    session.setAttribute("currentClubId", leaderClubId);
+                    System.out.println("Redirecting ClubLeader to dashboard with club: " + leaderClubId);
+                    response.sendRedirect(request.getContextPath() + "/clubDashboard?clubId=" + leaderClubId);
                 } else {
                     // No clubs found, redirect to home
                     System.out.println("ClubLeader has no clubs, redirecting to home");
-                    response.sendRedirect("home");
+                    response.sendRedirect(request.getContextPath() + "/home");
                 }
             } else {
                 // Default redirect to home for other roles
-                response.sendRedirect("home");
+                response.sendRedirect(request.getContextPath() + "/home");
             }
         } else {
             request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
