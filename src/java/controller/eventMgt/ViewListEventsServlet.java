@@ -65,6 +65,8 @@ public class ViewListEventsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        request.setAttribute("activeMenu", "events");
+        request.setAttribute("activeSubMenu", "events-list");
         try {
             // Get current user from session
             HttpSession session = request.getSession(false);
@@ -379,7 +381,7 @@ public class ViewListEventsServlet extends HttpServlet {
             request.setAttribute("statusFilter", statusFilter);
             
             // Forward to the events list JSP
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
             
         } catch (Exception e) {
             // Handle unexpected errors
@@ -387,7 +389,7 @@ public class ViewListEventsServlet extends HttpServlet {
             try {
                 if (!response.isCommitted()) {
                     request.setAttribute("error", "An error occurred while loading events: " + e.getMessage());
-                    request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 } else {
                     // Response already committed (likely error during JSP render). Send error status.
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading events");
@@ -447,6 +449,17 @@ public class ViewListEventsServlet extends HttpServlet {
         // For now, just redirect to GET method
         // In the future, this could handle AJAX search/filter requests
         doGet(request, response);
+    }
+
+    private String determineEventListView(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("roleId");
+            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
+                return "/view/admin/admin-event-list.jsp";
+            }
+        }
+        return "/view/eventMgt/list-events.jsp";
     }
 
     /**

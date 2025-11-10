@@ -52,9 +52,9 @@ public class CancelEventServlet extends HttpServlet {
             // Get event ID from request
             String eventIdStr = request.getParameter("eventId");
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
-                request.setAttribute("message", "Event ID is required");
+                request.setAttribute("message", "Event ID is required to cancel an event.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -63,9 +63,9 @@ public class CancelEventServlet extends HttpServlet {
             // Get the event to cancel
             Event event = eventDAO.getEventById(eventId);
             if (event == null) {
-                request.setAttribute("message", "Event not found");
+                request.setAttribute("message", "Event not found.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -90,10 +90,10 @@ public class CancelEventServlet extends HttpServlet {
             }
 
             // Check if event can be cancelled (only upcoming events can be cancelled)
-            if (!"Upcoming".equals(event.getStatus()) && !"Published".equals(event.getStatus())) {
-                request.setAttribute("message", "Only upcoming or published events can be cancelled");
+            if (!"Published".equalsIgnoreCase(event.getStatus()) && !"Approved".equalsIgnoreCase(event.getStatus())) {
+                request.setAttribute("message", "Only published or approved events can be cancelled.");
                 request.setAttribute("messageType", "warning");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -102,29 +102,29 @@ public class CancelEventServlet extends HttpServlet {
 
             if (success) {
                 // Success - redirect to list events with success message
-                request.setAttribute("message", "Event '" + escapeHtml(event.getEventName()) + "' has been cancelled successfully");
+                request.setAttribute("message", "Event cancelled successfully.");
                 request.setAttribute("messageType", "success");
             } else {
                 // Database error
-                request.setAttribute("message", "Failed to cancel event. Please try again.");
+                request.setAttribute("message", "Error cancelling event. Please try again.");
                 request.setAttribute("messageType", "danger");
             }
 
             // Reload events data and forward back to list events
             reloadEventsData(request);
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
 
         } catch (NumberFormatException e) {
-            request.setAttribute("message", "Invalid event ID format");
+            request.setAttribute("message", "Invalid event ID format.");
             request.setAttribute("messageType", "danger");
             reloadEventsData(request);
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
         } catch (Exception e) {
             // Handle unexpected errors
-            request.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
+            request.setAttribute("message", "Error cancelling event: " + e.getMessage());
             request.setAttribute("messageType", "danger");
             reloadEventsData(request);
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
             e.printStackTrace();
         }
     }
@@ -247,6 +247,17 @@ public class CancelEventServlet extends HttpServlet {
                    .replace(">", "&gt;")
                    .replace("\"", "&quot;")
                    .replace("'", "&#x27;");
+    }
+
+    private String determineEventListView(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("roleId");
+            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
+                return "/view/admin/admin-event-list.jsp";
+            }
+        }
+        return "/view/eventMgt/list-events.jsp";
     }
 
     /**

@@ -64,7 +64,8 @@ public class CreateClubRequestDAO extends DBContext {
             return list;
         }
 
-        String sql = "SELECT r.*, " +
+        String sql = "SELECT r.RequestID, r.ClubName, r.Description, r.Logo, r.ClubTypes, r.UserID, r.CreatedAt, r.Status, " +
+                     "r.ReviewedBy, r.ReviewedAt, " +
                      "u1.FullName AS RequestedByName, " +
                      "u2.FullName AS ReviewedByName " +
                      "FROM CreateClubRequests r " +
@@ -108,7 +109,7 @@ public class CreateClubRequestDAO extends DBContext {
                      "FROM CreateClubRequests r " +
                      "LEFT JOIN Users u1 ON r.UserID = u1.UserID " +
                      "LEFT JOIN Users u2 ON r.ReviewedBy = u2.UserID " +
-                     "WHERE LOWER(r.Status) = LOWER(?) " +
+                     "WHERE LOWER(LTRIM(RTRIM(r.Status))) = LOWER(?) " +
                      "ORDER BY r.CreatedAt DESC";
 
         try (PreparedStatement st = connection.prepareStatement(sql)) {
@@ -174,30 +175,20 @@ public class CreateClubRequestDAO extends DBContext {
      * @param createdClubId ClubID if approved (null if rejected)
      * @return true if successful
      */
-    public boolean updateRequestStatus(int requestId, String status, int reviewedBy, 
-                                       String reviewComment, Integer createdClubId) {
+    public boolean updateRequestStatus(int requestId, String status, int reviewedBy) {
         if (connection == null) {
             System.err.println("❌ Database connection is null");
             return false;
         }
 
         String sql = "UPDATE CreateClubRequests " +
-                     "SET Status = ?, ReviewedBy = ?, ReviewedAt = GETDATE(), " +
-                     "ReviewComment = ?, CreatedClubID = ? " +
+                     "SET Status = ?, ReviewedBy = ?, ReviewedAt = GETDATE() " +
                      "WHERE RequestID = ?";
 
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, status);
             st.setInt(2, reviewedBy);
-            st.setString(3, reviewComment);
-            
-            if (createdClubId != null) {
-                st.setInt(4, createdClubId);
-            } else {
-                st.setNull(4, Types.INTEGER);
-            }
-            
-            st.setInt(5, requestId);
+            st.setInt(3, requestId);
 
             int rows = st.executeUpdate();
             if (rows > 0) {
@@ -224,7 +215,7 @@ public class CreateClubRequestDAO extends DBContext {
             return 0;
         }
 
-        String sql = "SELECT COUNT(*) FROM CreateClubRequests WHERE LOWER(Status) = LOWER(?)";
+        String sql = "SELECT COUNT(*) FROM CreateClubRequests WHERE LOWER(LTRIM(RTRIM(Status))) = LOWER(?)";
 
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, status);
@@ -288,13 +279,28 @@ public class CreateClubRequestDAO extends DBContext {
         CreateClubRequest req = new CreateClubRequest();
         
         req.setRequestId(rs.getInt("RequestID"));
-        req.setClubName(rs.getString("ClubName"));
-        req.setDescription(rs.getString("Description"));
-        req.setLogo(rs.getString("Logo"));
-        req.setClubTypes(rs.getString("ClubTypes"));
+        String clubName = rs.getString("ClubName");
+        if (clubName != null) {
+            req.setClubName(clubName.trim());
+        }
+        String description = rs.getString("Description");
+        if (description != null) {
+            req.setDescription(description.trim());
+        }
+        String logo = rs.getString("Logo");
+        if (logo != null) {
+            req.setLogo(logo.trim());
+        }
+        String clubTypes = rs.getString("ClubTypes");
+        if (clubTypes != null) {
+            req.setClubTypes(clubTypes.trim());
+        }
         req.setRequestedBy(rs.getInt("UserID"));  // Database column is UserID
         req.setRequestedAt(rs.getTimestamp("CreatedAt"));  // Database column is CreatedAt
-        req.setStatus(rs.getString("Status"));
+        String status = rs.getString("Status");
+        if (status != null) {
+            req.setStatus(status.trim());
+        }
         
         // Nullable fields
         int reviewedBy = rs.getInt("ReviewedBy");
@@ -307,12 +313,8 @@ public class CreateClubRequestDAO extends DBContext {
             req.setReviewedAt(reviewedAt);
         }
         
-        req.setReviewComment(rs.getString("ReviewComment"));
-        
-        int createdClubId = rs.getInt("CreatedClubID");
-        if (!rs.wasNull()) {
-            req.setCreatedClubId(createdClubId);
-        }
+        req.setReviewComment(null);
+        req.setCreatedClubId(null);
         
         // Display fields from JOIN
         req.setRequestedByName(rs.getString("RequestedByName"));

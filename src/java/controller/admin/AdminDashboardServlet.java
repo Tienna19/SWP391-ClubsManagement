@@ -38,6 +38,7 @@ public class AdminDashboardServlet extends HttpServlet {
         */
         
         try {
+            request.setAttribute("activeMenu", "dashboard");
             // Initialize DAOs
             ClubDAO clubDAO = new ClubDAO();
             EventDAO eventDAO = new EventDAO();
@@ -62,8 +63,9 @@ public class AdminDashboardServlet extends HttpServlet {
                     .filter(e -> "Draft".equals(e.getStatus()))
                     .count();
             
-            // 3. Total users (TODO: implement getAllUsers in UserDAO)
-            int totalUsers = 0; // Placeholder
+            // 3. Total users
+            List<User> allUsers = userDAO.getAllUsers();
+            int totalUsers = allUsers.size();
             
             // 4. Get recent clubs (last 5)
             List<Club> recentClubs = allClubs.size() > 5 ? 
@@ -73,8 +75,8 @@ public class AdminDashboardServlet extends HttpServlet {
             List<Event> recentEvents = allEvents.size() > 5 ?
                     allEvents.subList(0, 5) : allEvents;
             
-            // 6. Get recent users (placeholder - implement later)
-            List<User> recentUsers = new java.util.ArrayList<>();
+            // 6. Get recent users (last 5)
+            List<User> recentUsers = allUsers.size() > 5 ? allUsers.subList(0, 5) : allUsers;
             
             // Set attributes for JSP
             request.setAttribute("totalClubs", totalClubs);

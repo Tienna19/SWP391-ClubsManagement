@@ -72,7 +72,7 @@ public class EditEventServlet extends HttpServlet {
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
                 request.setAttribute("message", "Event ID is required");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -106,7 +106,7 @@ public class EditEventServlet extends HttpServlet {
             if (event == null) {
                 request.setAttribute("message", "Event not found");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -123,11 +123,11 @@ public class EditEventServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.setAttribute("message", "Invalid event ID format");
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
         } catch (Exception e) {
             request.setAttribute("message", "Error loading event: " + e.getMessage());
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
             e.printStackTrace();
         }
     }
@@ -148,7 +148,7 @@ public class EditEventServlet extends HttpServlet {
             if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
                 request.setAttribute("message", "Event ID is required");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -175,7 +175,7 @@ public class EditEventServlet extends HttpServlet {
             if (existingEvent == null) {
                 request.setAttribute("message", "Event not found");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -184,7 +184,7 @@ public class EditEventServlet extends HttpServlet {
             if (session == null || session.getAttribute("account") == null) {
                 request.setAttribute("message", "You must be logged in to edit events.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
             
@@ -195,7 +195,7 @@ public class EditEventServlet extends HttpServlet {
             if (userRoleId != 4 && (userRoleId != 3 || existingEvent.getCreatedBy() != user.getUserId())) {
                 request.setAttribute("message", "You do not have permission to edit this event.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
@@ -482,14 +482,25 @@ public class EditEventServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.setAttribute("message", "Invalid event ID format");
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
         } catch (Exception e) {
             // Handle unexpected errors
             request.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
             e.printStackTrace();
         }
+    }
+
+    private String determineEventListView(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("roleId");
+            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
+                return "/view/admin/admin-event-list.jsp";
+            }
+        }
+        return "/view/eventMgt/list-events.jsp";
     }
 
     /**

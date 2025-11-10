@@ -22,7 +22,7 @@
     color: #767676;
     padding: 8px 14px;
     font-weight: 400;
-	font-family: rubik;
+	font-family: 'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
     font-size: 14px;
 }
 .pagination > li > a:hover,

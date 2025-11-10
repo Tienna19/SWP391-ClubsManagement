@@ -3,7 +3,6 @@ package controller.club;
 import dal.ClubDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import model.Club;
@@ -17,6 +16,8 @@ public class ViewAllClubServlet extends HttpServlet {
             throws ServletException, IOException {
         
         try {
+            request.setAttribute("activeMenu", "clubs");
+            request.setAttribute("activeSubMenu", "clubs-list");
             ClubDAO dao = new ClubDAO();
             
             // Get parameters for filtering and searching
@@ -75,11 +76,29 @@ public class ViewAllClubServlet extends HttpServlet {
             
             // Get paginated clubs
             List<Club> paginatedClubs = getPaginatedClubs(allFilteredClubs, currentPage, recordsPerPage);
+
+            // Normalize logo paths for consistent rendering on JSP
+            for (Club club : paginatedClubs) {
+                String logo = club.getLogo();
+                if (logo != null) {
+                    club.setLogo(logo.trim().replace("\\", "/"));
+                }
+            }
             
             // Get all categories for dropdown
             List<Category> categories = dao.getAllCategories();
             
             // Set attributes for JSP
+            boolean isAdminLayout = false;
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Object roleObj = session.getAttribute("roleId");
+                if (roleObj instanceof Integer) {
+                    isAdminLayout = ((Integer) roleObj) == 4;
+                }
+            }
+            String targetJsp = isAdminLayout ? "/view/admin/admin-club-list.jsp" : "/view/club/viewAllClubs.jsp";
+
             request.setAttribute("clubs", paginatedClubs);
             request.setAttribute("categories", categories);
             request.setAttribute("totalClubs", totalRecords);
@@ -106,7 +125,7 @@ public class ViewAllClubServlet extends HttpServlet {
             request.setAttribute("inactiveClubs", inactiveClubs);
             
             // Forward to view
-            request.getRequestDispatcher("/view/club/viewAllClubs.jsp").forward(request, response);
+            request.getRequestDispatcher(targetJsp).forward(request, response);
             
         } catch (Exception e) {
             // Log error and show error page

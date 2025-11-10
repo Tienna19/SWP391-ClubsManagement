@@ -19,6 +19,8 @@ public class ViewClubRequestsServlet extends HttpServlet {
         
         // ✅ Check if user is Admin
         HttpSession session = request.getSession(false);
+        request.setAttribute("activeMenu", "clubs");
+        request.setAttribute("activeSubMenu", "club-requests");
         if (session == null || session.getAttribute("userId") == null) {
             response.sendRedirect(request.getContextPath() + "/login?error=login_required");
             return;
@@ -48,26 +50,73 @@ public class ViewClubRequestsServlet extends HttpServlet {
         try {
             CreateClubRequestDAO dao = new CreateClubRequestDAO();
             
-            // Get filter parameter
             String statusFilter = request.getParameter("status");
-            List<CreateClubRequest> requests;
-            
-            if (statusFilter != null && !statusFilter.isEmpty() && !"All".equals(statusFilter)) {
-                // Filter by status
-                requests = dao.getRequestsByStatus(statusFilter);
-            } else {
-                // Get all requests
-                requests = dao.getAllRequests();
+            if (statusFilter != null) {
+                statusFilter = statusFilter.trim();
             }
-
-            // Get counts for badges
-            int pendingCount = dao.getCountByStatus("Pending");
-            int approvedCount = dao.getCountByStatus("Approved");
-            int rejectedCount = dao.getCountByStatus("Rejected");
-
+            if (statusFilter == null || statusFilter.isEmpty()) {
+                statusFilter = "Pending";
+            }
+            
+            List<CreateClubRequest> allRequests = dao.getAllRequests();
+            if (allRequests == null) {
+                allRequests = new java.util.ArrayList<>();
+            }
+            
+            List<CreateClubRequest> pendingRequests = new java.util.ArrayList<>();
+            List<CreateClubRequest> approvedRequests = new java.util.ArrayList<>();
+            List<CreateClubRequest> rejectedRequests = new java.util.ArrayList<>();
+            
+            for (CreateClubRequest req : allRequests) {
+                String status = req.getStatus();
+                if (status != null) {
+                    status = status.trim();
+                    req.setStatus(status);
+                }
+                if (status == null || status.isEmpty()) {
+                    continue;
+                }
+                if (status.equalsIgnoreCase("Pending")) {
+                    pendingRequests.add(req);
+                } else if (status.equalsIgnoreCase("Approved")) {
+                    approvedRequests.add(req);
+                } else if (status.equalsIgnoreCase("Rejected")) {
+                    rejectedRequests.add(req);
+                }
+            }
+            
+            List<CreateClubRequest> requests;
+            switch (statusFilter.toLowerCase()) {
+                case "pending":
+                    requests = pendingRequests;
+                    statusFilter = "Pending";
+                    break;
+                case "approved":
+                    requests = approvedRequests;
+                    statusFilter = "Approved";
+                    break;
+                case "rejected":
+                    requests = rejectedRequests;
+                    statusFilter = "Rejected";
+                    break;
+                default:
+                    requests = allRequests;
+                    statusFilter = "All";
+                    break;
+            }
+            
+            System.out.println("Fetched " + requests.size() + " club requests for filter: " + statusFilter);
+            for (CreateClubRequest req : requests) {
+                System.out.println(" - Request " + req.getRequestId() + ": status=" + req.getStatus() + ", club=" + req.getClubName());
+            }
+            
+            int pendingCount = pendingRequests.size();
+            int approvedCount = approvedRequests.size();
+            int rejectedCount = rejectedRequests.size();
+            
             // Set attributes
             request.setAttribute("requests", requests);
-            request.setAttribute("statusFilter", statusFilter != null ? statusFilter : "All");
+            request.setAttribute("statusFilter", statusFilter);
             request.setAttribute("pendingCount", pendingCount);
             request.setAttribute("approvedCount", approvedCount);
             request.setAttribute("rejectedCount", rejectedCount);

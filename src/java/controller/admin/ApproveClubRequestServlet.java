@@ -134,9 +134,7 @@ public class ApproveClubRequestServlet extends HttpServlet {
         boolean updated = requestDAO.updateRequestStatus(
             clubRequest.getRequestId(),
             "Approved",
-            adminId,
-            reviewComment != null ? reviewComment : "Yêu cầu đã được phê duyệt",
-            newClubId  // Link to created club
+            adminId
         );
 
         if (!updated) {
@@ -157,9 +155,7 @@ public class ApproveClubRequestServlet extends HttpServlet {
         boolean updated = requestDAO.updateRequestStatus(
             clubRequest.getRequestId(),
             "Rejected",
-            adminId,
-            reviewComment != null ? reviewComment : "Yêu cầu bị từ chối",
-            null  // No club created
+            adminId
         );
 
         if (!updated) {

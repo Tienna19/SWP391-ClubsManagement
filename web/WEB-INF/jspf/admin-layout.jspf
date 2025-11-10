@@ -1,0 +1,162 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<header class="ttr-header">
+    <div class="ttr-header-wrapper">
+        <div class="ttr-toggle-sidebar ttr-material-button">
+            <i class="ti-close ttr-open-icon"></i>
+            <i class="ti-menu ttr-close-icon"></i>
+        </div>
+        <div class="ttr-logo-box">
+            <div>
+                <a href="${ctx}/home" class="ttr-logo">
+                    <img class="ttr-logo-mobile" alt="logo mobile" src="${ctx}/assets/images/logo-mobile.png" width="30" height="30">
+                    <img class="ttr-logo-desktop" alt="logo" src="${ctx}/assets/images/logo-white.png" width="160" height="27">
+                </a>
+            </div>
+        </div>
+        <div class="ttr-header-menu">
+            <ul class="ttr-header-navigation">
+                <li>
+                    <a href="${ctx}/home" class="ttr-material-button ttr-submenu-toggle">Trang ch&#7911;</a>
+                </li>
+                <li>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle">MENU NHANH <i class="fa fa-angle-down"></i></a>
+                    <div class="ttr-header-submenu">
+                        <ul>
+                            <li><a href="${ctx}/admin-club-list">C&#225;c CLB</a></li>
+                            <li><a href="${ctx}/admin-event-list">S&#7921; ki&#7879;n</a></li>
+                            <li><a href="${ctx}/viewClubRequests">Y&#234;u c&#7847;u CLB</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="ttr-header-right ttr-with-seperator">
+            <ul class="ttr-header-navigation">
+                <li>
+                    <a href="#" class="ttr-material-button ttr-search-toggle"><i class="fa fa-search"></i></a>
+                </li>
+                <li>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle">
+                        <span class="ttr-user-avatar">
+                            <img alt="avatar" src="${ctx}/assets/images/testimonials/pic3.jpg" width="32" height="32">
+                        </span>
+                    </a>
+                    <div class="ttr-header-submenu">
+                        <ul>
+                            <li><a href="${ctx}/profile">H&#7891; s&#417; c&#7911;a t&#244;i</a></li>
+                            <li><a href="${ctx}/logout">&#272;&#259;ng xu&#7845;t</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="ttr-sidebar">
+    <div class="ttr-sidebar-wrapper content-scroll">
+        <div class="ttr-sidebar-logo">
+            <a href="${ctx}/home">
+                <img alt="logo" src="${ctx}/assets/images/logo.png" width="122" height="27">
+            </a>
+            <div class="ttr-sidebar-toggle-button"><i class="ti-arrow-left"></i></div>
+        </div>
+        <nav class="ttr-sidebar-navi">
+            <ul>
+                <c:set var="menu" value="${empty requestScope.activeMenu ? '' : requestScope.activeMenu}" />
+                <c:set var="sub" value="${empty requestScope.activeSubMenu ? '' : requestScope.activeSubMenu}" />
+                <li class="${menu eq 'dashboard' ? 'active open' : ''}">
+                    <a href="${ctx}/adminDashboard" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-home"></i></span>
+                        <span class="ttr-label">Dashboard</span>
+                    </a>
+                </li>
+                <li class="${menu eq 'clubs' ? 'open active' : ''}">
+                    <a href="${ctx}/admin-club-list" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-briefcase"></i></span>
+                        <span class="ttr-label">Qu&#7843;n l&#253; CLB</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li class="${sub eq 'clubs-list' ? 'active' : ''}">
+                            <a href="${ctx}/admin-club-list" class="ttr-material-button">
+                                <span class="ttr-label">Danh s&#225;ch CLB</span>
+                            </a>
+                        </li>
+                        <li class="${sub eq 'club-requests' ? 'active' : ''}">
+                            <a href="${ctx}/viewClubRequests" class="ttr-material-button">
+                                <span class="ttr-label">Y&#234;u c&#7847;u t&#7841;o CLB</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="${menu eq 'events' ? 'open active' : ''}">
+                    <a href="${ctx}/admin-event-list" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-calendar"></i></span>
+                        <span class="ttr-label">Qu&#7843;n l&#253; s&#7921; ki&#7879;n</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li class="${sub eq 'events-list' ? 'active' : ''}">
+                            <a href="${ctx}/admin-event-list" class="ttr-material-button">
+                                <span class="ttr-label">Danh s&#225;ch s&#7921; ki&#7879;n</span>
+                            </a>
+                        </li>
+                        <li class="${sub eq 'events-create' ? 'active' : ''}">
+                            <a href="${ctx}/admin-event-create" class="ttr-material-button">
+                                <span class="ttr-label">T&#7841;o s&#7921; ki&#7879;n m&#7899;i</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="${menu eq 'users' ? 'open active' : ''}">
+                    <a href="${ctx}/adminUsers" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-user"></i></span>
+                        <span class="ttr-label">Ng&#432;&#7901;i d&#249;ng</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li class="${sub eq 'users-list' ? 'active' : ''}">
+                            <a href="${ctx}/adminUsers" class="ttr-material-button">
+                                <span class="ttr-label">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="${menu eq 'reports' ? 'active open' : ''}">
+                    <a href="${ctx}/systemReports" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-bar-chart"></i></span>
+                        <span class="ttr-label">B&#225;o c&#225;o</span>
+                    </a>
+                </li>
+                <li class="${menu eq 'settings' ? 'active open' : ''}">
+                    <a href="${ctx}/systemSettings" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-settings"></i></span>
+                        <span class="ttr-label">C&#224;i &#273;&#7863;t h&#7879; th&#7889;ng</span>
+                    </a>
+                </li>
+                <li class="ttr-seperate"></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script>
+    (function() {
+        var arrows = document.querySelectorAll('.ttr-sidebar-navi .ttr-arrow-icon');
+        arrows.forEach(function(arrow) {
+            arrow.addEventListener('click', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                var parentLi = this.closest('li');
+                if (!parentLi) return;
+                if (parentLi.classList.contains('open')) {
+                    parentLi.classList.remove('open');
+                    parentLi.classList.remove('active');
+                } else {
+                    parentLi.classList.add('open');
+                    parentLi.classList.add('active');
+                }
+            });
+        });
+    })();
+</script>
