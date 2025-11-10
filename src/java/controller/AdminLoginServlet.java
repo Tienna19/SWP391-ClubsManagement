@@ -45,10 +45,10 @@ public class AdminLoginServlet extends HttpServlet {
             String redirect = request.getParameter("redirect");
             String clubId = request.getParameter("clubId");
             String eventId = request.getParameter("eventId");
-            
+
             // Check user role and redirect accordingly
             int roleId = user.getRoleId();
-            
+
             if ("clubDetail".equals(redirect) && clubId != null) {
                 // Redirect back to club detail page
                 String redirectUrl = "clubDetail?clubId=" + clubId;
@@ -56,12 +56,16 @@ public class AdminLoginServlet extends HttpServlet {
                     redirectUrl += "&eventId=" + eventId;
                 }
                 response.sendRedirect(redirectUrl);
+            } else if (roleId == 4) {
+                // RoleID 4 = Admin - redirect to admin dashboard servlet
+                System.out.println("Redirecting Admin to admin dashboard");
+                response.sendRedirect(request.getContextPath() + "/adminDashboard");
             } else if (roleId == 3) {
                 // RoleID 3 = ClubLeader - redirect to club leader dashboard
                 // Store club ID in session
                 MemberDAO memberDAO = new MemberDAO();
                 List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
-                
+
                 if (!clubIds.isEmpty()) {
                     // Store first club ID in session
                     session.setAttribute("currentClubId", clubIds.get(0));

@@ -145,23 +145,40 @@
                 <!-- header right menu start -->
                 <ul class="ttr-header-navigation">
                     <li>
-                        <a href="#" class="ttr-material-button ttr-search-toggle"><i class="fa fa-search"></i></a>
-                    </li>
-                    <li>
-                        <a href="#" class="ttr-material-button ttr-submenu-toggle">
-                            <span class="ttr-user-avatar">
-                                <img alt="" src="${pageContext.request.contextPath}/assets/images/testimonials/pic3.jpg" width="32" height="32">
-                            </span>
-                        </a>
-                        <div class="ttr-header-submenu">
-                            <ul>
-                                <li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
-                                <c:if test="${not empty club}">
-                                <li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
-                                </c:if>
-                                <li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
-                            </ul>
-                        </div>
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.account}">
+                                <a href="#" class="ttr-material-button ttr-submenu-toggle" style="display: flex; align-items: center; gap: 10px; padding: 5px 15px;">
+                                    <c:choose>
+                                        <c:when test="${not empty sessionScope.account.profileImage}">
+                                            <span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <img alt="${sessionScope.account.fullName}" src="${pageContext.request.contextPath}/${sessionScope.account.profileImage}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0;">
+                                                ${not empty sessionScope.account.fullName ? sessionScope.account.fullName.substring(0, 1).toUpperCase() : 'U'}
+                                            </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <span class="ttr-user-name" style="color: #fff; font-size: 14px; font-weight: 500; white-space: nowrap;">
+                                        ${not empty sessionScope.account.fullName ? sessionScope.account.fullName : 'User'}
+                                    </span>
+                                </a>
+                                <div class="ttr-header-submenu">
+                                    <ul>
+                                        <li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
+                                        <c:if test="${not empty club}">
+                                        <li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
+                                        </c:if>
+                                        <li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
+                                    </ul>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${pageContext.request.contextPath}/login" class="ttr-material-button" style="padding: 5px 15px;">Đăng nhập</a>
+                                <a href="${pageContext.request.contextPath}/register" class="ttr-material-button" style="padding: 5px 15px;">Đăng ký</a>
+                            </c:otherwise>
+                        </c:choose>
                     </li>
                 </ul>
                 <!-- header right menu end -->
