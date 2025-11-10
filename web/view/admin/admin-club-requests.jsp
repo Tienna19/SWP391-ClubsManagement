@@ -36,6 +36,7 @@
             box-shadow: 0 10px 30px rgba(37,18,75,0.35);
             position: relative;
             z-index: 2;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
         .admin-sidebar .sidebar-title {
             font-size: 18px;
@@ -67,6 +68,14 @@
         }
         .sidebar-nav a i {
             font-size: 18px;
+        }
+
+        body.admin-sidebar-collapsed .admin-sidebar {
+            display: none;
+        }
+
+        body.admin-sidebar-collapsed .admin-content {
+            width: 100%;
         }
         .sidebar-nav a:hover {
             background: rgba(255,255,255,0.12);
@@ -291,17 +300,48 @@
                                     <div class="request-card">
                                         <div class="row align-items-center">
                                             <div class="col-md-2 mb-3 mb-md-0 text-center text-md-left">
-                                                <c:choose>
-                                                    <c:when test="${not empty req.logo}">
-                                                        <img src="${pageContext.request.contextPath}/${req.logo}" 
-                                                             alt="${req.clubName}" class="request-logo">
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <div class="request-logo bg-light d-flex align-items-center justify-content-center text-muted">
-                                                            <i class="fa fa-users fa-2x"></i>
-                                                        </div>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <c:set var="logoSrc" value="" />
+                                                <c:if test="${not empty req.logo}">
+                                                    <c:set var="rawLogo" value="${req.logo}" />
+                                                    <c:set var="normalizedLogo" value="${fn:replace(rawLogo, '\\\\', '/')}" />
+                                                    <c:choose>
+                                                        <c:when test="${fn:startsWith(normalizedLogo, 'http')}">
+                                                            <c:set var="logoSrc" value="${normalizedLogo}" />
+                                                        </c:when>
+                                                        <c:when test="${fn:startsWith(normalizedLogo, '/')}">
+                                                            <c:set var="logoSrc" value="${pageContext.request.contextPath}${normalizedLogo}" />
+                                                        </c:when>
+                                                        <c:when test="${fn:contains(normalizedLogo, '/web/')}">
+                                                            <c:set var="relativeLogo" value="${fn:substringAfter(normalizedLogo, '/web/')}" />
+                                                            <c:if test="${not fn:startsWith(relativeLogo, '/')}">
+                                                                <c:set var="relativeLogo" value="/${relativeLogo}" />
+                                                            </c:if>
+                                                            <c:set var="logoSrc" value="${pageContext.request.contextPath}${relativeLogo}" />
+                                                        </c:when>
+                                                        <c:when test="${fn:contains(normalizedLogo, '/assets/') or fn:startsWith(normalizedLogo, 'assets/')}">
+                                                            <c:set var="relativeLogo" value="${normalizedLogo}" />
+                                                            <c:if test="${fn:contains(relativeLogo, '/assets/')}">
+                                                                <c:set var="relativeLogo" value="${fn:substringAfter(relativeLogo, '/assets/')}" />
+                                                                <c:set var="relativeLogo" value="/assets/${relativeLogo}" />
+                                                            </c:if>
+                                                            <c:if test="${fn:startsWith(relativeLogo, 'assets/')}">
+                                                                <c:set var="relativeLogo" value="/${relativeLogo}" />
+                                                            </c:if>
+                                                            <c:set var="logoSrc" value="${pageContext.request.contextPath}${relativeLogo}" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="logoSrc" value="${pageContext.request.contextPath}/${normalizedLogo}" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:if>
+                                                <c:if test="${not empty logoSrc}">
+                                                    <img src="${logoSrc}" alt="${req.clubName}" class="request-logo">
+                                                </c:if>
+                                                <c:if test="${empty logoSrc}">
+                                                    <div class="request-logo bg-light d-flex align-items-center justify-content-center text-muted">
+                                                        <i class="fa fa-users fa-2x"></i>
+                                                    </div>
+                                                </c:if>
                                             </div>
                                             <div class="col-md-6">
                                                 <h4 class="mb-2">

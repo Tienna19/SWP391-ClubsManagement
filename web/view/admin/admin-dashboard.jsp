@@ -43,6 +43,7 @@
             box-shadow: 0 10px 30px rgba(37,18,75,0.35);
             position: relative;
             z-index: 2;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
         .admin-sidebar .sidebar-title {
@@ -79,6 +80,14 @@
 
         .sidebar-nav a i {
             font-size: 18px;
+        }
+
+        body.admin-sidebar-collapsed .admin-sidebar {
+            display: none;
+        }
+
+        body.admin-sidebar-collapsed .admin-content {
+            width: 100%;
         }
 
         .sidebar-nav a:hover {
