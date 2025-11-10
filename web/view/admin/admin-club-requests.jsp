@@ -32,6 +32,16 @@
             font-size: 12px;
             padding: 6px 12px;
         }
+        .request-thumb {
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .request-thumb img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
         .request-meta {
             font-size: 13px;
             color: #6f7896;
@@ -131,6 +141,21 @@
                     <c:forEach items="${requests}" var="req">
                         <div class="col-xl-6">
                             <div class="request-card">
+                                <c:set var="logoSrc" value="${req.logo}" />
+                                <c:choose>
+                                    <c:when test="${empty logoSrc}">
+                                        <c:set var="logoSrc" value="${pageContext.request.contextPath}/assets/images/courses/pic1.jpg" />
+                                    </c:when>
+                                    <c:when test="${not empty logoSrc && fn:startsWith(logoSrc, 'http')}">
+                                        <!-- keep absolute URL -->
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:set var="logoSrc" value="${pageContext.request.contextPath}${logoSrc}" />
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="request-thumb">
+                                    <img src="${logoSrc}" alt="${req.clubName}">
+                                </div>
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div>
                                         <h4 class="mb-1">${req.clubName}</h4>

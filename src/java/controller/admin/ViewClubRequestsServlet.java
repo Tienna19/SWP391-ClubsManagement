@@ -68,11 +68,15 @@ public class ViewClubRequestsServlet extends HttpServlet {
             List<CreateClubRequest> rejectedRequests = new java.util.ArrayList<>();
             
             for (CreateClubRequest req : allRequests) {
+                // normalize status and logo
                 String status = req.getStatus();
                 if (status != null) {
                     status = status.trim();
                     req.setStatus(status);
                 }
+                String normalizedLogo = normalizeLogoPath(req.getLogo());
+                req.setLogo(normalizedLogo);
+
                 if (status == null || status.isEmpty()) {
                     continue;
                 }
@@ -129,6 +133,35 @@ public class ViewClubRequestsServlet extends HttpServlet {
             request.setAttribute("error", "Lỗi khi tải danh sách yêu cầu: " + e.getMessage());
             request.getRequestDispatcher("/view/error.jsp").forward(request, response);
         }
+    }
+
+    private String normalizeLogoPath(String logo) {
+        if (logo == null || logo.trim().isEmpty()) {
+            return null;
+        }
+        String normalized = logo.trim().replace("\\", "/");
+        if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+            return normalized;
+        }
+        int webIndex = normalized.indexOf("/web/");
+        if (webIndex >= 0) {
+            normalized = normalized.substring(webIndex + 4);
+        }
+        if (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+        if (normalized.contains("assets/")) {
+            normalized = normalized.substring(normalized.indexOf("assets/"));
+        } else if (normalized.contains("uploads/")) {
+            normalized = normalized.substring(normalized.indexOf("uploads/"));
+        }
+        if (!normalized.startsWith("assets/") && !normalized.startsWith("uploads/")) {
+            normalized = normalized.startsWith("/") ? normalized.substring(1) : normalized;
+        }
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+        return normalized;
     }
 }
 
