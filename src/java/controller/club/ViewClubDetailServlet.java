@@ -63,11 +63,11 @@ public class ViewClubDetailServlet extends HttpServlet {
                 userRoleId = (Integer) session.getAttribute("roleId");
                 userId = (Integer) session.getAttribute("userId");
                 
-                // RoleID: 1=Admin, 2=ClubLeader, 3=Member, 4=User
+                // RoleID: 4=Admin, 3=ClubLeader, 2=Member, 1=User
                 if (userRoleId != null && userId != null) {
-                    if (userRoleId == 1) {
+                    if (userRoleId == 4) {
                         isLeaderOrAdmin = true;
-                    } else if (userRoleId == 2) {
+                    } else if (userRoleId == 3) {
                         // Ensure this leader belongs to this club
                         isLeaderOrAdmin = memberDAO.isClubLeader(userId, clubId);
                     }

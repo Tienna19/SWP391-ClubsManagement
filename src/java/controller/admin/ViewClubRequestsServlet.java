@@ -35,8 +35,8 @@ public class ViewClubRequestsServlet extends HttpServlet {
         System.out.println("Full Name: " + fullName);
         System.out.println("=========================================");
         
-        if (roleId == null || roleId != 1) {  // RoleID 1 = Admin
-            System.err.println("❌ ACCESS DENIED - Role ID: " + roleId + " (expected: 1)");
+        if (roleId == null || roleId != 4) {  // RoleID 4 = Admin
+            System.err.println("❌ ACCESS DENIED - Role ID: " + roleId + " (expected: 4)");
             request.setAttribute("error", "Chỉ Admin mới có quyền xem danh sách yêu cầu tạo CLB.");
             request.setAttribute("errorCode", "403");
             request.getRequestDispatcher("/view/error.jsp").forward(request, response);

@@ -30,7 +30,7 @@ public class AdminDashboardServlet extends HttpServlet {
         
         // Check if user is admin
         User user = (User) session.getAttribute("user");
-        if (user.getRoleID() != 1) { // Assuming roleID 1 is Admin
+        if (user.getRoleID() != 4) { // RoleID 4 is Admin
             request.setAttribute("error", "Bạn không có quyền truy cập trang này.");
             request.getRequestDispatcher("/view/error.jsp").forward(request, response);
             return;
