@@ -66,20 +66,20 @@ public class LoginServlet extends HttpServlet {
                     redirectUrl += "&eventId=" + eventId;
                 }
                 response.sendRedirect(redirectUrl);
-            } else if (roleId == 1) {
-                // Admin redirect to admin dashboard
+            } else if (roleId == 4) {
+                // Admin (RoleID 4) - redirect to admin dashboard servlet
                 response.sendRedirect(request.getContextPath() + "/adminDashboard");
-            } else if (roleId == 2) {
-                // RoleID 2 = ClubLeader - redirect to club leader dashboard
+            } else if (roleId == 3) {
+                // ClubLeader (RoleID 3) - redirect to club leader dashboard
                 // Store club ID in session
                 MemberDAO memberDAO = new MemberDAO();
                 List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
-                
+
                 if (!clubIds.isEmpty()) {
                     // Store first club ID in session
                     Integer leaderClubId = clubIds.get(0);
                     session.setAttribute("currentClubId", leaderClubId);
-                    System.out.println("Redirecting ClubLeader to dashboard with club: " + leaderClubId);
+                    System.out.println("Redirecting ClubLeader (roleId=3) to dashboard with club: " + leaderClubId);
                     response.sendRedirect(request.getContextPath() + "/clubDashboard?clubId=" + leaderClubId);
                 } else {
                     // No clubs found, redirect to home
