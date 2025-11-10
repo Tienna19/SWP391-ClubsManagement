@@ -64,7 +64,7 @@ public class RegisterServlet extends HttpServlet {
                 null, // phone
                 null, // address
                 null, // gender
-                1, // roleId
+                1, // roleId (RoleID 1 = User)
                 null // profileImage (default avatar)
         );
 

@@ -1,607 +1,354 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Club Management System</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="${pageContext.request.contextPath}/assets/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="${pageContext.request.contextPath}/assets/vendors/fontawesome/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/dashboard.css" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-        }
+    <!-- META ============================================= -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
 
-        body {
-            background: #f5f6fb;
-        }
+    <!-- All PLUGINS CSS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
 
-        .admin-layout {
-            display: flex;
-            min-height: calc(100vh - 70px);
-        }
+    <!-- TYPOGRAPHY ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
 
-        .admin-sidebar {
-            width: 255px;
-            background: #25124B;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            padding: 28px 22px;
-            box-shadow: 0 10px 30px rgba(37,18,75,0.35);
-            position: relative;
-            z-index: 2;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
+    <!-- SHORTCODES ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
 
-        .admin-sidebar .sidebar-title {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-sidebar .sidebar-title i {
-            font-size: 24px;
-        }
-
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .sidebar-nav a {
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            padding: 12px 14px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 500;
-            transition: background 0.25s ease, transform 0.2s ease;
-        }
-
-        .sidebar-nav a i {
-            font-size: 18px;
-        }
-
-        body.admin-sidebar-collapsed .admin-sidebar {
-            display: none;
-        }
-
-        body.admin-sidebar-collapsed .admin-content {
-            width: 100%;
-        }
-
-        .sidebar-nav a:hover {
-            background: rgba(255,255,255,0.12);
-            transform: translateX(4px);
-        }
-
-        .sidebar-nav a.active {
-            background: linear-gradient(135deg, #FFB64E 0%, #FF6B83 100%);
-            color: #fff;
-            box-shadow: 0 8px 20px rgba(255,107,131,0.35);
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 25px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 13px;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .admin-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 30px 0;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            border-left: 5px solid;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .stat-card.primary { border-left-color: #667eea; }
-        .stat-card.success { border-left-color: var(--success-color); }
-        .stat-card.danger { border-left-color: var(--danger-color); }
-        .stat-card.warning { border-left-color: var(--warning-color); }
-        .stat-card.info { border-left-color: var(--info-color); }
-
-        .stat-icon {
-            font-size: 48px;
-            opacity: 0.2;
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .stat-number {
-            font-size: 42px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-details {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .stat-detail-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-            font-size: 13px;
-        }
-
-        .quick-action-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-            cursor: pointer;
-            height: 100%;
-        }
-
-        .quick-action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-
-        .quick-action-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .recent-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-        }
-
-        .recent-item:hover {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transform: translateX(5px);
-        }
-
-        .section-title {
-            font-size: 22px;
-            font-weight: 600;
-            margin: 30px 0 20px 0;
-            color: #333;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-title i {
-            margin-right: 10px;
-            color: #667eea;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-
-        @media (max-width: 991px) {
-            .admin-layout {
-                flex-direction: column;
-            }
-            .admin-sidebar {
-                width: 100%;
-                flex-direction: row;
-                overflow-x: auto;
-                padding: 18px;
-                gap: 12px;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                gap: 8px;
-            }
-            .sidebar-nav a {
-                flex: 0 0 auto;
-                padding: 10px 16px;
-                border-radius: 30px;
-            }
-            .sidebar-footer {
-                display: none;
-            }
-        }
-    </style>
+    <!-- STYLESHEETS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+    <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
 </head>
-<body>
+<body class="ttr-opened-sidebar ttr-pinned-sidebar admin-theme-loaded">
+<%@ include file="/WEB-INF/jspf/admin-layout.jspf" %>
 
-<!-- Include Header -->
-<jsp:include page="../layout/header.jsp"/>
+<!--Main container start -->
+<main class="ttr-wrapper">
+    <div class="container-fluid">
+        <div class="db-breadcrumb">
+            <h4 class="breadcrumb-title">Dashboard</h4>
+            <ul class="db-breadcrumb-list">
+                <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Home</a></li>
+                <li>Dashboard</li>
+            </ul>
+        </div>
 
-<div class="admin-layout">
-    <aside class="admin-sidebar">
-        <div class="sidebar-title">
-            <i class="fa fa-shield"></i> Bảng điều khiển
+        <!-- Stat cards -->
+        <div class="row">
+            <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                <div class="widget-card widget-bg1">
+                    <div class="wc-item">
+                        <h4 class="wc-title">Tổng CLB</h4>
+                        <span class="wc-des">Số CLB trong hệ thống</span>
+                        <span class="wc-stats">${totalClubsVal}</span>
+                        <div class="progress wc-progress">
+                            <div class="progress-bar" role="progressbar" style="width: 78%;"></div>
+                        </div>
+                        <span class="wc-progress-bx">
+                            <span class="wc-change">Hoạt động</span>
+                            <span class="wc-number ml-auto">${activeClubsVal}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                <div class="widget-card widget-bg2">
+                    <div class="wc-item">
+                        <h4 class="wc-title">Sự kiện</h4>
+                        <span class="wc-des">Tổng sự kiện</span>
+                        <span class="wc-stats">${totalEventsVal}</span>
+                        <div class="progress wc-progress">
+                            <div class="progress-bar" role="progressbar" style="width: 88%;"></div>
+                        </div>
+                        <span class="wc-progress-bx">
+                            <span class="wc-change">Đã xuất bản</span>
+                            <span class="wc-number ml-auto">${publishedEventsVal}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                <div class="widget-card widget-bg3">
+                    <div class="wc-item">
+                        <h4 class="wc-title">Thành viên</h4>
+                        <span class="wc-des">Tổng người dùng</span>
+                        <span class="wc-stats">${totalUsersVal}</span>
+                        <div class="progress wc-progress">
+                            <div class="progress-bar" role="progressbar" style="width: 65%;"></div>
+                        </div>
+                        <span class="wc-progress-bx">
+                            <span class="wc-change">Nháp sự kiện</span>
+                            <span class="wc-number ml-auto">${draftEventsVal}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                <div class="widget-card widget-bg4">
+                    <div class="wc-item">
+                        <h4 class="wc-title">Tình trạng</h4>
+                        <span class="wc-des">Hệ thống</span>
+                        <span class="wc-stats">Online</span>
+                        <div class="progress wc-progress">
+                            <div class="progress-bar" role="progressbar" style="width: 90%;"></div>
+                        </div>
+                        <span class="wc-progress-bx">
+                            <span class="wc-change">CLB ngưng</span>
+                            <span class="wc-number ml-auto">${inactiveClubsVal}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <nav class="sidebar-nav">
-            <a href="${pageContext.request.contextPath}/adminDashboard" class="active">
-                <i class="fa fa-tachometer"></i> Dashboard
-            </a>
-            <a href="${pageContext.request.contextPath}/viewClubRequests">
-                <i class="fa fa-bell"></i> Yêu cầu CLB
-            </a>
-            <a href="${pageContext.request.contextPath}/viewAllClubs">
-                <i class="fa fa-users"></i> Quản lý CLB
-            </a>
-            <a href="${pageContext.request.contextPath}/listEvents">
-                <i class="fa fa-calendar"></i> Quản lý sự kiện
-            </a>
-            <a href="${pageContext.request.contextPath}/manageUsers">
-                <i class="fa fa-user-circle"></i> Quản lý người dùng
-            </a>
-            <a href="${pageContext.request.contextPath}/systemReports">
-                <i class="fa fa-bar-chart"></i> Báo cáo
-            </a>
-            <a href="${pageContext.request.contextPath}/systemSettings">
-                <i class="fa fa-cog"></i> Cài đặt hệ thống
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <div><i class="fa fa-check-circle text-success mr-2"></i>Hệ thống hoạt động ổn định</div>
-            <div class="mt-2"><i class="fa fa-life-ring mr-2"></i>Hỗ trợ: support@stuclub.vn</div>
-        </div>
-    </aside>
 
-    <div class="admin-content">
-
-<!-- Admin Header -->
-<div class="admin-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="mb-2">
-                    <i class="fa fa-tachometer"></i> Admin Dashboard
-                </h1>
-                <p class="mb-0">Quản lý toàn bộ hệ thống Club Management</p>
+        <div class="row">
+            <div class="col-lg-8 m-b30">
+                <div class="widget-box">
+                    <div class="wc-title">
+                        <h4>Tổng quan hệ thống</h4>
+                    </div>
+                    <div class="widget-inner">
+                        <canvas id="overviewChart" width="100" height="45"></canvas>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <span class="badge bg-light text-dark fs-6">
-                    <i class="fa fa-user-shield"></i> Administrator
-                </span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container py-4">
-    
-    <!-- Statistics Overview -->
-    <div class="row">
-        
-        <!-- Total Clubs -->
-        <div class="col-md-3">
-            <div class="stat-card primary position-relative">
-                <i class="fa fa-users stat-icon"></i>
-                <div class="stat-label">Tổng số CLB</div>
-                <div class="stat-number text-primary">${totalClubs}</div>
-                <div class="stat-details">
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-check-circle text-success"></i> Hoạt động:</span>
-                        <strong>${activeClubs}</strong>
+            <div class="col-lg-4 m-b30">
+                <div class="widget-box">
+                    <div class="wc-title">
+                        <h4>CLB mới</h4>
                     </div>
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-times-circle text-danger"></i> Ngưng:</span>
-                        <strong>${inactiveClubs}</strong>
-                    </div>
-                </div>
-                <a href="${pageContext.request.contextPath}/viewAllClubs" class="btn btn-sm btn-primary mt-2 w-100">
-                    Quản lý CLB
-                </a>
-            </div>
-        </div>
-        
-        <!-- Total Events -->
-        <div class="col-md-3">
-            <div class="stat-card success position-relative">
-                <i class="fa fa-calendar stat-icon"></i>
-                <div class="stat-label">Tổng sự kiện</div>
-                <div class="stat-number text-success">${totalEvents}</div>
-                <div class="stat-details">
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-eye text-success"></i> Published:</span>
-                        <strong>${publishedEvents}</strong>
-                    </div>
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-pencil text-warning"></i> Draft:</span>
-                        <strong>${draftEvents}</strong>
-                    </div>
-                </div>
-                <a href="${pageContext.request.contextPath}/listEvents" class="btn btn-sm btn-success mt-2 w-100">
-                    Quản lý Events
-                </a>
-            </div>
-        </div>
-        
-        <!-- Total Users -->
-        <div class="col-md-3">
-            <div class="stat-card warning position-relative">
-                <i class="fa fa-user stat-icon"></i>
-                <div class="stat-label">Tổng người dùng</div>
-                <div class="stat-number text-warning">${totalUsers}</div>
-                <div class="stat-details">
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-user-circle"></i> Thành viên</span>
-                    </div>
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-user-plus text-info"></i> Đang hoạt động</span>
-                    </div>
-                </div>
-                <a href="${pageContext.request.contextPath}/manageUsers" class="btn btn-sm btn-warning mt-2 w-100">
-                    Quản lý Users
-                </a>
-            </div>
-        </div>
-        
-        <!-- System Health -->
-        <div class="col-md-3">
-            <div class="stat-card info position-relative">
-                <i class="fa fa-heartbeat stat-icon"></i>
-                <div class="stat-label">Trạng thái hệ thống</div>
-                <div class="stat-number text-info">
-                    <i class="fa fa-check-circle"></i>
-                </div>
-                <div class="stat-details">
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-database text-success"></i> Database:</span>
-                        <strong class="text-success">OK</strong>
-                    </div>
-                    <div class="stat-detail-item">
-                        <span><i class="fa fa-server text-success"></i> Server:</span>
-                        <strong class="text-success">Online</strong>
-                    </div>
-                </div>
-                <a href="${pageContext.request.contextPath}/systemSettings" class="btn btn-sm btn-info mt-2 w-100">
-                    Cài đặt
-                </a>
-            </div>
-        </div>
-        
-    </div>
-    
-    <!-- Quick Actions -->
-    <div class="section-title">
-        <i class="fa fa-bolt"></i> Thao tác nhanh
-    </div>
-    
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <a href="${pageContext.request.contextPath}/viewClubRequests" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="quick-action-icon text-danger">
-                        <i class="fa fa-bell"></i>
-                    </div>
-                    <h5>Yêu cầu tạo CLB</h5>
-                    <p class="text-muted small mb-0">Phê duyệt yêu cầu tạo CLB</p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="${pageContext.request.contextPath}/addNewEvent" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="quick-action-icon text-success">
-                        <i class="fa fa-calendar-plus-o"></i>
-                    </div>
-                    <h5>Tạo sự kiện</h5>
-                    <p class="text-muted small mb-0">Thêm sự kiện mới</p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="${pageContext.request.contextPath}/assignRole" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="quick-action-icon text-warning">
-                        <i class="fa fa-user-plus"></i>
-                    </div>
-                    <h5>Phân quyền</h5>
-                    <p class="text-muted small mb-0">Gán vai trò người dùng</p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="${pageContext.request.contextPath}/systemReports" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="quick-action-icon text-info">
-                        <i class="fa fa-bar-chart"></i>
-                    </div>
-                    <h5>Báo cáo</h5>
-                    <p class="text-muted small mb-0">Xem thống kê chi tiết</p>
-                </div>
-            </a>
-        </div>
-    </div>
-    
-    <!-- Recent Activities -->
-    <div class="row">
-        
-        <!-- Recent Clubs -->
-        <div class="col-md-4">
-            <div class="section-title">
-                <i class="fa fa-users"></i> CLB mới nhất
-            </div>
-            <div class="chart-container">
-                <c:if test="${empty recentClubs}">
-                    <div class="alert alert-info">
-                        <i class="fa fa-info-circle"></i> Chưa có CLB nào.
-                    </div>
-                </c:if>
-                
-                <c:forEach items="${recentClubs}" var="club">
-                    <div class="recent-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">${club.clubName}</h6>
-                                <p class="mb-0 text-muted small">
-                                    <span class="badge bg-${club.status eq 'Active' ? 'success' : 'secondary'}">${club.status}</span>
-                                    <span class="ms-2">${club.clubTypes}</span>
-                                </p>
-                            </div>
-                            <a href="${pageContext.request.contextPath}/clubDashboard" 
-                               class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-eye"></i>
-                            </a>
+                    <div class="widget-inner">
+                        <div class="noti-box-list">
+                            <ul>
+                                <c:forEach items="${recentClubs}" var="club">
+                                    <li>
+                                        <span class="notification-icon dashbg-green">
+                                            <i class="fa fa-university"></i>
+                                        </span>
+                                        <span class="notification-text">
+                                            <strong>${club.clubName}</strong> - ${club.clubTypes}
+                                        </span>
+                                        <span class="notification-time">
+                                            <span>${club.status}</span>
+                                        </span>
+                                    </li>
+                                </c:forEach>
+                                <c:if test="${empty recentClubs}">
+                                    <li class="text-center text-muted py-3">
+                                        Chưa có CLB nào
+                                    </li>
+                                </c:if>
+                            </ul>
                         </div>
                     </div>
-                </c:forEach>
-                
-                <c:if test="${not empty recentClubs}">
-                    <a href="${pageContext.request.contextPath}/viewAllClubs" class="btn btn-primary w-100 mt-3">
-                        Xem tất cả <i class="fa fa-arrow-right"></i>
-                    </a>
-                </c:if>
+                </div>
             </div>
         </div>
-        
-        <!-- Recent Events -->
-        <div class="col-md-4">
-            <div class="section-title">
-                <i class="fa fa-calendar"></i> Sự kiện mới nhất
-            </div>
-            <div class="chart-container">
-                <c:if test="${empty recentEvents}">
-                    <div class="alert alert-info">
-                        <i class="fa fa-info-circle"></i> Chưa có sự kiện nào.
+
+        <div class="row">
+            <div class="col-lg-6 m-b30">
+                <div class="widget-box">
+                    <div class="wc-title">
+                        <h4>Người dùng mới</h4>
                     </div>
-                </c:if>
-                
-                <c:forEach items="${recentEvents}" var="event">
-                    <div class="recent-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">${event.eventName}</h6>
-                                <p class="mb-0 text-muted small">
-                                    <i class="fa fa-map-marker"></i> ${event.location}
-                                    <br>
-                                    <i class="fa fa-clock-o"></i> ${event.startDate}
-                                </p>
-                            </div>
-                            <span class="badge bg-primary">${event.status}</span>
+                    <div class="widget-inner">
+                        <div class="new-user-list">
+                            <ul>
+                                <c:forEach items="${recentUsers}" var="user">
+                                    <li>
+                                        <span class="new-users-pic">
+                                            <img src="${pageContext.request.contextPath}/assets/images/testimonials/pic1.jpg" alt="avatar"/>
+                                        </span>
+                                        <span class="new-users-text">
+                                            <a href="#" class="new-users-name">${user.fullName}</a>
+                                            <span class="new-users-info">${user.email}</span>
+                                        </span>
+                                        <span class="new-users-btn">
+                                            <a href="${pageContext.request.contextPath}/adminUsers" class="btn button-sm outline">Xem</a>
+                                        </span>
+                                    </li>
+                                </c:forEach>
+                                <c:if test="${empty recentUsers}">
+                                    <li class="text-center text-muted py-3">
+                                        Chưa có người dùng mới
+                                    </li>
+                                </c:if>
+                            </ul>
                         </div>
                     </div>
-                </c:forEach>
-                
-                <c:if test="${not empty recentEvents}">
-                    <a href="${pageContext.request.contextPath}/listEvents" class="btn btn-success w-100 mt-3">
-                        Xem tất cả <i class="fa fa-arrow-right"></i>
-                    </a>
-                </c:if>
+                </div>
             </div>
-        </div>
-        
-        <!-- Recent Users -->
-        <div class="col-md-4">
-            <div class="section-title">
-                <i class="fa fa-user"></i> Người dùng mới
-            </div>
-            <div class="chart-container">
-                <c:if test="${empty recentUsers}">
-                    <div class="alert alert-info">
-                        <i class="fa fa-info-circle"></i> Chưa có người dùng nào.
+            <div class="col-lg-6 m-b30">
+                <div class="widget-box">
+                    <div class="wc-title">
+                        <h4>Sự kiện gần đây</h4>
                     </div>
-                </c:if>
-                
-                <c:forEach items="${recentUsers}" var="user">
-                    <div class="recent-item">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">${user.fullName}</h6>
-                                <p class="mb-0 text-muted small">
-                                    <i class="fa fa-envelope"></i> ${user.email}
-                                </p>
-                            </div>
-                            <span class="badge bg-info">User</span>
+                    <div class="widget-inner">
+                        <div class="orders-list">
+                            <ul>
+                                <c:forEach items="${recentEvents}" var="event">
+                                    <li>
+                                        <span class="orders-title">
+                                            <a href="${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}" class="orders-title-name">
+                                                ${event.eventName}
+                                            </a>
+                                            <span class="orders-info">
+                                                <i class="fa fa-map-marker"></i> ${event.location}
+                                                <br/>
+                                                <i class="fa fa-clock-o"></i>
+                                                <fmt:formatDate value="${event.startDate}" pattern="dd/MM/yyyy HH:mm"/>
+                                            </span>
+                                        </span>
+                                        <span class="orders-btn">
+                                            <span class="btn button-sm ${event.status eq 'Published' ? 'green' : 'red'}">${event.status}</span>
+                                        </span>
+                                    </li>
+                                </c:forEach>
+                                <c:if test="${empty recentEvents}">
+                                    <li class="text-center text-muted py-3">
+                                        Chưa có sự kiện nào
+                                    </li>
+                                </c:if>
+                            </ul>
                         </div>
                     </div>
-                </c:forEach>
-                
-                <c:if test="${not empty recentUsers}">
-                    <a href="${pageContext.request.contextPath}/manageUsers" class="btn btn-warning w-100 mt-3">
-                        Xem tất cả <i class="fa fa-arrow-right"></i>
-                    </a>
-                </c:if>
+                </div>
             </div>
         </div>
-        
+
+        <div class="row">
+            <div class="col-lg-12 m-b30">
+                <div class="widget-box">
+                    <div class="wc-title">
+                        <h4>Lịch sự kiện</h4>
+                    </div>
+                    <div class="widget-inner">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-</div>
+</main>
+<div class="ttr-overlay"></div>
 
-</div>
-</div>
-
-<!-- Include Footer -->
-<jsp:include page="../layout/footer.jsp"/>
-
-<!-- Bootstrap JS -->
-<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+<!-- External JavaScripts -->
 <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/magnific-popup/magnific-popup.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/counter/waypoints-min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/counter/counterup.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/imagesloaded/imagesloaded.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/chart/chart.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
+<script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
 
 <script>
-    // Auto refresh statistics every 60 seconds
-    setTimeout(function() {
-        location.reload();
-    }, 60000);
+    (function () {
+        const clubs = Number("<c:out value='${totalClubsVal}'/>");
+        const events = Number("<c:out value='${totalEventsVal}'/>");
+        const users = Number("<c:out value='${totalUsersVal}'/>");
+        const ctx = document.getElementById('overviewChart');
+        if (ctx && window.Chart) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['CLB', 'Sự kiện', 'Người dùng'],
+                    datasets: [{
+                        label: 'Thống kê hệ thống',
+                        data: [clubs, events, users],
+                        borderColor: '#5E35B1',
+                        backgroundColor: 'rgba(94, 53, 177, 0.15)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        const calendarEvents = [];
+        document.querySelectorAll('#calendar-event-data .calendar-event').forEach(function(node) {
+            calendarEvents.push({
+                title: node.dataset.title,
+                start: node.dataset.start,
+                end: node.dataset.end,
+                url: node.dataset.url
+            });
+        });
+
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay,listWeek'
+            },
+            defaultDate: moment().format('YYYY-MM-DD'),
+            navLinks: true,
+            editable: false,
+            eventLimit: true,
+            events: calendarEvents
+        });
+        if (window.innerWidth <= 1024) {
+            document.body.classList.remove('ttr-opened-sidebar');
+            document.body.classList.remove('ttr-pinned-sidebar');
+        } else {
+            document.body.classList.add('ttr-opened-sidebar');
+            document.body.classList.add('ttr-pinned-sidebar');
+        }
+        window.addEventListener('resize', function () {
+            if (window.innerWidth <= 1024) {
+                document.body.classList.remove('ttr-opened-sidebar');
+                document.body.classList.remove('ttr-pinned-sidebar');
+            } else {
+                document.body.classList.add('ttr-opened-sidebar');
+                document.body.classList.add('ttr-pinned-sidebar');
+            }
+        });
+    })();
 </script>
 
+<div id="calendar-event-data" style="display:none;">
+    <c:forEach items="${recentEvents}" var="event">
+        <fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="eventStartIso"/>
+        <fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="eventEndIso"/>
+        <div class="calendar-event"
+             data-title="<c:out value='${event.eventName}'/>"
+             data-start="<c:out value='${eventStartIso}'/>"
+             data-end="<c:out value='${eventEndIso}'/>"
+             data-url="${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}">
+        </div>
+    </c:forEach>
+</div>
 </body>
 </html>
 

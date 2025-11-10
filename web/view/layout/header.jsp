@@ -241,7 +241,7 @@
                             <li><a href="${pageContext.request.contextPath}/viewAllEvents">Sự kiện</a></li>
                             <c:if test="${not empty account}">
                                 <c:choose>
-                                    <c:when test="${account.roleId == 2}">
+                                    <c:when test="${account.roleId == 3}">
                                         <c:url var="leaderDashboardUrl" value="/clubDashboard"/>
                                         <c:if test="${not empty sessionScope.currentClubId}">
                                             <c:url var="leaderDashboardUrl" value="/clubDashboard">
@@ -250,7 +250,7 @@
                                         </c:if>
                                         <li><a href="${leaderDashboardUrl}">Leader Dashboard</a></li>
                                     </c:when>
-                                    <c:when test="${account.roleId == 1}">
+                                    <c:when test="${account.roleId == 4}">
                                         <c:url var="adminDashboardUrl" value="/adminDashboard"/>
                                         <li><a href="${adminDashboardUrl}">Admin Dashboard</a></li>
                                     </c:when>
@@ -342,7 +342,7 @@
             }
         });
 
-        const privilegedFlag = '${not empty account && (account.roleId == 1 || account.roleId == 2)}';
+        const privilegedFlag = '${not empty account && (account.roleId == 4 || account.roleId == 3)}';
         const isPrivilegedUser = privilegedFlag === 'true';
         if (isPrivilegedUser) {
             document.body.classList.remove('admin-sidebar-collapsed');

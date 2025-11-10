@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.UUID;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
@@ -66,6 +67,8 @@ public class AddNewEventServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        request.setAttribute("activeMenu", "events");
+        request.setAttribute("activeSubMenu", "events-create");
         try {
             // Get clubId parameter if provided
             String clubIdParam = request.getParameter("clubId");
@@ -76,15 +79,14 @@ public class AddNewEventServlet extends HttpServlet {
             
             // Set selected club ID if provided
             if (clubIdParam != null && !clubIdParam.trim().isEmpty()) {
-                request.setAttribute("selectedClubId", clubIdParam);
+                request.setAttribute("selectedClubId", Integer.parseInt(clubIdParam));
             }
             
-            // Forward to the add event JSP form
-            request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+            request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
         } catch (Exception e) {
             // Handle error
             request.setAttribute("error", "Error loading clubs: " + e.getMessage());
-            request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+            request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
             e.printStackTrace();
         }
     }
@@ -99,13 +101,15 @@ public class AddNewEventServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        request.setAttribute("activeMenu", "events");
+        request.setAttribute("activeSubMenu", "events-create");
         try {
             // Get user from session
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("account") == null) {
                 request.setAttribute("message", "You must be logged in to create events.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 return;
             }
             
@@ -160,12 +164,12 @@ public class AddNewEventServlet extends HttpServlet {
                 } catch (IllegalArgumentException e) {
                     request.setAttribute("message", e.getMessage());
                     request.setAttribute("messageType", "danger");
-                    request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                     return;
                 } catch (Exception e) {
                     request.setAttribute("message", "Lỗi khi tải ảnh lên: " + e.getMessage());
                     request.setAttribute("messageType", "danger");
-                    request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                     return;
                 }
             }
@@ -209,6 +213,10 @@ public class AddNewEventServlet extends HttpServlet {
             try {
                 if (clubIdStr != null && !clubIdStr.trim().isEmpty()) {
                     clubId = Integer.parseInt(clubIdStr);
+                    request.setAttribute("selectedClubId", clubId);
+                    if (clubId <= 0) {
+                        errors.append("Club ID must be greater than 0.<br>");
+                    }
                 }
             } catch (NumberFormatException e) {
                 errors.append("Invalid club ID format.<br>");
@@ -294,7 +302,7 @@ public class AddNewEventServlet extends HttpServlet {
             if (errors.length() > 0) {
                 request.setAttribute("message", errors.toString());
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 return;
             }
 
@@ -319,11 +327,11 @@ public class AddNewEventServlet extends HttpServlet {
                     request.setAttribute("message", message);
                     request.setAttribute("messageType", "success");
                     request.setAttribute("eventId", eventId);
-                    request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 } else {
                     request.setAttribute("message", "Failed to create event. Please try again.");
                     request.setAttribute("messageType", "danger");
-                    request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 }
             } else if (userRoleId == 3) {
                 // ClubLeader creates request in CreateEventRequests table
@@ -368,24 +376,24 @@ public class AddNewEventServlet extends HttpServlet {
                     request.setAttribute("message", message);
                     request.setAttribute("messageType", "success");
                     request.setAttribute("requestId", requestId);
-                    request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 } else {
                     request.setAttribute("message", "Failed to submit event request. Please try again.");
                     request.setAttribute("messageType", "danger");
-                    request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                    request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 }
             } else {
                 // Unauthorized user
                 request.setAttribute("message", "You do not have permission to create events.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+                request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
             }
 
         } catch (Exception e) {
             // Handle unexpected errors
             request.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/add-event.jsp").forward(request, response);
+            request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
             e.printStackTrace();
         }
     }
@@ -437,12 +445,13 @@ public class AddNewEventServlet extends HttpServlet {
      * Generate unique file name
      */
     private String generateUniqueFileName(String originalFileName) {
+        int lastDotIndex = originalFileName.lastIndexOf('.');
         String extension = "";
-        int lastDotIndex = originalFileName.lastIndexOf(".");
         if (lastDotIndex > 0) {
             extension = originalFileName.substring(lastDotIndex);
         }
-        return System.currentTimeMillis() + "_" + originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
+        String uniqueId = UUID.randomUUID().toString();
+        return uniqueId + extension;
     }
 
     /**
@@ -452,6 +461,17 @@ public class AddNewEventServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Servlet for adding new events to the club management system";
+    }
+
+    private String determineAddEventView(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("roleId");
+            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
+                return "/view/admin/admin-event-create.jsp";
+            }
+        }
+        return "/view/eventMgt/add-event.jsp";
     }
 }
 

@@ -58,9 +58,9 @@ public class ApproveRejectEventServlet extends HttpServlet {
             
             // Only Admin (role 4) can approve/reject events
             if (userRoleId != 4) {
-                request.setAttribute("message", "You do not have permission to approve/reject events.");
+                request.setAttribute("message", "Bạn không có quyền thực hiện hành động này.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
             
@@ -68,17 +68,17 @@ public class ApproveRejectEventServlet extends HttpServlet {
             String requestIdStr = request.getParameter("requestId");
             String action = request.getParameter("action"); // "approve" or "reject"
             
-            if (requestIdStr == null || requestIdStr.trim().isEmpty()) {
-                request.setAttribute("message", "Event request ID is required");
+            if (requestIdStr == null || requestIdStr.trim().isEmpty() || action == null || action.trim().isEmpty()) {
+                request.setAttribute("message", "Thiếu thông tin cần thiết để xử lý yêu cầu.");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
             
             if (action == null || (!action.equals("approve") && !action.equals("reject"))) {
                 request.setAttribute("message", "Invalid action. Must be 'approve' or 'reject'");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
             
@@ -87,9 +87,9 @@ public class ApproveRejectEventServlet extends HttpServlet {
             // Get the event request
             CreateEventRequest eventRequest = createEventRequestDAO.getRequestById(requestId);
             if (eventRequest == null) {
-                request.setAttribute("message", "Event request not found");
+                request.setAttribute("message", "Không tìm thấy yêu cầu sự kiện");
                 request.setAttribute("messageType", "danger");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
             
@@ -107,19 +107,19 @@ public class ApproveRejectEventServlet extends HttpServlet {
             if (!"Pending".equals(eventRequest.getStatus())) {
                 request.setAttribute("message", "Only Pending event requests can be approved/rejected");
                 request.setAttribute("messageType", "warning");
-                request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+                request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
             
             if ("approve".equals(action)) {
                 // APPROVE: Move event from CreateEventRequests to Events table with Published status
                 handleApproval(eventRequest, user.getUserId());
-                request.setAttribute("message", "Event '" + escapeHtml(eventRequest.getEventName()) + "' has been approved and published successfully");
+                request.setAttribute("message", "Sự kiện đã được phê duyệt thành công.");
                 request.setAttribute("messageType", "success");
             } else if ("reject".equals(action)) {
                 // REJECT: Just update status in CreateEventRequests
                 handleRejection(eventRequest, user.getUserId());
-                request.setAttribute("message", "Event request '" + escapeHtml(eventRequest.getEventName()) + "' has been rejected");
+                request.setAttribute("message", "Yêu cầu sự kiện đã được cập nhật trạng thái thành công.");
                 request.setAttribute("messageType", "success");
             }
             
@@ -127,14 +127,14 @@ public class ApproveRejectEventServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/listEvents");
             
         } catch (NumberFormatException e) {
-            request.setAttribute("message", "Invalid request ID format");
+            request.setAttribute("message", "Invalid event ID format.");
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
         } catch (Exception e) {
             // Handle unexpected errors
-            request.setAttribute("message", "An unexpected error occurred: " + e.getMessage());
+            request.setAttribute("message", "Có lỗi xảy ra: " + e.getMessage());
             request.setAttribute("messageType", "danger");
-            request.getRequestDispatcher("/view/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
             e.printStackTrace();
         }
     }
@@ -275,6 +275,17 @@ public class ApproveRejectEventServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Servlet for approving/rejecting event requests in the club management system";
+    }
+
+    private String determineEventListView(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("roleId");
+            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
+                return "/view/admin/admin-event-list.jsp";
+            }
+        }
+        return "/view/eventMgt/list-events.jsp";
     }
 }
 

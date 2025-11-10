@@ -51,9 +51,9 @@ public class DeleteClubServlet extends HttpServlet {
             
             // Check permissions
             boolean hasPermission = false;
-            if (roleId == 1) {
+            if (roleId == 4) {
                 hasPermission = true; // Admin can delete any club
-            } else if (roleId == 2) {
+            } else if (roleId == 3) {
                 hasPermission = memberDAO.isClubLeader(userId, clubId);
             }
             

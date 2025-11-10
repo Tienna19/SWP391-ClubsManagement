@@ -67,13 +67,13 @@ public class UpdateClubServlet extends HttpServlet {
             MemberDAO memberDAO = new MemberDAO();
             
             // Check permissions:
-            // RoleID: 1 = Admin, 2 = ClubLeader, 3 = Member, 4 = User
+            // RoleID: 4 = Admin, 3 = ClubLeader, 2 = Member, 1 = User
             boolean hasPermission = false;
             
-            if (roleId == 1) {
+            if (roleId == 4) {
                 // Admin can edit any club
                 hasPermission = true;
-            } else if (roleId == 2) {
+            } else if (roleId == 3) {
                 // Club Leader: verify leader membership
                 hasPermission = memberDAO.isClubLeader(userId, clubId);
             }
@@ -148,9 +148,9 @@ public class UpdateClubServlet extends HttpServlet {
             
             // ✅ Verify permission again (double check)
             boolean hasPermission = false;
-            if (roleId == 1) {
+            if (roleId == 4) {
                 hasPermission = true; // Admin
-            } else if (roleId == 2) {
+            } else if (roleId == 3) {
                 MemberDAO memberDAO = new MemberDAO();
                 hasPermission = memberDAO.isClubLeader(currentUserId, clubId);
             }

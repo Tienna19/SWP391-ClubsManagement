@@ -91,7 +91,7 @@ Theme Version:	1.0.0
 				
 				var displayGraph = function() {
 					if(!checkSelectorExistence('#chart')){return;}
-					Chart.defaults.global.defaultFontFamily = "rubik";
+					Chart.defaults.global.defaultFontFamily = "Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif";
 					Chart.defaults.global.defaultFontColor = '#999';
 					Chart.defaults.global.defaultFontSize = '12';
 

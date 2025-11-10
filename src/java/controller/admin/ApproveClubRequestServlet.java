@@ -33,7 +33,7 @@ public class ApproveClubRequestServlet extends HttpServlet {
         Integer adminId = (Integer) session.getAttribute("userId");
         Integer roleId = (Integer) session.getAttribute("roleId");
         
-        if (roleId == null || roleId != 1) {  // RoleID 1 = Admin
+        if (roleId == null || roleId != 4) {  // RoleID 4 = Admin
             request.setAttribute("error", "Chỉ Admin mới có quyền phê duyệt yêu cầu tạo CLB.");
             request.setAttribute("errorCode", "403");
             request.getRequestDispatcher("/view/error.jsp").forward(request, response);
@@ -134,9 +134,7 @@ public class ApproveClubRequestServlet extends HttpServlet {
         boolean updated = requestDAO.updateRequestStatus(
             clubRequest.getRequestId(),
             "Approved",
-            adminId,
-            reviewComment != null ? reviewComment : "Yêu cầu đã được phê duyệt",
-            newClubId  // Link to created club
+            adminId
         );
 
         if (!updated) {
@@ -157,9 +155,7 @@ public class ApproveClubRequestServlet extends HttpServlet {
         boolean updated = requestDAO.updateRequestStatus(
             clubRequest.getRequestId(),
             "Rejected",
-            adminId,
-            reviewComment != null ? reviewComment : "Yêu cầu bị từ chối",
-            null  // No club created
+            adminId
         );
 
         if (!updated) {
