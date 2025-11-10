@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page pageEncoding="UTF-8" %>
 <!-- Footer -->
 <footer class="text-center text-white mt-5" style="background-color: #5B2C8E; padding: 20px 0;">
     <div class="container">

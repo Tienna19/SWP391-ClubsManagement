@@ -340,15 +340,35 @@
 								<c:forEach var="club" items="${featuredClubs}" varStatus="status">
 									<c:set var="clubLogo" value="" />
 									<c:if test="${not empty club.logo}">
+										<c:set var="rawLogo" value="${club.logo}" />
+										<c:set var="normalizedLogo" value="${fn:replace(rawLogo, '\\\\', '/')}" />
 										<c:choose>
-											<c:when test="${fn:startsWith(club.logo, 'http')}">
-												<c:set var="clubLogo" value="${club.logo}" />
+											<c:when test="${fn:startsWith(normalizedLogo, 'http')}">
+												<c:set var="clubLogo" value="${normalizedLogo}" />
 											</c:when>
-											<c:when test="${fn:startsWith(club.logo, '/')}">
-												<c:set var="clubLogo" value="${pageContext.request.contextPath}${club.logo}" />
+											<c:when test="${fn:startsWith(normalizedLogo, '/')}">
+												<c:set var="clubLogo" value="${pageContext.request.contextPath}${normalizedLogo}" />
+											</c:when>
+											<c:when test="${fn:contains(normalizedLogo, '/web/')}">
+												<c:set var="relativeLogo" value="${fn:substringAfter(normalizedLogo, '/web/')}" />
+												<c:if test="${not fn:startsWith(relativeLogo, '/')}">
+													<c:set var="relativeLogo" value="/${relativeLogo}" />
+												</c:if>
+												<c:set var="clubLogo" value="${pageContext.request.contextPath}${relativeLogo}" />
+											</c:when>
+											<c:when test="${fn:contains(normalizedLogo, '/assets/') or fn:startsWith(normalizedLogo, 'assets/')}">
+												<c:set var="relativeLogo" value="${normalizedLogo}" />
+												<c:if test="${fn:contains(relativeLogo, '/assets/')}">
+													<c:set var="relativeLogo" value="${fn:substringAfter(relativeLogo, '/assets/')}" />
+													<c:set var="relativeLogo" value="/assets/${relativeLogo}" />
+												</c:if>
+												<c:if test="${fn:startsWith(relativeLogo, 'assets/')}">
+													<c:set var="relativeLogo" value="/${relativeLogo}" />
+												</c:if>
+												<c:set var="clubLogo" value="${pageContext.request.contextPath}${relativeLogo}" />
 											</c:when>
 											<c:otherwise>
-												<c:set var="clubLogo" value="${pageContext.request.contextPath}/${club.logo}" />
+												<c:set var="clubLogo" value="${pageContext.request.contextPath}/${normalizedLogo}" />
 											</c:otherwise>
 										</c:choose>
 									</c:if>

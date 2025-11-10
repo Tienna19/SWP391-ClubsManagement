@@ -139,20 +139,24 @@
         align-items: center;
         transition: opacity 0.2s;
     }
+    nav ul li.has-dropdown > a {
+        cursor: pointer;
+    }
     nav ul li a:hover {
         opacity: 0.7;
     }
     .submenu {
         position: absolute;
-        top: 58px;
+        top: 60px;
         left: 0;
         background-color: white;
         color: #333;
         min-width: 180px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
         display: none;
-        border-radius: 4px;
+        border-radius: 12px;
         z-index: 999;
+        padding: 12px 0;
     }
     .submenu ul {
         list-style: none;
@@ -167,7 +171,7 @@
         text-decoration: none;
         display: block;
     }
-    nav ul li:hover .submenu {
+    nav ul li.has-dropdown.open .submenu {
         display: block;
     }
     .header-right {
@@ -214,7 +218,7 @@
 
 <header>
     <div class="header-left">
-        <button type="button" class="menu-toggle" onclick="if (typeof window.toggleSidebar === 'function') { window.toggleSidebar(); } else { document.body.classList.toggle('sidebar-open'); }">
+        <button type="button" class="menu-toggle" onclick="if (typeof window.toggleSidebar === 'function') { window.toggleSidebar(); }">
             <i class="fa fa-bars"></i>
         </button>
         <a href="${pageContext.request.contextPath}/home" class="logo">
@@ -235,25 +239,23 @@
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
                             <li><a href="${pageContext.request.contextPath}/viewAllEvents">Sự kiện</a></li>
-                            <li><a href="${pageContext.request.contextPath}/clubDetails">Chi tiết CLB</a></li>
-                <li><a href="${pageContext.request.contextPath}/home">Trang chủ</a></li>
-                <li>
-                    <a href="#">CLUBS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
-                    <div class="submenu">
-                        <ul>
-                            <li><a href="${pageContext.request.contextPath}/viewAllClubs">Tất cả Câu lạc bộ</a></li>
-                            <li><a href="${pageContext.request.contextPath}/myClubs">Câu lạc bộ của tôi</a></li>
-                            <li><a href="${pageContext.request.contextPath}/createClub">Tạo Câu lạc bộ</a></li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#">EVENTS <i class="fa fa-angle-down" style="margin-left:4px;"></i></a>
-                    <div class="submenu">
-                        <ul>
-                            <li><a href="${pageContext.request.contextPath}/viewAllEvents">Tất cả Sự kiện</a></li>
-                            <li><a href="${pageContext.request.contextPath}/addNewEvent">Thêm sự kiện</a></li>
-                            <li><a href="${pageContext.request.contextPath}/myEvents">Sự kiện của tôi</a></li>
+                            <c:if test="${not empty account}">
+                                <c:choose>
+                                    <c:when test="${account.roleId == 2}">
+                                        <c:url var="leaderDashboardUrl" value="/clubDashboard"/>
+                                        <c:if test="${not empty sessionScope.currentClubId}">
+                                            <c:url var="leaderDashboardUrl" value="/clubDashboard">
+                                                <c:param name="clubId" value="${sessionScope.currentClubId}"/>
+                                            </c:url>
+                                        </c:if>
+                                        <li><a href="${leaderDashboardUrl}">Leader Dashboard</a></li>
+                                    </c:when>
+                                    <c:when test="${account.roleId == 1}">
+                                        <c:url var="adminDashboardUrl" value="/adminDashboard"/>
+                                        <li><a href="${adminDashboardUrl}">Admin Dashboard</a></li>
+                                    </c:when>
+                                </c:choose>
+                            </c:if>
                         </ul>
                     </div>
                 </li>
@@ -286,3 +288,65 @@
         </c:choose>
     </div>
 </header>
+
+<script>
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownItems = document.querySelectorAll('.header-left nav .has-dropdown');
+
+        dropdownItems.forEach(function (item) {
+            const trigger = item.querySelector('a');
+            trigger.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const alreadyOpen = item.classList.contains('open');
+                dropdownItems.forEach(function (other) {
+                    other.classList.remove('open');
+                });
+                if (!alreadyOpen) {
+                    item.classList.add('open');
+                }
+            });
+        });
+
+        window.toggleSidebar = function () {
+            const ttrSidebar = document.querySelector('.ttr-sidebar');
+            if (ttrSidebar) {
+                const body = document.body;
+                if (body.classList.contains('ttr-opened-sidebar')) {
+                    body.classList.remove('ttr-opened-sidebar');
+                    body.classList.remove('ttr-body-fixed');
+                } else {
+                    if (window.innerWidth < 760) {
+                        body.classList.add('ttr-body-fixed');
+                    }
+                    body.classList.add('ttr-opened-sidebar');
+                }
+                return;
+            }
+
+            const adminSidebar = document.querySelector('.admin-sidebar');
+            if (adminSidebar) {
+                document.body.classList.toggle('admin-sidebar-collapsed');
+                return;
+            }
+
+            document.body.classList.toggle('sidebar-open');
+        };
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.header-left nav .has-dropdown')) {
+                dropdownItems.forEach(function (item) {
+                    item.classList.remove('open');
+                });
+            }
+        });
+
+        const privilegedFlag = '${not empty account && (account.roleId == 1 || account.roleId == 2)}';
+        const isPrivilegedUser = privilegedFlag === 'true';
+        if (isPrivilegedUser) {
+            document.body.classList.remove('admin-sidebar-collapsed');
+        }
+    });
+})();
+</script>
