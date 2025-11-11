@@ -4,13 +4,13 @@
  */
 package model;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 public class MembershipRole {
     private int membershipId;
     private int clubId;
     private int userId;
-    private String role;
+    private String roleInClub;
     private String status;
     private String fullName; 
     private Timestamp joinDate;
@@ -21,7 +21,7 @@ public class MembershipRole {
         this.membershipId = membershipId;
         this.clubId = clubId;
         this.userId = userId;
-        this.role = role;
+        this.roleInClub = roleInClub;;
         this.status = status;
     }
 
@@ -46,11 +46,12 @@ public class MembershipRole {
         this.userId = userId; 
     }
 
-    public String getRole() { 
-        return role; 
+    public String getRoleInClub() {
+        return roleInClub;
     }
-    public void setRole(String role) { 
-        this.role = role; 
+
+    public void setRoleInClub(String roleInClub) {
+        this.roleInClub = roleInClub;
     }
 
     public String getStatus() { 

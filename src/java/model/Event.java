@@ -232,14 +232,15 @@ public class Event {
     public void setStatus(String status) {
         this.status = status;
     }
-
+    
     public String getImage() {
-        return image;
+    return image;
     }
 
     public void setImage(String image) {
-        this.image = image;
+    this.image = image;
     }
+
 
     @Override
     public String toString() {

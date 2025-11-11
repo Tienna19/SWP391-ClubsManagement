@@ -71,7 +71,7 @@
 
       <hr style="margin: 25px 0;">
 
-      <!-- Thông tin ??ng kı CLB -->
+      <!-- Thông tin nguoi dang kı CLB -->
       <label>Student ID</label>
       <input type="number" name="userId" required placeholder="Enter your UserID">
 
