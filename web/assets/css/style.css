@@ -3244,4 +3244,31 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 	.courses-filter {
 		padding: 15px 15px 0 15px;
 	}
+        .profile-content-bx .list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+}
+.profile-content-bx h3, .profile-content-bx h4 {
+    font-weight: 600;
+}
+.profile-bx img {
+    border: 4px solid #eee;
+}
+.profile-content-bx label {
+    font-weight: 600;
+}
+.profile-content-bx input, 
+.profile-content-bx select {
+    border-radius: 8px;
+}
+.profile-bx {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #e2e2e2;
+}
+.profile-bx h4 {
+    margin-bottom: 15px;
+}
 }

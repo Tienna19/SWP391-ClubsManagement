@@ -2,6 +2,7 @@ package dal;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
@@ -53,9 +54,9 @@ public class UserDAO extends DBContext {
     // ĐĂNG KÝ NGƯỜI DÙNG MỚI
     public boolean register(User user) {
         try {
-            String sql = "INSERT INTO Users " +
-                         "(FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage, CreatedAt) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Users "
+                    + "(FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage, CreatedAt) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement st = connection.prepareStatement(sql);
 
             st.setString(1, user.getFullName());
@@ -169,7 +170,7 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-    
+
     // GET ALL USERS (for dropdown, etc.)
     public java.util.List<User> getAllUsers() {
         java.util.List<User> userList = new java.util.ArrayList<>();
@@ -177,7 +178,7 @@ public class UserDAO extends DBContext {
             String sql = "SELECT UserID, FullName, Email, RoleID FROM Users ORDER BY FullName";
             PreparedStatement st = connection.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
-            
+
             while (rs.next()) {
                 User user = new User();
                 user.setUserId(rs.getInt("UserID"));
@@ -192,5 +193,17 @@ public class UserDAO extends DBContext {
         }
         return userList;
     }
-    
+
+    public boolean updatePasswordByEmail(String email, String hashedPassword) {
+        String sql = "UPDATE Users SET PasswordHash = ? WHERE email = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, hashedPassword);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
