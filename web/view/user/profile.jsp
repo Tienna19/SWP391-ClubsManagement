@@ -64,101 +64,47 @@
                     <div class="section-area section-sp1">
                         <div class="container">
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                    <div class="profile-bx text-center">
-                                        <div class="user-profile-thumb">
-                                            <img src="${account.profileImage}" alt="user"/>
-                                        </div>
-                                        <div class="profile-info">
-                                            <h4>${userInfo.fullName}</h4>
-                                            <span>${userInfo.email}</span>
-                                        </div>
-                                        <div class="profile-social">
-                                            <ul class="list-inline m-a0">
-                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="profile-tabnav">
-                                            <ul class="nav nav-tabs">
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="edit-profile">
-                                                        <i class="ti-pencil-alt"></i> Chỉnh sửa Hồ sơ
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="change-password">
-                                                        <i class="ti-lock"></i> Đổi Mật khẩu
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-9 col-md-8 col-sm-12 m-b30">
-                                    <div class="profile-content-bx">
-                                        <div class="tab-content">
-                                            <div class="tab-pane active" id="edit-profile">
-                                                <div class="profile-head">
-                                                    <h3>Hồ sơ</h3>
-                                                </div>
-                                                <form class="edit-profile">
-                                                    <div class="">
-                                                        <div class="form-group row">
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-9 ml-auto">
-                                                                <h3></h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Tên</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" value="${userInfo.fullName}" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Email</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" value="${userInfo.email}"readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Số điện thoại</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" value="${userInfo.phoneNumber}"readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Địa chỉ</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" value="${userInfo.address}"readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Giới tính</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" value="${userInfo.gender}"readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Thời gian tạo TK</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" value="${userInfo.createdAt}"readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-12 col-sm-4 col-md-4 col-lg-3">
-                                                        </div>
-                                                        <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                        </div>
-                                                    </div>
-                                                </form>
+
+                                <div class="col-lg-9 col-md-8 col-sm-12 m-b30 mx-auto">
+                                    <div class="profile-content-bx p-4 shadow radius bg-white">
+
+                                        <div class="d-flex align-items-center mb-4">
+                                            <img src="${account.profileImage}" class="rounded-circle mr-3" style="width: 90px; height: 90px; object-fit: cover;">
+                                            <div>
+                                                <h3 class="m-0">${userInfo.fullName}</h3>
+                                                <small class="text-muted">${userInfo.email}</small>
                                             </div>
                                         </div>
-                                    </div> 
+
+                                        <h4 class="mb-3">Thông tin cá nhân</h4>
+
+                                        <ul class="list-group mb-4">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>📞 Số điện thoại:</span>
+                                                <span>${userInfo.phoneNumber != null ? userInfo.phoneNumber : "Chưa cập nhật"}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>🏠 Địa chỉ:</span>
+                                                <span>${userInfo.address != null ? userInfo.address : "Chưa cập nhật"}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>⚧ Giới tính:</span>
+                                                <span>${userInfo.gender != null ? userInfo.gender : "Chưa cập nhật"}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>🗓 Ngày tạo tài khoản:</span>
+                                                <span>${userInfo.createdAt}</span>
+                                            </li>
+                                        </ul>
+
+                                        <div class="text-right">
+                                            <a href="edit-profile" class="btn btn-primary mr-2"><i class="ti-pencil-alt"></i> Chỉnh sửa hồ sơ</a>
+                                            <a href="change-password" class="btn btn-warning"><i class="ti-lock"></i> Đổi mật khẩu</a>
+                                        </div>
+
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

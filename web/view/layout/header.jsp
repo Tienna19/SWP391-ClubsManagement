@@ -226,8 +226,8 @@
                 <i class="fa fa-graduation-cap"></i>
             </div>
             <div class="logo-text">
-                <strong>EduChamp</strong>
-                <span>Education & Courses</span>
+                <strong>StuClub</strong>
+                <span>Phần mềm quản lí CLB</span>
             </div>
         </a>
         <nav>
@@ -264,8 +264,8 @@
     </div>
 
     <div class="header-right">
-        <a href="#"><i class="fa fa-search"></i></a>
-        <a href="#"><i class="fa fa-bell"></i></a>
+<!--        <a href="#"><i class="fa fa-search"></i></a>
+        <a href="#"><i class="fa fa-bell"></i></a>-->
         <c:choose>
             <c:when test="${not empty account}">
                 <div class="profile-info">
@@ -275,14 +275,14 @@
                     <span>Hi, <strong>${account.fullName}</strong></span>
                     <a href="#"
                        onclick="if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) { window.location.href = '${pageContext.request.contextPath}/logout'; } return false;">
-                        <i class="fa fa-sign-out"></i> Logout
+                        <i class="fa fa-sign-out"></i> Đăng xuất
                     </a>
                 </div>
             </c:when>
             <c:otherwise>
                 <div class="auth-links">
-                    <a href="${pageContext.request.contextPath}/login">Login</a>
-                    <a href="${pageContext.request.contextPath}/register">Register</a>
+                    <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
+                    <a href="${pageContext.request.contextPath}/register">Đăng kí</a>
                 </div>
             </c:otherwise>
         </c:choose>

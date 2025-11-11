@@ -64,107 +64,58 @@
                     <div class="section-area section-sp1">
                         <div class="container">
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                    <div class="profile-bx text-center">
-                                        <div class="user-profile-thumb">
-                                            <img src="${account.profileImage}" alt="user"/>
-                                        </div>
-                                        <div class="profile-info">
-                                            <h4>${userInfo.fullName}</h4>
-                                            <span>${userInfo.email}</span>
-                                        </div>
-                                        <div class="profile-social">
-                                            <ul class="list-inline m-a0">
-                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="profile-tabnav">
-                                            <ul class="nav nav-tabs">
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="edit-profile">
-                                                        <i class="ti-pencil-alt"></i> Chỉnh sửa Hồ sơ
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="change-password">
-                                                        <i class="ti-lock"></i> Đổi Mật khẩu
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-9 col-md-8 col-sm-12 m-b30">
-                                    <div class="profile-content-bx">
-                                        <div class="tab-content">
-                                            <div class="tab-pane active" id="edit-profile">
-                                                <div class="profile-head">
-                                                    <h3>Hồ sơ</h3>
-                                                </div>
-                                                <form class="edit-profile" action="edit-profile" method="post" enctype="multipart/form-data">
-                                                    <div class="">
-                                                        <div class="form-group row">
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-9 ml-auto">
-                                                                <h3></h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Tên</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" name="fullName" value="${userInfo.fullName}">
-                                                            </div>
-                                                        </div>
-                                                        <!--                                                        <div class="form-group row">
-                                                                                                                    <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Email</label>
-                                                                                                                    <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                                                                        <input class="form-control" type="text" value="${userInfo.email}" readonly=""> 
-                                                                                                                    </div>
-                                                                                                                </div>-->
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Số điện thoại</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="number" name="phoneNumber" value="${userInfo.phoneNumber}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Địa chỉ</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input class="form-control" type="text" name="address" value="${userInfo.address}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Giới tính</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <select name="gender" class="form-control">
-                                                                    <option value="Male" ${userInfo.gender == 'Male' ? 'selected' : ''}>Nam</option>
-                                                                    <option value="Female" ${userInfo.gender == 'Female' ? 'selected' : ''}>Nữ</option>
-                                                                    <option value="Other" ${userInfo.gender == 'Other' ? 'selected' : ''}>Khác</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Ảnh đại diện</label>
-                                                            <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                                <input type="file" name="profileImage" class="form-control-file">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-12 col-sm-4 col-md-4 col-lg-3">
-                                                        </div>
-                                                        <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                            <button type="submit" class="btn">Lưu</button>
-                                                            <a href="profile" class="btn-secondry">Hủy</a>
-                                                        </div>
-                                                    </div>
-                                                </form>
+
+                                <div class="col-lg-9 col-md-8 col-sm-12 m-b30 mx-auto">
+                                    <div class="profile-content-bx p-4 shadow radius bg-white">
+
+                                        <h3 class="mb-4 font-weight-bold">Chỉnh sửa hồ sơ</h3>
+
+                                        <!-- Avatar Preview -->
+                                        <div class="text-center mb-4">
+                                            <img id="avatarPreview" src="${account.profileImage}" class="rounded-circle"
+                                                 style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #eee;">
+                                            <div class="mt-2">
+                                                <label class="btn btn-outline-primary btn-sm">
+                                                    Chọn ảnh mới <input type="file" name="profileImage" id="avatarInput" hidden>
+                                                </label>
                                             </div>
                                         </div>
-                                    </div> 
+
+                                        <form action="edit-profile" method="post" enctype="multipart/form-data">
+
+                                            <div class="form-group">
+                                                <label>Họ và tên</label>
+                                                <input class="form-control" type="text" name="fullName" value="${userInfo.fullName}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Số điện thoại</label>
+                                                <input class="form-control" type="text" name="phoneNumber" value="${userInfo.phoneNumber}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Địa chỉ</label>
+                                                <input class="form-control" type="text" name="address" value="${userInfo.address}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Giới tính</label>
+                                                <select name="gender" class="form-control">
+                                                    <option value="Male" ${userInfo.gender == 'Male' ? 'selected' : ''}>Nam</option>
+                                                    <option value="Female" ${userInfo.gender == 'Female' ? 'selected' : ''}>Nữ</option>
+                                                    <option value="Other" ${userInfo.gender == 'Other' ? 'selected' : ''}>Khác</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="text-right mt-4">
+                                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                                <a href="profile" class="btn btn-light">Hủy</a>
+                                            </div>
+
+                                        </form>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -192,6 +143,18 @@
     <script src="assets/js/functions.js"></script>
     <script src="assets/js/contact.js"></script>
     <script src='assets/vendors/switcher/switcher.js'></script>
+    <script>
+    const avatarInput = document.getElementById("avatarInput");
+    const avatarPreview = document.getElementById("avatarPreview");
+
+    avatarInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+            avatarPreview.src = URL.createObjectURL(file);
+        }
+    });
+</script>
+
 </body>
 
 </html>
