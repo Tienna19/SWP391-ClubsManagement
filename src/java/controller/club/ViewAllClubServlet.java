@@ -3,7 +3,6 @@ package controller.club;
 import dal.ClubDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import model.Club;
@@ -17,21 +16,16 @@ public class ViewAllClubServlet extends HttpServlet {
             throws ServletException, IOException {
         
         try {
+            request.setAttribute("activeMenu", "clubs");
+            request.setAttribute("activeSubMenu", "clubs-list");
             ClubDAO dao = new ClubDAO();
             
             // Get parameters for filtering and searching
             String searchQuery = request.getParameter("search");
             String statusFilter = request.getParameter("status");
             String categoryFilter = request.getParameter("category");
-            String clubIdParam = request.getParameter("clubId");
             String sortBy = request.getParameter("sort");
             String sortOrder = request.getParameter("order");
-            
-            // If clubId is provided, show club details
-            if (clubIdParam != null && !clubIdParam.trim().isEmpty()) {
-                handleClubDetails(request, response, dao, clubIdParam);
-                return;
-            }
             
             // Parse category filter
             Integer categoryId = null;
@@ -82,11 +76,27 @@ public class ViewAllClubServlet extends HttpServlet {
             
             // Get paginated clubs
             List<Club> paginatedClubs = getPaginatedClubs(allFilteredClubs, currentPage, recordsPerPage);
+
+            // Normalize logo paths for consistent rendering on JSP
+            for (Club club : paginatedClubs) {
+            String normalizedLogo = normalizeLogoPath(club.getLogo());
+                club.setLogo(normalizedLogo);
+            }
             
             // Get all categories for dropdown
             List<Category> categories = dao.getAllCategories();
             
             // Set attributes for JSP
+            boolean isAdminLayout = false;
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Object roleObj = session.getAttribute("roleId");
+                if (roleObj instanceof Integer) {
+                    isAdminLayout = ((Integer) roleObj) == 4;
+                }
+            }
+            String targetJsp = isAdminLayout ? "/view/admin/admin-club-list.jsp" : "/view/club/viewAllClubs.jsp";
+
             request.setAttribute("clubs", paginatedClubs);
             request.setAttribute("categories", categories);
             request.setAttribute("totalClubs", totalRecords);
@@ -113,7 +123,7 @@ public class ViewAllClubServlet extends HttpServlet {
             request.setAttribute("inactiveClubs", inactiveClubs);
             
             // Forward to view
-            request.getRequestDispatcher("/view/club/viewAllClubs.jsp").forward(request, response);
+            request.getRequestDispatcher(targetJsp).forward(request, response);
             
         } catch (Exception e) {
             // Log error and show error page
@@ -127,34 +137,6 @@ public class ViewAllClubServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
-    }
-    
-    /**
-     * Handle club details view
-     */
-    private void handleClubDetails(HttpServletRequest request, HttpServletResponse response, 
-                                 ClubDAO dao, String clubIdParam) 
-            throws ServletException, IOException {
-        try {
-            int clubId = Integer.parseInt(clubIdParam);
-            
-            // Get specific club by ID
-            Club selectedClub = dao.getClubById(clubId);
-            List<Club> allClubs = dao.getAllClubs();
-            
-            if (selectedClub != null) {
-                request.setAttribute("selectedClub", selectedClub);
-                request.setAttribute("clubs", allClubs);
-                request.getRequestDispatcher("/view/club/clubDetails.jsp").forward(request, response);
-            } else {
-                // Club not found, redirect back to all clubs
-                response.sendRedirect("viewAllClubs?error=Club not found");
-            }
-            
-        } catch (NumberFormatException e) {
-            // Invalid club ID, redirect back to all clubs
-            response.sendRedirect("viewAllClubs?error=Invalid club ID");
-        }
     }
     
     /**
@@ -173,5 +155,49 @@ public class ViewAllClubServlet extends HttpServlet {
         }
         
         return allClubs.subList(startIndex, endIndex);
+    }
+
+    /**
+     * Normalize logo path to a URL usable by JSP
+     */
+    private String normalizeLogoPath(String logo) {
+        if (logo == null || logo.trim().isEmpty()) {
+            return null;
+        }
+
+        String normalized = logo.trim().replace("\\", "/");
+
+        // If already absolute URL, return as-is
+        if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+            return normalized;
+        }
+
+        // Strip off local absolute prefix ending with /web/
+        int webIndex = normalized.indexOf("/web/");
+        if (webIndex >= 0) {
+            normalized = normalized.substring(webIndex + 4); // remove '/web'
+        }
+
+        // Ensure starts with single '/' and points to assets/uploads folder
+        if (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+
+        if (normalized.contains("assets/")) {
+            normalized = normalized.substring(normalized.indexOf("assets/"));
+        } else if (normalized.contains("uploads/")) {
+            normalized = normalized.substring(normalized.indexOf("uploads/"));
+        }
+
+        if (!normalized.startsWith("assets/") && !normalized.startsWith("uploads/")) {
+            // fallback - leave original relative path
+            normalized = normalized.startsWith("/") ? normalized.substring(1) : normalized;
+        }
+
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+
+        return normalized;
     }
 }

@@ -42,6 +42,8 @@
         <servlet-name>ViewAllClubServlet</servlet-name>
         <url-pattern>/viewAllClubs</url-pattern>
         <url-pattern>/ViewAllClubServlet</url-pattern>
+        <url-pattern>/admin/clubs</url-pattern>
+        <url-pattern>/admin-club-list</url-pattern>
     </servlet-mapping>
     <!-- CreateClubServlet -->
     <servlet>
@@ -68,6 +70,8 @@
     <servlet-mapping>
         <servlet-name>ViewListEventsServlet</servlet-name>
         <url-pattern>/listEvents</url-pattern>
+        <url-pattern>/admin/events</url-pattern>
+        <url-pattern>/admin-event-list</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>AddNewEventServlet</servlet-name>
@@ -76,6 +80,8 @@
     <servlet-mapping>
         <servlet-name>AddNewEventServlet</servlet-name>
         <url-pattern>/addNewEvent</url-pattern>
+        <url-pattern>/admin/events/new</url-pattern>
+        <url-pattern>/admin-event-create</url-pattern>
     </servlet-mapping>
     <!-- EditEventServlet -->
     <servlet>
@@ -95,6 +101,27 @@
         <servlet-name>CancelEventServlet</servlet-name>
         <url-pattern>/cancelEvent</url-pattern>
     </servlet-mapping>
+
+    <!-- ApproveRejectEventServlet (Admin) -->
+    <servlet>
+        <servlet-name>ApproveRejectEventServlet</servlet-name>
+        <servlet-class>controller.eventMgt.ApproveRejectEventServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApproveRejectEventServlet</servlet-name>
+        <url-pattern>/approveRejectEvent</url-pattern>
+    </servlet-mapping>
+
+    <!-- ViewEventDetailServlet -->
+    <servlet>
+        <servlet-name>ViewEventDetailServlet</servlet-name>
+        <servlet-class>controller.eventMgt.ViewEventDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewEventDetailServlet</servlet-name>
+        <url-pattern>/viewEvent</url-pattern>
+    </servlet-mapping>
+
     <!-- ClubLeaderDashboardServlet -->
     <servlet>
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
@@ -104,6 +131,7 @@
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
         <url-pattern>/clubDashboard</url-pattern>
     </servlet-mapping>
+
     <!-- AdminDashboardServlet -->
     <servlet>
         <servlet-name>AdminDashboardServlet</servlet-name>
@@ -113,6 +141,7 @@
         <servlet-name>AdminDashboardServlet</servlet-name>
         <url-pattern>/adminDashboard</url-pattern>
     </servlet-mapping>
+
     <!-- ViewClubDetailServlet -->
     <servlet>
         <servlet-name>ViewClubDetailServlet</servlet-name>
@@ -122,6 +151,7 @@
         <servlet-name>ViewClubDetailServlet</servlet-name>
         <url-pattern>/clubDetail</url-pattern>
     </servlet-mapping>
+
     <!-- UpdateClubServlet -->
     <servlet>
         <servlet-name>UpdateClubServlet</servlet-name>
@@ -131,6 +161,7 @@
         <servlet-name>UpdateClubServlet</servlet-name>
         <url-pattern>/updateClub</url-pattern>
     </servlet-mapping>
+
     <!-- DeleteClubServlet -->
     <servlet>
         <servlet-name>DeleteClubServlet</servlet-name>
@@ -140,6 +171,38 @@
         <servlet-name>DeleteClubServlet</servlet-name>
         <url-pattern>/deleteClub</url-pattern>
     </servlet-mapping>
+
+
+    <!-- ViewClubRequestsServlet (Admin) -->
+    <servlet>
+        <servlet-name>ViewClubRequestsServlet</servlet-name>
+        <servlet-class>controller.admin.ViewClubRequestsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewClubRequestsServlet</servlet-name>
+        <url-pattern>/viewClubRequests</url-pattern>
+    </servlet-mapping>
+
+    <!-- ApproveClubRequestServlet (Admin) -->
+    <servlet>
+        <servlet-name>ApproveClubRequestServlet</servlet-name>
+        <servlet-class>controller.admin.ApproveClubRequestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ApproveClubRequestServlet</servlet-name>
+        <url-pattern>/approveClubRequest</url-pattern>
+    </servlet-mapping>
+
+    <!-- AdminUserListServlet -->
+    <servlet>
+        <servlet-name>AdminUserListServlet</servlet-name>
+        <servlet-class>controller.admin.AdminUserListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminUserListServlet</servlet-name>
+        <url-pattern>/adminUsers</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ManageUsersServlet</servlet-name>
         <url-pattern>/ManageUsersServlet</url-pattern>
@@ -164,6 +227,7 @@
         <servlet-name>MyRegisteredEventsServlet</servlet-name>
         <url-pattern>/MyRegisteredEventsServlet</url-pattern>
     </servlet-mapping>
+
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->

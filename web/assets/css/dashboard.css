@@ -131,6 +131,18 @@
 .ttr-header-navigation > li > a.active{
 	box-shadow: inset 0 -2px 0 0 #fff;
 }
+.ttr-header .menu-toggle{
+	display: none;
+}
+@media (max-width: 768px){
+	.ttr-header .menu-toggle{
+		display: inline-flex;
+		margin-right: 10px;
+	}
+	.ttr-header-wrapper{
+		justify-content: space-between;
+	}
+}
 .ttr-header-submenu{
 	background-color: #fff;
 	position: absolute;
@@ -181,6 +193,34 @@
 .ttr-extra-menu a:nth-child(odd){
 	border-right: solid 1px #EEE;
 }
+.admin-layout{
+	display: flex;
+	min-height: calc(100vh - 70px);
+}
+.admin-sidebar{
+	width: 255px;
+	background: #25124B;
+	color: #fff;
+	display: flex;
+	flex-direction: column;
+	padding: 28px 22px;
+	box-shadow: 0 10px 30px rgba(37,18,75,0.35);
+	position: relative;
+	z-index: 2;
+	transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.admin-content{
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+body.admin-sidebar-collapsed .admin-sidebar{
+	display: none;
+}
+body.admin-sidebar-collapsed .admin-content{
+	width: 100%;
+}
+
 .ttr-header-submenu.ttr-notify-list{
 	width: 360px;
 }

@@ -1,7 +1,7 @@
 // src/.../DAO/MemberDAO.java
 package dal;
 
-import com.app.model.MemberDTO;
+import model.MemberDTO;
 import dal.DBContext;
 
 
@@ -31,7 +31,7 @@ public class MemberDAO {
 
    
     public List<MemberDTO> findMembersByClub(int clubId) {
-        String sql = "SELECT u.UserID, u.FullName, u.ProfileImage, " +
+        String sql = "SELECT u.UserID, u.FullName, u.ProfileImage, u.Email, " +
                      "m.RoleInClub, m.JoinDate " +
                      "FROM Memberships m " +
                      "JOIN Users u ON u.UserID = m.UserID " +
@@ -53,7 +53,8 @@ public class MemberDAO {
                         rs.getNString("FullName"),
                         rs.getNString("RoleInClub"),
                         rs.getString("ProfileImage"),
-                        ts != null ? ts.toLocalDateTime() : null
+                        ts != null ? ts.toLocalDateTime() : null,
+                        rs.getString("Email")
                     ));
                 }
             }
@@ -90,5 +91,46 @@ public class MemberDAO {
             System.err.println("Error checking club leader: " + e.getMessage());
         }
         return false;
+    }
+    
+    /**
+     * Get club IDs where user is a leader
+     * @param userId User ID
+     * @return List of club IDs where user is leader
+     */
+    public List<Integer> getClubsWhereUserIsLeader(int userId) {
+        List<Integer> clubIds = new ArrayList<>();
+        String sql = "SELECT ClubID FROM Memberships WHERE UserID = ? AND RoleInClub = 'Leader' AND Status = 'Active'";
+        
+        try (Connection con = new DBContext().connection;
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            if (con == null) {
+                System.err.println("Error: Database connection is null in getClubsWhereUserIsLeader");
+                return clubIds;
+            }
+            
+            System.out.println("Getting clubs for user ID: " + userId);
+            ps.setInt(1, userId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                System.out.println("Executing query: " + sql + " with userId=" + userId);
+                
+                while (rs.next()) {
+                    int clubId = rs.getInt("ClubID");
+                    System.out.println("Found club ID: " + clubId);
+                    clubIds.add(clubId);
+                }
+            }
+            
+            System.out.println("Total clubs found: " + clubIds.size());
+        } catch (SQLException e) {
+            System.err.println("Error getting clubs where user is leader: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected error in getClubsWhereUserIsLeader: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return clubIds;
     }
 }

@@ -141,7 +141,7 @@
 	border-radius: 3px;
 	font-weight: 400;
 	text-align:center;
-	font-family: rubik;
+	font-family: 'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 }
 .btn {
     background-color: #EFBB20;
@@ -1319,7 +1319,7 @@
 }
 .feature-filters.style1 li a {
     color: #A0A0A0;
-	font-family: rubik;
+	font-family: 'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 	font-weight: 500;
     margin: 0;
 	padding: 0 15px;

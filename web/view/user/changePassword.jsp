@@ -69,45 +69,12 @@
                     <div class="section-area section-sp1">
                         <div class="container">
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                    <div class="profile-bx text-center">
-                                        <div class="user-profile-thumb">
-                                            <img src="${account.profileImage}" alt="user"/>
-                                        </div>
-                                        <div class="profile-info">
-                                            <h4>${userInfo.fullName}</h4>
-                                            <span>${userInfo.email}</span>
-                                        </div>
-                                        <div class="profile-social">
-                                            <ul class="list-inline m-a0">
-                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="profile-tabnav">
-                                            <ul class="nav nav-tabs">
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="edit-profile">
-                                                        <i class="ti-pencil-alt"></i> Edit Profile
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" href="change-password">
-                                                        <i class="ti-lock"></i> Change Password
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="col-lg-9 col-md-8 col-sm-12 m-b30">
                                     <div class="profile-content-bx">
                                         <div class="tab-content">
                                             <div class="tab-pane active" id="change-password">
                                                 <div class="profile-head">
-                                                    <h3>Change Password</h3>
+                                                    <h3>Đổi Mật khẩu</h3>
                                                 </div>
                                                 <form class="edit-profile" action="change-password" method="post">
                                                     <div class="">
@@ -117,19 +84,19 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Current Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Mật khẩu hiện tại</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="password" name="currentPassword" value="">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">New Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Mật khẩu mới</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="password" name="newPassword" value="">
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Re Type New Password</label>
+                                                            <label class="col-12 col-sm-4 col-md-4 col-lg-3 col-form-label">Xác nhận Mật khẩu mới</label>
                                                             <div class="col-12 col-sm-8 col-md-8 col-lg-7">
                                                                 <input class="form-control" type="password" name="confirmPassword" value="">
                                                             </div>
@@ -139,16 +106,34 @@
                                                         <div class="col-12 col-sm-4 col-md-4 col-lg-3">
                                                         </div>
                                                         <div class="col-12 col-sm-8 col-md-8 col-lg-7">
-                                                            <button type="submit" class="btn">Save changes</button>
-                                                            <a href="profile" class="btn-secondry">Cancel</a>
+                                                            <button type="submit" class="btn">Lưu</button>
+                                                            <a href="profile" class="btn-secondry">Hủy</a>
                                                         </div>
                                                     </div>
-
                                                 </form>
                                             </div>
                                         </div>
                                     </div> 
                                 </div>
+                                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
+                                    <div class="profile-bx">
+                                        <div class="profile-head text-center">
+                                            <h4 style="font-weight:600;">Hướng dẫn đổi mật khẩu</h4>
+                                        </div>
+                                        <div class="p-3" style="line-height: 1.7; font-size: 15px;">
+                                            <ul style="padding-left: 18px;">
+                                                <li>Mật khẩu hiện tại phải nhập đúng.</li>
+                                                <li>Mật khẩu mới phải có tối thiểu 8 ký tự.</li>
+                                                <li>Mật khẩu mới phải chứa ít nhất 1 chữ hoa, 1 kí tự đặc biệt và 1 số để tăng bảo mật.</li>
+                                                <li>Xác nhận mật khẩu phải trùng với mật khẩu mới.</li>
+                                            </ul>
+                                            <div class="alert alert-warning mt-3" style="font-size:14px;">
+                                                <strong>Lưu ý:</strong> Không chia sẻ mật khẩu cho người khác.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

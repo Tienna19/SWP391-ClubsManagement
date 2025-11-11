@@ -66,15 +66,15 @@
                 <div class="account-form-inner">
                     <div class="account-container">
                         <div class="heading-bx left">
-                            <h2 class="title-head">Sign Up <span>Now</span></h2>
-                            <p>Login Your Account <a href="login">Click here</a></p>
+                            <h2 class="title-head">Đăng kí <span>Ngay</span></h2>
+                            <p>Đã có tài khoản? <a href="login">Đăng nhập</a></p>
                         </div>	
                         <form class="contact-bx" action="register" method="post">
                             <div class="row placeani">
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Name</label>
+                                            <label>Tên của bạn</label>
                                             <input name="fullName" type="text" required="" class="form-control">
                                         </div>
                                     </div>
@@ -82,7 +82,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <label>Your Email Address</label>
+                                            <label>Email</label>
                                             <input name="email" type="email" required="" class="form-control">
                                         </div>
                                     </div>
@@ -90,7 +90,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group"> 
-                                            <label>Your Password</label>
+                                            <label>Mật khẩu</label>
                                             <input name="passwordHash" type="password" class="form-control" required="">
                                         </div>
                                     </div>
@@ -98,16 +98,16 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group"> 
-                                            <label>Confirm Password</label>
+                                            <label>Xác nhận mật khẩu</label>
                                             <input name="confirmHash" type="password" class="form-control" required="">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-12 m-b30">
-                                    <button name="submit" type="submit" value="Submit" class="btn button-md">Sign Up</button>
+                                    <button name="submit" type="submit" value="Submit" class="btn button-md">Đăng kí</button>
                                 </div>
                                 <div class="col-lg-12">
-                                    <h6>Sign Up with Social media</h6>
+                                    <h6>Đăng kí </h6>
                                     <div class="d-flex">
                                         <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
                                         <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google Plus</a>

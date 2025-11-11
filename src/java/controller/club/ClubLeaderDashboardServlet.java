@@ -3,12 +3,14 @@ package controller.club;
 import dal.ClubDAO;
 import dal.EventDAO;
 import dal.MemberDAO;
+import dal.JoinClubRequestDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import model.Club;
 import model.Event;
-import com.app.model.MemberDTO;
+import model.MemberDTO;
+import model.User;
 import java.util.List;
 
 /**
@@ -20,32 +22,43 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // TODO: Uncomment this when login is implemented
-        /*
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        
-        // Get user info from session
-        Integer userId = (Integer) session.getAttribute("userID");
-        */
-        
         try {
-            // TEMPORARY: For testing without login - remove this when login is ready
-            Integer userId = 1; // Mock user ID
+            HttpSession session = request.getSession(false);
             
-            // Get clubId from parameter
-            String clubIdParam = request.getParameter("clubId");
+            // Check if user is logged in
+            if (session == null || session.getAttribute("account") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+            
+            // Get user from session
+            User user = (User) session.getAttribute("account");
+            
+            // Try to get clubId from session first (set by login), then from parameter
             Integer clubId = null;
+            Object currentClubId = session.getAttribute("currentClubId");
+            if (currentClubId != null) {
+                clubId = (Integer) currentClubId;
+            } else {
+                String clubIdParam = request.getParameter("clubId");
+                if (clubIdParam != null && !clubIdParam.isEmpty()) {
+                    clubId = Integer.parseInt(clubIdParam);
+                }
+            }
             
-            if (clubIdParam != null && !clubIdParam.isEmpty()) {
-                clubId = Integer.parseInt(clubIdParam);
+            // If still no clubId, try to get from user's clubs
+            if (clubId == null) {
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+                
+                if (!clubIds.isEmpty()) {
+                    clubId = clubIds.get(0); // Use first club
+                    session.setAttribute("currentClubId", clubId);
+                }
             }
             
             if (clubId == null) {
-                request.setAttribute("error", "Vui lòng cung cấp clubId. Ví dụ: /clubDashboard?clubId=1");
+                request.setAttribute("error", "Bạn chưa có CLB nào để quản lý.");
                 request.getRequestDispatcher("/view/error.jsp").forward(request, response);
                 return;
             }
@@ -54,6 +67,7 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             ClubDAO clubDAO = new ClubDAO();
             EventDAO eventDAO = new EventDAO();
             MemberDAO memberDAO = new MemberDAO();
+            JoinClubRequestDAO joinRequestDAO = new JoinClubRequestDAO();
             
             // Get club details
             Club club = clubDAO.getClubById(clubId);
@@ -63,16 +77,20 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
                 return;
             }
             
-            // TODO: Uncomment this when login is implemented
-            /*
-            // Verify user is leader of this club
-            boolean isLeader = memberDAO.isClubLeader(userId, clubId);
-            if (!isLeader) {
+            // Verify permissions: admin or leader of this club
+            boolean hasPermission = false;
+            if (user.getRoleId() == 4) {
+                // Admin (RoleID 4) has permission to view any club dashboard
+                hasPermission = true;
+            } else if (user.getRoleId() == 3) {
+                // ClubLeader (RoleID 3) - check if user is leader of this club
+                hasPermission = memberDAO.isClubLeader(user.getUserId(), clubId);
+            }
+            if (!hasPermission) {
                 request.setAttribute("error", "Bạn không có quyền quản lý CLB này.");
                 request.getRequestDispatcher("/view/error.jsp").forward(request, response);
                 return;
             }
-            */
             
             // Get dashboard statistics
             // 1. Members count
@@ -87,8 +105,8 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             List<Event> recentEvents = upcomingEvents.size() > 5 ? 
                     upcomingEvents.subList(0, 5) : upcomingEvents;
             
-            // 3. Pending requests count (if you have join requests feature)
-            int pendingRequests = 0; // TODO: implement getPendingJoinRequests()
+            // 3. Pending requests count
+            int pendingRequests = joinRequestDAO.getRequestsByClub(clubId, "Pending").size();
             
             // Set attributes for JSP
             request.setAttribute("club", club);
@@ -97,9 +115,10 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             request.setAttribute("pendingRequests", pendingRequests);
             request.setAttribute("members", members);
             request.setAttribute("recentEvents", recentEvents);
+            request.setAttribute("activeMenu", "dashboard");
             
             // Forward to dashboard JSP
-            request.getRequestDispatcher("/view/club/club-leader-dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/club/club-leader-dashboard-new.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Club ID không hợp lệ.");

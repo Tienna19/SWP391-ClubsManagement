@@ -1,387 +1,280 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- META ============================================= -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- FAVICONS ICON ============================================= -->
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" />
+    
+    <!-- PAGE TITLE ============================================= -->
     <title>Club Leader Dashboard - ${club.clubName}</title>
     
-    <!-- Bootstrap CSS -->
-    <link href="${pageContext.request.contextPath}/assets/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="${pageContext.request.contextPath}/assets/vendors/fontawesome/css/font-awesome.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/dashboard.css" rel="stylesheet">
+    <!-- All PLUGINS CSS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.css">
     
-    <style>
-        .dashboard-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px 0;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            transition: transform 0.3s;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-        .stat-icon {
-            font-size: 48px;
-            opacity: 0.8;
-        }
-        .stat-number {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-        }
-        .quick-action-btn {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 30px 0 20px 0;
-            color: #333;
-        }
-        .event-card {
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .member-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #667eea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-    </style>
+    <!-- TYPOGRAPHY ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
+    
+    <!-- SHORTCODES ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
+    
+    <!-- STYLESHEETS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+    <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
+    
 </head>
-<body>
-
-<!-- Include Header -->
-<jsp:include page="../layout/header.jsp"/>
-
-<!-- Dashboard Header -->
-<div class="dashboard-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="mb-2">
-                    <i class="fa fa-dashboard"></i> Dashboard Quản Lý CLB
-                </h1>
-                <h3>${club.clubName}</h3>
-                <p class="mb-0">
-                    <span class="badge bg-light text-dark">${club.clubTypes}</span>
-                    <span class="badge bg-success ms-2">${club.status}</span>
-                </p>
-            </div>
-            <div class="col-md-4 text-end">
-                <a href="${pageContext.request.contextPath}/viewAllClubs" class="btn btn-light">
-                    <i class="fa fa-arrow-left"></i> Quay lại
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-    
-    <!-- Statistics Cards -->
-    <div class="row">
-        <!-- Total Members -->
-        <div class="col-md-4">
-            <div class="stat-card text-center">
-                <i class="fa fa-users stat-icon" style="color: #667eea;"></i>
-                <div class="stat-number">${totalMembers}</div>
-                <div class="stat-label">Thành viên</div>
-                <a href="#members-section" class="btn btn-sm btn-outline-primary mt-2">
-                    Xem chi tiết <i class="fa fa-arrow-down"></i>
-                </a>
-            </div>
-        </div>
-        
-        <!-- Total Events -->
-        <div class="col-md-4">
-            <div class="stat-card text-center">
-                <i class="fa fa-calendar stat-icon" style="color: #f093fb;"></i>
-                <div class="stat-number">${totalEvents}</div>
-                <div class="stat-label">Sự kiện đang hoạt động</div>
-                <a href="${pageContext.request.contextPath}/listEvents?clubId=${club.clubId}" class="btn btn-sm btn-outline-primary mt-2">
-                    Quản lý sự kiện
-                </a>
-            </div>
-        </div>
-        
-        <!-- Pending Requests -->
-        <div class="col-md-4">
-            <div class="stat-card text-center">
-                <i class="fa fa-bell stat-icon" style="color: #ffa647;"></i>
-                <div class="stat-number">${pendingRequests}</div>
-                <div class="stat-label">Yêu cầu chờ duyệt</div>
-                <a href="#" class="btn btn-sm btn-outline-warning mt-2">
-                    Xử lý yêu cầu
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row mt-4">
-        
-        <!-- Left Column: Quick Actions & Recent Events -->
-        <div class="col-md-8">
+<body class="ttr-opened-sidebar ttr-pinned-sidebar">
+    <jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
+    <!--Main container start -->
+    <main class="ttr-wrapper">
+        <div class="container-fluid">
+            <div class="db-breadcrumb">
+                <h4 class="breadcrumb-title">Dashboard - ${club.clubName}</h4>
+                <ul class="db-breadcrumb-list">
+                    <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+                    <li>Dashboard</li>
+                </ul>
+            </div>    
             
-            <!-- Quick Actions -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fa fa-bolt"></i> Thao tác nhanh</h5>
+            <!-- Card -->
+            <div class="row">
+                <!-- Total Members -->
+                <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                    <div class="widget-card widget-bg1">                     
+                        <div class="wc-item">
+                            <h4 class="wc-title">Tổng thành viên</h4>
+                            <span class="wc-des">Số lượng thành viên</span>
+                            <span class="wc-stats counter">${totalMembers}</span>        
+                            <div class="progress wc-progress">
+                                <div class="progress-bar" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="wc-progress-bx">
+                                <span class="wc-change">Tăng trưởng</span>
+                                <span class="wc-number ml-auto">78%</span>
+                            </span>
+                        </div>                      
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <a href="${pageContext.request.contextPath}/addEvent?clubId=${club.clubId}" 
-                               class="quick-action-btn btn btn-primary">
-                                <i class="fa fa-plus-circle"></i> Tạo sự kiện mới
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="${pageContext.request.contextPath}/editClub?clubId=${club.clubId}" 
-                               class="quick-action-btn btn btn-info text-white">
-                                <i class="fa fa-edit"></i> Chỉnh sửa thông tin CLB
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="#members-section" class="quick-action-btn btn btn-success">
-                                <i class="fa fa-user-plus"></i> Quản lý thành viên
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="${pageContext.request.contextPath}/clubStatistics?clubId=${club.clubId}" 
-                               class="quick-action-btn btn btn-warning text-white">
-                                <i class="fa fa-bar-chart"></i> Xem thống kê
-                            </a>
-                        </div>
+                
+                <!-- Total Events -->
+                <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                    <div class="widget-card widget-bg2">                     
+                        <div class="wc-item">
+                            <h4 class="wc-title">Tổng sự kiện</h4>
+                            <span class="wc-des">Sự kiện đã tổ chức</span>
+                            <span class="wc-stats counter">${totalEvents}</span>        
+                            <div class="progress wc-progress">
+                                <div class="progress-bar" role="progressbar" style="width: 88%;" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="wc-progress-bx">
+                                <span class="wc-change">Hoạt động</span>
+                                <span class="wc-number ml-auto">88%</span>
+                            </span>
+                        </div>                      
+                    </div>
+                </div>
+                
+                <!-- Upcoming Events -->
+                <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                    <div class="widget-card widget-bg3">                     
+                        <div class="wc-item">
+                            <h4 class="wc-title">Sự kiện sắp tới</h4>
+                            <span class="wc-des">Sự kiện trong tháng</span>
+                            <span class="wc-stats counter">${upcomingEvents != null ? upcomingEvents.size() : 0}</span>        
+                            <div class="progress wc-progress">
+                                <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="wc-progress-bx">
+                                <span class="wc-change">Kế hoạch</span>
+                                <span class="wc-number ml-auto">65%</span>
+                            </span>
+                        </div>                      
+                    </div>
+                </div>
+                
+                <!-- Club Status -->
+                <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
+                    <div class="widget-card widget-bg4">                     
+                        <div class="wc-item">
+                            <h4 class="wc-title">Trạng thái</h4>
+                            <span class="wc-des">Tình trạng CLB</span>
+                            <span class="wc-stats">${club.status}</span>        
+                            <div class="progress wc-progress">
+                                <div class="progress-bar" role="progressbar" style="width: ${club.status eq 'Active' ? 100 : 50}%;" 
+                                     aria-valuenow="${club.status eq 'Active' ? 100 : 50}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="wc-progress-bx">
+                                <span class="wc-change">Hoạt động</span>
+                                <span class="wc-number ml-auto">${club.status eq 'Active' ? '100' : '50'}%</span>
+                            </span>
+                        </div>                      
                     </div>
                 </div>
             </div>
+            <!-- Card END -->
             
-            <!-- Recent Events -->
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fa fa-calendar-check-o"></i> Sự kiện sắp tới</h5>
-                </div>
-                <div class="card-body">
-                    <c:if test="${empty recentEvents}">
-                        <div class="alert alert-info">
-                            <i class="fa fa-info-circle"></i> Chưa có sự kiện nào.
-                            <a href="${pageContext.request.contextPath}/addEvent?clubId=${club.clubId}" class="alert-link">
-                                Tạo sự kiện đầu tiên
-                            </a>
+            <div class="row">
+                <!-- Member List -->
+                <div class="col-lg-6 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Thành viên mới</h4>
                         </div>
-                    </c:if>
-                    
-                    <c:forEach items="${recentEvents}" var="event">
-                        <div class="event-card">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">${event.eventName}</h6>
-                                    <p class="mb-1 text-muted small">
-                                        <i class="fa fa-map-marker"></i> ${event.location}
-                                    </p>
-                                    <p class="mb-0 text-muted small">
-                                        <i class="fa fa-clock-o"></i> ${event.startDate}
-                                    </p>
-                                </div>
-                                <div>
-                                    <span class="badge bg-primary">${event.status}</span>
-                                    <br>
-                                    <a href="${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}" 
-                                       class="btn btn-sm btn-outline-primary mt-2">
-                                        <i class="fa fa-edit"></i> Sửa
-                                    </a>
-                                </div>
+                        <div class="widget-inner">
+                            <div class="new-user-list">
+                                <ul>
+                                    <c:forEach items="${members}" var="member" end="4">
+                                        <li>
+                                            <span class="new-users-pic">
+                                                <c:choose>
+                                                    <c:when test="${not empty member.profileImage}">
+                                                        <img src="${pageContext.request.contextPath}/${member.profileImage}" alt=""/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="${pageContext.request.contextPath}/assets/images/testimonials/pic1.jpg" alt=""/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                            <span class="new-users-text">
+                                                <a href="#" class="new-users-name">${member.fullName}</a>
+                                                <span class="new-users-info">${member.roleInClub} | ${member.joinDate}</span>
+                                            </span>
+                                            <span class="new-users-btn">
+                                                <a href="#" class="btn button-sm outline">Xem</a>
+                                            </span>
+                                        </li>
+                                    </c:forEach>
+                                    
+                                    <c:if test="${empty members}">
+                                        <li class="text-center text-muted">Chưa có thành viên nào</li>
+                                    </c:if>
+                                </ul>
                             </div>
                         </div>
-                    </c:forEach>
-                    
-                    <c:if test="${not empty recentEvents}">
-                        <div class="text-center mt-3">
-                            <a href="${pageContext.request.contextPath}/listEvents?clubId=${club.clubId}" 
-                               class="btn btn-primary">
-                                Xem tất cả sự kiện <i class="fa fa-arrow-right"></i>
-                            </a>
-                        </div>
-                    </c:if>
-                </div>
-            </div>
-            
-        </div>
-        
-        <!-- Right Column: Club Info & Activity Feed -->
-        <div class="col-md-4">
-            
-            <!-- Club Information -->
-            <div class="card mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fa fa-info-circle"></i> Thông tin CLB</h5>
-                </div>
-                <div class="card-body">
-                    <c:if test="${not empty club.logo}">
-                        <img src="${pageContext.request.contextPath}/${club.logo}" 
-                             alt="${club.clubName}" 
-                             class="img-fluid rounded mb-3">
-                    </c:if>
-                    
-                    <p><strong>Mô tả:</strong></p>
-                    <p class="text-muted">${club.description}</p>
-                    
-                    <hr>
-                    
-                    <p class="mb-2">
-                        <i class="fa fa-tag"></i> <strong>Thể loại:</strong> ${club.clubTypes}
-                    </p>
-                    <p class="mb-2">
-                        <i class="fa fa-calendar"></i> <strong>Ngày tạo:</strong> ${club.createdAt}
-                    </p>
-                    <p class="mb-0">
-                        <i class="fa fa-check-circle"></i> <strong>Trạng thái:</strong> 
-                        <span class="badge bg-success">${club.status}</span>
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Activity Feed (Optional) -->
-            <div class="card">
-                <div class="card-header bg-warning text-white">
-                    <h5 class="mb-0"><i class="fa fa-bell"></i> Thông báo</h5>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-light">
-                        <small><i class="fa fa-info-circle"></i> Chức năng thông báo sẽ được cập nhật sau.</small>
                     </div>
                 </div>
-            </div>
-            
-        </div>
-    </div>
-    
-    <!-- Members Section -->
-    <div class="row mt-5" id="members-section">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fa fa-users"></i> Danh sách thành viên (${totalMembers})</h5>
-                </div>
-                <div class="card-body">
-                    <c:if test="${empty members}">
-                        <div class="alert alert-info">
-                            <i class="fa fa-info-circle"></i> Chưa có thành viên nào trong CLB.
+                
+                <!-- Upcoming Events -->
+                <div class="col-lg-6 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Sự kiện sắp tới</h4>
                         </div>
-                    </c:if>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Thành viên</th>
-                                    <th>Vai trò</th>
-                                    <th>Ngày tham gia</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${members}" var="member">
-                                    <tr>
-                                        <td>${member.userId}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="member-avatar me-2">
-                                                    ${member.fullName.substring(0,1)}
-                                                </div>
-                                                <div>
-                                                    <strong>${member.fullName}</strong>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-${member.roleInClub eq 'Leader' ? 'danger' : 'primary'}">
-                                                ${member.roleInClub}
+                        <div class="widget-inner">
+                            <div class="orders-list">
+                                <ul>
+                                    <c:forEach items="${upcomingEvents}" var="event">
+                                        <li>
+                                            <span class="orders-title">
+                                                <a href="${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}" class="orders-title-name">
+                                                    ${event.eventName}
+                                                </a>
+                                                <span class="orders-info">
+                                                    <i class="fa fa-map-marker"></i> ${event.location} | 
+                                                    <i class="fa fa-clock-o"></i> ${event.startDate}
+                                                </span>
                                             </span>
-                                        </td>
-                                        <td>${member.joinDate}</td>
-                                        <td>
-                                            <c:if test="${member.roleInClub ne 'Leader'}">
-                                                <button class="btn btn-sm btn-outline-danger" 
-                                                        onclick="confirmRemoveMember(${member.userId})">
-                                                    <i class="fa fa-times"></i> Xóa
-                                                </button>
-                                            </c:if>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+                                            <span class="orders-btn">
+                                                <a href="${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}" 
+                                                   class="btn button-sm ${event.status eq 'Published' ? 'green' : 'red'}">
+                                                    ${event.status}
+                                                </a>
+                                            </span>
+                                        </li>
+                                    </c:forEach>
+                                    
+                                    <c:if test="${empty upcomingEvents}">
+                                        <li class="text-center text-muted">Không có sự kiện sắp tới</li>
+                                    </c:if>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar -->
+                <div class="col-lg-12 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Lịch sự kiện CLB</h4>
+                        </div>
+                        <div class="widget-inner">
+                            <div id="calendar"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+    <div class="ttr-overlay"></div>
+
+    <!-- External JavaScripts -->
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/magnific-popup/magnific-popup.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/counter/waypoints-min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/counter/counterup.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/imagesloaded/imagesloaded.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/masonry/masonry.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/masonry/filter.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/owl-carousel/owl.carousel.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/calendar/moment.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/calendar/fullcalendar.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/switcher/switcher.js"></script>
     
-</div>
+    <script>
+    $(document).ready(function() {
+        // Counter animation
+        $('.counter').each(function() {
+            $(this).prop('Counter',0).animate({
+                Counter: $(this).text()
+            }, {
+                duration: 2000,
+                easing: 'swing',
+                step: function (now) {
+                    $(this).text(Math.ceil(now));
+                }
+            });
+        });
 
-<!-- Include Footer -->
-<jsp:include page="../layout/footer.jsp"/>
-
-<!-- Bootstrap JS -->
-<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
-<script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
-
-<script>
-    function confirmRemoveMember(userId) {
-        if (confirm('Bạn có chắc chắn muốn xóa thành viên này khỏi CLB?')) {
-            // TODO: Implement remove member functionality
-            window.location.href = '${pageContext.request.contextPath}/removeMember?userId=' + userId + '&clubId=${club.clubId}';
-        }
-    }
-    
-    // Smooth scroll to sections
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-            }
+        // Calendar initialization
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay,listWeek'
+            },
+            defaultDate: new Date(),
+            navLinks: true,
+            editable: true,
+            eventLimit: true,
+            events: [
+                <c:forEach items="${upcomingEvents}" var="event" varStatus="status">
+                {
+                    title: '<c:out value="${event.eventName}" escapeXml="true"/>',
+                    start: '<fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/>',
+                    end: '<fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>',
+                    url: '${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}'
+                }<c:if test="${!status.last}">,</c:if>
+                </c:forEach>
+            ]
         });
     });
-</script>
-
+    </script>
 </body>
 </html>
 

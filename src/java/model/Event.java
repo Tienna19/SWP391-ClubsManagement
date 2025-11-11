@@ -25,11 +25,10 @@ public class Event {
     private String status;
     private String image;
 
-
     public Event() {
     }
 
-    public Event(int eventID, int clubID, String eventName, String description, 
+    public Event(int eventID, int clubID, String eventName, String description,
                  String location, int capacity, Timestamp startDate, Timestamp endDate,
                  Timestamp registrationStart, Timestamp registrationEnd, int createdBy,
                  String status) {
@@ -47,6 +46,25 @@ public class Event {
         this.status = status;
     }
 
+    public Event(int eventID, int clubID, String eventName, String description,
+                 String location, int capacity, Timestamp startDate, Timestamp endDate,
+                 Timestamp registrationStart, Timestamp registrationEnd, int createdBy,
+                 String status, String image) {
+        this.eventID = eventID;
+        this.clubID = clubID;
+        this.eventName = eventName;
+        this.description = description;
+        this.location = location;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.registrationStart = registrationStart;
+        this.registrationEnd = registrationEnd;
+        this.createdBy = createdBy;
+        this.status = status;
+        this.image = image;
+    }
+
     public Event(int clubID, String eventName, String description, String location,
                  int capacity, Timestamp startDate, Timestamp endDate, int createdBy, String status) {
         this.clubID = clubID;
@@ -61,7 +79,7 @@ public class Event {
     }
 
     public Event(int clubID, String eventName, String description, String location,
-                 int capacity, Timestamp startDate, Timestamp endDate, 
+                 int capacity, Timestamp startDate, Timestamp endDate,
                  Timestamp registrationStart, Timestamp registrationEnd, int createdBy, String status) {
         this.clubID = clubID;
         this.eventName = eventName;
@@ -74,6 +92,23 @@ public class Event {
         this.registrationEnd = registrationEnd;
         this.createdBy = createdBy;
         this.status = status;
+    }
+
+    public Event(int clubID, String eventName, String description, String location,
+                 int capacity, Timestamp startDate, Timestamp endDate,
+                 Timestamp registrationStart, Timestamp registrationEnd, int createdBy, String status, String image) {
+        this.clubID = clubID;
+        this.eventName = eventName;
+        this.description = description;
+        this.location = location;
+        this.capacity = capacity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.registrationStart = registrationStart;
+        this.registrationEnd = registrationEnd;
+        this.createdBy = createdBy;
+        this.status = status;
+        this.image = image;
     }
 
     public int getEventID() {

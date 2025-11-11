@@ -1,0 +1,161 @@
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<c:set var="clubId" value="${not empty club ? club.clubId : param.clubId}" />
+
+<header class="ttr-header">
+    <div class="ttr-header-wrapper">
+        <div class="ttr-toggle-sidebar ttr-material-button">
+            <i class="ti-close ttr-open-icon"></i>
+            <i class="ti-menu ttr-close-icon"></i>
+        </div>
+        <div class="ttr-logo-box">
+            <div>
+                <a href="${ctx}/home" class="ttr-logo">
+                    <img class="ttr-logo-mobile" alt="logo mobile" src="${ctx}/assets/images/logo-mobile.png" width="30" height="30">
+                    <img class="ttr-logo-desktop" alt="logo" src="${ctx}/assets/images/logo-white.png" width="160" height="27">
+                </a>
+            </div>
+        </div>
+        <div class="ttr-header-menu">
+            <ul class="ttr-header-navigation">
+                <li>
+                    <a href="${ctx}/home" class="ttr-material-button ttr-submenu-toggle">Trang chủ</a>
+                </li>
+                <li>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle">Menu nhanh <i class="fa fa-angle-down"></i></a>
+                    <div class="ttr-header-submenu">
+                        <ul>
+                            <li><a href="${ctx}/clubDashboard?clubId=${clubId}">Dashboard CLB</a></li>
+                            <li><a href="${ctx}/clubDetail?clubId=${clubId}">Thông tin CLB</a></li>
+                            <li><a href="${ctx}/memberApprovals?clubId=${clubId}">Phê duyệt thành viên</a></li>
+                            <li><a href="${ctx}/listEvents?clubId=${clubId}">Sự kiện CLB</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="ttr-header-right ttr-with-seperator">
+            <ul class="ttr-header-navigation">
+                <li>
+                    <a href="#" class="ttr-material-button ttr-search-toggle"><i class="fa fa-search"></i></a>
+                </li>
+                <li>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle">
+                        <span class="ttr-user-avatar">
+                            <img alt="avatar" src="${ctx}/assets/images/testimonials/pic3.jpg" width="32" height="32">
+                        </span>
+                    </a>
+                    <div class="ttr-header-submenu">
+                        <ul>
+                            <li><a href="${ctx}/profile">Hồ sơ của tôi</a></li>
+                            <li><a href="${ctx}/clubDetail?clubId=${clubId}">Chi tiết CLB</a></li>
+                            <li><a href="${ctx}/logout">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div class="ttr-sidebar">
+    <div class="ttr-sidebar-wrapper content-scroll">
+        <div class="ttr-sidebar-logo">
+            <a href="${ctx}/home">
+                <img alt="logo" src="${ctx}/assets/images/logo.png" width="122" height="27">
+            </a>
+            <div class="ttr-sidebar-toggle-button"><i class="ti-arrow-left"></i></div>
+        </div>
+        <nav class="ttr-sidebar-navi">
+            <c:set var="menu" value="${empty requestScope.activeMenu ? '' : requestScope.activeMenu}" />
+            <c:set var="sub" value="${empty requestScope.activeSubMenu ? '' : requestScope.activeSubMenu}" />
+            <ul>
+                <li>
+                    <a href="${ctx}/clubDashboard?clubId=${clubId}" class="ttr-material-button ${menu eq 'dashboard' ? 'active' : ''}">
+                        <span class="ttr-icon"><i class="ti-home"></i></span>
+                        <span class="ttr-label">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${ctx}/clubDetail?clubId=${clubId}" class="ttr-material-button ${menu eq 'club' ? 'active' : ''}">
+                        <span class="ttr-icon"><i class="ti-info-alt"></i></span>
+                        <span class="ttr-label">Thông tin CLB</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${ctx}/updateClub?clubId=${clubId}" class="ttr-material-button ${menu eq 'club-edit' ? 'active' : ''}">
+                        <span class="ttr-icon"><i class="ti-pencil"></i></span>
+                        <span class="ttr-label">Chỉnh sửa CLB</span>
+                    </a>
+                </li>
+                <li class="${menu eq 'members' ? 'open active' : ''}">
+                    <a href="#" class="ttr-material-button sidebar-toggle">
+                        <span class="ttr-icon"><i class="ti-user"></i></span>
+                        <span class="ttr-label">Thành viên</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li class="${sub eq 'members-list' ? 'active' : ''}">
+                            <a href="${ctx}/memberList?clubId=${clubId}" class="ttr-material-button">
+                                <span class="ttr-label">Danh sách thành viên</span>
+                            </a>
+                        </li>
+                        <li class="${sub eq 'members-approvals' ? 'active' : ''}">
+                            <a href="${ctx}/memberApprovals?clubId=${clubId}" class="ttr-material-button">
+                                <span class="ttr-label">Phê duyệt thành viên</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="${menu eq 'events' ? 'open active' : ''}">
+                    <a href="#" class="ttr-material-button sidebar-toggle">
+                        <span class="ttr-icon"><i class="ti-calendar"></i></span>
+                        <span class="ttr-label">Sự kiện</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li class="${sub eq 'events-list' ? 'active' : ''}">
+                            <a href="${ctx}/listEvents?clubId=${clubId}" class="ttr-material-button">
+                                <span class="ttr-label">Danh sách sự kiện</span>
+                            </a>
+                        </li>
+                        <li class="${sub eq 'events-create' ? 'active' : ''}">
+                            <a href="${ctx}/addNewEvent?clubId=${clubId}" class="ttr-material-button">
+                                <span class="ttr-label">Tạo sự kiện mới</span>
+                            </a>
+                        </li>
+                        <li class="${sub eq 'events-requests' ? 'active' : ''}">
+                            <a href="${ctx}/eventApprovals?clubId=${clubId}" class="ttr-material-button">
+                                <span class="ttr-label">Yêu cầu sự kiện</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="${ctx}/clubStatistics?clubId=${clubId}" class="ttr-material-button ${menu eq 'stats' ? 'active' : ''}">
+                        <span class="ttr-icon"><i class="ti-bar-chart"></i></span>
+                        <span class="ttr-label">Thống kê</span>
+                    </a>
+                </li>
+                <li class="ttr-seperate"></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    (function() {
+        var toggles = document.querySelectorAll('.sidebar-toggle');
+        toggles.forEach(function(toggle) {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault();
+                var parentLi = this.closest('li');
+                if (!parentLi) return;
+                parentLi.classList.toggle('open');
+                parentLi.classList.toggle('active');
+            });
+        });
+    })();
+</script>
+

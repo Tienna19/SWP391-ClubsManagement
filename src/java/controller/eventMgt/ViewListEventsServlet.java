@@ -5,6 +5,7 @@
 
 package controller.eventMgt;
 
+import dal.CreateEventRequestDAO;
 import dal.EventDAO;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,20 +14,45 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.CreateEventRequest;
 import model.Event;
+import model.User;
 
 /**
  * Servlet for handling Events List functionality
+ * 
+ * EVENT VISIBILITY RULES:
+ * =======================
+ * 
+ * PRIVATE STATUSES (Filter by Creator):
+ * - Draft:    Only visible to creator (Club Leader or Admin)
+ * - Pending:  Only visible to creator (waiting for admin approval)
+ * - Rejected: Only visible to creator (was rejected by admin)
+ * 
+ * PUBLIC STATUSES (Visible to Everyone):
+ * - Published: Visible to all users
+ * - Approved:  Visible to all users
+ * - Completed: Visible to all users
+ * - Cancelled: Visible to all users
+ * 
+ * IMPLEMENTATION:
+ * For Club Leaders (role 3) and Admins (role 4):
+ * - They can see all PUBLIC events created by anyone
+ * - They can only see their own PRIVATE events (Draft, Pending, Rejected)
+ * 
  * @author admin
  */
 public class ViewListEventsServlet extends HttpServlet {
 
     private EventDAO eventDAO;
+    private CreateEventRequestDAO createEventRequestDAO;
 
     @Override
     public void init() throws ServletException {
         super.init();
         eventDAO = new EventDAO();
+        createEventRequestDAO = new CreateEventRequestDAO();
     }
 
     /**
@@ -39,7 +65,16 @@ public class ViewListEventsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        request.setAttribute("activeMenu", "events");
+        request.setAttribute("activeSubMenu", "events-list");
         try {
+            // Get current user from session
+            HttpSession session = request.getSession(false);
+            User currentUser = null;
+            if (session != null) {
+                currentUser = (User) session.getAttribute("account");  // Use "account" not "user"
+            }
+            
             // Get search and filter parameters
             String searchTerm = request.getParameter("search");
             String statusFilter = request.getParameter("status");
@@ -64,28 +99,208 @@ public class ViewListEventsServlet extends HttpServlet {
             // Get filtered events from the database
             List<Event> allEvents = eventDAO.getAllEvents();
             
-            // Apply search filter
+            // Also get event requests from CreateEventRequests table and convert to Event format
+            List<CreateEventRequest> eventRequests = createEventRequestDAO.getAllEventRequests();
+            System.out.println("Total event requests found: " + eventRequests.size());
+            
+            // Separate Pending events first - they will be displayed in separate section
+            List<Event> pendingEventsList = new ArrayList<>();
+            // Separate Draft events - displayed in their own section for creators
+            List<Event> draftEventsList = new ArrayList<>();
+            List<Event> otherEvents = new ArrayList<>();
+            
+            // Process event requests and separate Pending from others
+            for (CreateEventRequest eventRequest : eventRequests) {
+                String status = eventRequest.getStatus();
+                if (status == null || status.trim().isEmpty()) {
+                    status = "Pending";
+                }
+                
+                System.out.println("=================================================================");
+                System.out.println("Processing Event Request:");
+                System.out.println("  Status: " + status);
+                System.out.println("  EventName: " + eventRequest.getEventName());
+                System.out.println("  RequestID: " + eventRequest.getRequestID());
+                System.out.println("  UserID: " + eventRequest.getUserID());
+                System.out.println("  Current User: " + (currentUser != null ? currentUser.getUserId() + " (Role: " + currentUser.getRoleId() + ")" : "null"));
+                System.out.println("  Match? " + (currentUser != null && currentUser.getUserId() == eventRequest.getUserID()));
+                
+                Event event = convertRequestToEvent(eventRequest);
+                
+                // Separate Pending events
+                if ("Pending".equals(status)) {
+                    // Admin (role 4) sees ALL Pending events (to approve/reject)
+                    // Club Leader (role 3) only sees their own Pending events
+                    if (currentUser != null) {
+                        if (currentUser.getRoleId() == 4) {
+                            // Admin sees all Pending events
+                            pendingEventsList.add(event);
+                            System.out.println("  >>> ✓ ADDED to pendingEventsList (Admin sees all) <<<");
+                        } else if (currentUser.getRoleId() == 3 && currentUser.getUserId() == eventRequest.getUserID()) {
+                            // Club Leader only sees their own Pending events
+                            pendingEventsList.add(event);
+                            System.out.println("  >>> ✓ ADDED to pendingEventsList (Club Leader own) <<<");
+                        } else {
+                            System.out.println("  >>> ✗ SKIPPED (not creator or no permission) <<<");
+                        }
+                    } else {
+                        System.out.println("  >>> ✗ SKIPPED (no user session) <<<");
+                    }
+                } else {
+                    otherEvents.add(event);
+                    System.out.println("  >>> Added to otherEvents (Status: " + status + ") <<<");
+                }
+                System.out.println("=================================================================");
+            }
+            
+            // Add non-Pending event requests to allEvents
+            for (Event evt : otherEvents) {
+                allEvents.add(evt);
+            }
+            
+            System.out.println("");
+            System.out.println("========== SUMMARY ==========");
+            System.out.println("Total events after adding non-Pending requests: " + allEvents.size());
+            System.out.println("Pending events separated: " + pendingEventsList.size());
+            System.out.println("Current user: " + (currentUser != null ? currentUser.getUserId() + " (Role: " + currentUser.getRoleId() + ")" : "null"));
+            
+            // Print all pending events
+            System.out.println("List of Pending Events in pendingEventsList:");
+            for (Event e : pendingEventsList) {
+                System.out.println("  - EventID: " + e.getEventID() + ", Name: " + e.getEventName() + ", CreatedBy: " + e.getCreatedBy());
+            }
+            System.out.println("=============================");
+            System.out.println("");
+            
+            // Filter events based on status and user role
+            // Private statuses: Draft, Pending, Rejected - only visible to creator
+            // Public statuses: Published, Approved, Completed, Cancelled - visible to everyone
+            // NOTE: Pending events are displayed separately in "Sự kiện đang chờ phê duyệt" section
+            if (currentUser != null && (currentUser.getRoleId() == 3 || currentUser.getRoleId() == 4)) {
+                List<Event> filteredEventsList = new ArrayList<>();
+                for (Event event : allEvents) {
+                    String status = event.getStatus();
+                    // Handle null or empty status
+                    if (status == null || status.trim().isEmpty()) {
+                        status = "Draft"; // Default status
+                    }
+                    
+                    // Private statuses - only show if created by current user (both Admin and Club Leader)
+                    if ("Draft".equals(status) || "Pending".equals(status) || "Rejected".equals(status)) {
+                        System.out.println("Private event - Status: " + status + ", CreatedBy: " + event.getCreatedBy() + ", CurrentUser: " + currentUser.getUserId());
+                        // Both Admin and Club Leader only see their own Draft/Rejected events
+                        if (event.getCreatedBy() == currentUser.getUserId()) {
+                            // NOTE: Events table no longer has 'Pending' status
+                            // 'Pending' events only exist in CreateEventRequests table
+                            // Events table has: Draft, Published, Completed, Cancelled
+                            if ("Pending".equals(status) && event.getEventID() > 0) {
+                                // This should not happen anymore, but keeping for backward compatibility
+                                pendingEventsList.add(event);
+                                System.out.println("Added Pending event from Events table: " + event.getEventName());
+                            } else if ("Draft".equals(status)) {
+                                // Put Draft events into separate list for the Draft section
+                                // Both Admin and Club Leader only see their own Draft events
+                                draftEventsList.add(event);
+                                System.out.println("Added to draftEventsList: " + event.getEventName());
+                            } else if ("Rejected".equals(status)) {
+                                // Keep Rejected in the main filtered list (still private to creator)
+                                filteredEventsList.add(event);
+                                System.out.println("Added private event: " + event.getEventName() + " (Status: Rejected)");
+                            } else {
+                                System.out.println("Skipped Pending event (already in pending section): " + event.getEventName());
+                            }
+                        }
+                    } else {
+                        // Public statuses - show to everyone
+                        filteredEventsList.add(event);
+                        System.out.println("Added public event: " + event.getEventName() + " (Status: " + status + ")");
+                    }
+                }
+                allEvents = filteredEventsList;
+                System.out.println("Total events after filtering (excluding Pending): " + allEvents.size());
+                System.out.println("Total Pending events (including from Events): " + pendingEventsList.size());
+                System.out.println("Total Draft events (creator only): " + draftEventsList.size());
+            }
+            
+            // Apply search and status filter to main events
             List<Event> filteredEvents = new ArrayList<>();
             for (Event event : allEvents) {
                 boolean matchesSearch = true;
                 boolean matchesStatus = true;
-                
+
                 // Search filter
                 if (!searchTerm.isEmpty()) {
                     String searchLower = searchTerm.toLowerCase();
                     matchesSearch = (event.getEventName().toLowerCase().contains(searchLower) ||
-                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)));
+                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)) ||
+                                   (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchLower)));
                 }
-                
+
                 // Status filter
                 if (!statusFilter.isEmpty()) {
                     matchesStatus = event.getStatus().equals(statusFilter);
                 }
-                
+
                 if (matchesSearch && matchesStatus) {
                     filteredEvents.add(event);
                 }
             }
+
+            System.out.println("Events after search filter: " + filteredEvents.size() + " (searchTerm: '" + searchTerm + "', statusFilter: '" + statusFilter + "')");
+
+            // Apply search and status filter to pending events
+            List<Event> filteredPendingEvents = new ArrayList<>();
+            for (Event event : pendingEventsList) {
+                boolean matchesSearch = true;
+                boolean matchesStatus = true;
+
+                // Search filter
+                if (!searchTerm.isEmpty()) {
+                    String searchLower = searchTerm.toLowerCase();
+                    matchesSearch = (event.getEventName().toLowerCase().contains(searchLower) ||
+                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)) ||
+                                   (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchLower)));
+                }
+
+                // Status filter - for pending events, only show if filter is empty or matches "Pending"
+                if (!statusFilter.isEmpty()) {
+                    matchesStatus = event.getStatus().equals(statusFilter);
+                }
+
+                if (matchesSearch && matchesStatus) {
+                    filteredPendingEvents.add(event);
+                }
+            }
+            pendingEventsList = filteredPendingEvents;
+
+            System.out.println("Pending events after search filter: " + pendingEventsList.size() + " (searchTerm: '" + searchTerm + "', statusFilter: '" + statusFilter + "')");
+
+            // Apply search and status filter to draft events
+            List<Event> filteredDraftEvents = new ArrayList<>();
+            for (Event event : draftEventsList) {
+                boolean matchesSearch = true;
+                boolean matchesStatus = true;
+
+                // Search filter
+                if (!searchTerm.isEmpty()) {
+                    String searchLower = searchTerm.toLowerCase();
+                    matchesSearch = (event.getEventName().toLowerCase().contains(searchLower) ||
+                                   (event.getDescription() != null && event.getDescription().toLowerCase().contains(searchLower)) ||
+                                   (event.getLocation() != null && event.getLocation().toLowerCase().contains(searchLower)));
+                }
+
+                // Status filter - for draft events, only show if filter is empty or matches "Draft"
+                if (!statusFilter.isEmpty()) {
+                    matchesStatus = event.getStatus().equals(statusFilter);
+                }
+
+                if (matchesSearch && matchesStatus) {
+                    filteredDraftEvents.add(event);
+                }
+            }
+            draftEventsList = filteredDraftEvents;
+
+            System.out.println("Draft events after search filter: " + draftEventsList.size() + " (searchTerm: '" + searchTerm + "', statusFilter: '" + statusFilter + "')");
             
             // Calculate pagination
             int totalRecords = filteredEvents.size();
@@ -108,21 +323,23 @@ public class ViewListEventsServlet extends HttpServlet {
                 eventsForPage = filteredEvents.subList(startIndex, endIndex);
             }
             
-            // Calculate statistics for all events (not just filtered)
+            System.out.println("Events for current page: " + eventsForPage.size() + " (page " + currentPage + " of " + totalPages + ")");
+            
+            // Calculate statistics for all events (not just filtered, excluding Pending which are shown separately)
             int totalEvents = allEvents.size();
             int publishedEvents = 0;
-            int pendingEvents = 0;
             int draftEvents = 0;
             int approvedEvents = 0;
             int rejectedEvents = 0;
             
+            // Note: pendingEventsList was already populated above from event requests
+            int pendingEvents = pendingEventsList.size();
+            
+            // Calculate statistics from allEvents (excluding Pending)
             for (Event event : allEvents) {
                 switch (event.getStatus()) {
                     case "Published":
                         publishedEvents++;
-                        break;
-                    case "Pending":
-                        pendingEvents++;
                         break;
                     case "Draft":
                         draftEvents++;
@@ -137,13 +354,21 @@ public class ViewListEventsServlet extends HttpServlet {
             }
             
             // Set attributes for the JSP
+            System.out.println("");
+            System.out.println("========== SETTING ATTRIBUTES ==========");
+            System.out.println("Setting 'events' (main list): " + eventsForPage.size() + " events");
+            System.out.println("Setting 'pendingEvents' (pending list): " + pendingEventsList.size() + " events");
             request.setAttribute("events", eventsForPage);
+            request.setAttribute("pendingEvents", pendingEventsList); // List of pending events
+            request.setAttribute("draftEvents", draftEventsList); // List of draft events
             request.setAttribute("totalEvents", totalEvents);
             request.setAttribute("publishedEvents", publishedEvents);
-            request.setAttribute("pendingEvents", pendingEvents);
-            request.setAttribute("draftEvents", draftEvents);
+            request.setAttribute("pendingEventsCount", pendingEvents); // Count only
+            request.setAttribute("draftEventsCount", draftEvents);
             request.setAttribute("approvedEvents", approvedEvents);
             request.setAttribute("rejectedEvents", rejectedEvents);
+            System.out.println("==========================================");
+            System.out.println("");
             
             // Pagination attributes
             request.setAttribute("currentPage", currentPage);
@@ -156,16 +381,61 @@ public class ViewListEventsServlet extends HttpServlet {
             request.setAttribute("statusFilter", statusFilter);
             
             // Forward to the events list JSP
-            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
+            request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
             
         } catch (Exception e) {
             // Handle unexpected errors
-            request.setAttribute("error", "An error occurred while loading events: " + e.getMessage());
-            request.getRequestDispatcher("/eventMgt/list-events.jsp").forward(request, response);
             e.printStackTrace();
+            try {
+                if (!response.isCommitted()) {
+                    request.setAttribute("error", "An error occurred while loading events: " + e.getMessage());
+                    request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
+                } else {
+                    // Response already committed (likely error during JSP render). Send error status.
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading events");
+                }
+            } catch (IllegalStateException ise) {
+                // As a last resort, log and do nothing
+                System.err.println("Response already committed; cannot forward. Message: " + ise.getMessage());
+            }
         }
     }
 
+    /**
+     * Convert CreateEventRequest to Event object for unified display
+     * @param request CreateEventRequest object
+     * @return Event object with data from request
+     */
+    private Event convertRequestToEvent(CreateEventRequest request) {
+        // Use negative ID to distinguish from actual Events (could also use different prefix)
+        // This helps identify that this came from CreateEventRequests table
+        
+        // Handle null or empty status - default to 'Pending'
+        String status = request.getStatus();
+        if (status == null || status.trim().isEmpty()) {
+            status = "Pending";
+        }
+        
+        Event event = new Event(
+            request.getClubID(),
+            request.getEventName(),
+            request.getDescription(),
+            request.getLocation(),
+            request.getCapacity(),
+            request.getStartDate(),
+            request.getEndDate(),
+            request.getRegistrationStart(),
+            request.getRegistrationEnd(),
+            request.getUserID(), // createdBy
+            status,
+            request.getImage()
+        );
+        // Set a special eventID to identify it as a request
+        // Using negative to avoid conflicts with real Events
+        event.setEventID(-request.getRequestID() - 1000000);
+        return event;
+    }
+    
     /**
      * Handles the HTTP <code>POST</code> method - handles search and filter requests
      * @param request servlet request
@@ -179,6 +449,17 @@ public class ViewListEventsServlet extends HttpServlet {
         // For now, just redirect to GET method
         // In the future, this could handle AJAX search/filter requests
         doGet(request, response);
+    }
+
+    private String determineEventListView(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object roleObj = session.getAttribute("roleId");
+            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
+                return "/view/admin/admin-event-list.jsp";
+            }
+        }
+        return "/view/eventMgt/list-events.jsp";
     }
 
     /**

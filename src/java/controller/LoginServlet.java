@@ -1,10 +1,12 @@
 package controller;
 
+import dal.MemberDAO;
 import dal.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.util.List;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -27,10 +29,67 @@ public class LoginServlet extends HttpServlet {
         UserDAO dao = new UserDAO();
         User user = dao.getUserByEmail(email);
 
-        if (user != null && BCrypt.checkpw(passwordHash, user.getPasswordHash())) {
+        // Check password - support both BCrypt hashes and plain text (for backward compatibility)
+        boolean passwordValid = false;
+        if (user != null && user.getPasswordHash() != null) {
+            // If stored password is a BCrypt hash, verify with BCrypt
+            if (user.getPasswordHash().startsWith("$2a$")) {
+                passwordValid = BCrypt.checkpw(passwordHash, user.getPasswordHash());
+            } else {
+                // For backward compatibility, allow plain text password if stored password is plain text
+                passwordValid = passwordHash.equals(user.getPasswordHash());
+            }
+        }
+
+        if (user != null && passwordValid) {
             HttpSession session = request.getSession();
+            
+            // Set user information in session
             session.setAttribute("account", user);
-            response.sendRedirect("home");
+            session.setAttribute("userId", user.getUserId());
+            session.setAttribute("roleId", user.getRoleId());
+            session.setAttribute("fullName", user.getFullName());
+            session.setAttribute("email", user.getEmail());
+            
+            // Check for redirect parameter (for guest → login → back to page)
+            String redirect = request.getParameter("redirect");
+            String clubId = request.getParameter("clubId");
+            String eventId = request.getParameter("eventId");
+            
+            // Check user role and redirect accordingly
+            int roleId = user.getRoleId();
+            
+            if ("clubDetail".equals(redirect) && clubId != null) {
+                // Redirect back to club detail page
+                String redirectUrl = "clubDetail?clubId=" + clubId;
+                if (eventId != null) {
+                    redirectUrl += "&eventId=" + eventId;
+                }
+                response.sendRedirect(redirectUrl);
+            } else if (roleId == 4) {
+                // Admin (RoleID 4) - redirect to admin dashboard servlet
+                response.sendRedirect(request.getContextPath() + "/adminDashboard");
+            } else if (roleId == 3) {
+                // ClubLeader (RoleID 3) - redirect to club leader dashboard
+                // Store club ID in session
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+
+                if (!clubIds.isEmpty()) {
+                    // Store first club ID in session
+                    Integer leaderClubId = clubIds.get(0);
+                    session.setAttribute("currentClubId", leaderClubId);
+                    System.out.println("Redirecting ClubLeader (roleId=3) to dashboard with club: " + leaderClubId);
+                    response.sendRedirect(request.getContextPath() + "/clubDashboard?clubId=" + leaderClubId);
+                } else {
+                    // No clubs found, redirect to home
+                    System.out.println("ClubLeader has no clubs, redirecting to home");
+                    response.sendRedirect(request.getContextPath() + "/home");
+                }
+            } else {
+                // Default redirect to home for other roles
+                response.sendRedirect(request.getContextPath() + "/home");
+            }
         } else {
             request.setAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);

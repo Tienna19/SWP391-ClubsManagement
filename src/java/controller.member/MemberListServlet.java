@@ -3,7 +3,7 @@ package controller.member;
 
 
 import dal.MemberDAO;
-import com.app.model.MemberDTO;
+import model.MemberDTO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

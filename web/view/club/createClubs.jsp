@@ -1,449 +1,286 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page isELIgnored="false" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Tạo Câu Lạc Bộ Mới</title>
-    <!-- Enhanced Error Suppression -->
-    <script>
-        // Comprehensive browser extension error suppression
-        (function() {
-            'use strict';
-            
-            const originalError = console.error;
-            const originalWarn = console.warn;
-            const originalLog = console.log;
-            const originalInfo = console.info;
-            
-            function shouldSuppress(message) {
-                if (!message) return false;
-                const lowerMessage = message.toLowerCase();
-                return lowerMessage.includes('runtime.lasterror') ||
-                       lowerMessage.includes('message port closed') ||
-                       lowerMessage.includes('extension') ||
-                       lowerMessage.includes('chrome-extension') ||
-                       lowerMessage.includes('moz-extension') ||
-                       lowerMessage.includes('safari-extension') ||
-                       lowerMessage.includes('unchecked runtime.lasterror') ||
-                       lowerMessage.includes('the message port closed before a response was received');
-            }
-            
-            console.error = function() {
-                const message = Array.prototype.join.call(arguments, ' ');
-                if (shouldSuppress(message)) {
-                    return;
-                }
-                originalError.apply(console, arguments);
-            };
-            
-            console.warn = function() {
-                const message = Array.prototype.join.call(arguments, ' ');
-                if (shouldSuppress(message)) {
-                    return;
-                }
-                originalWarn.apply(console, arguments);
-            };
-            
-            console.log = function() {
-                const message = Array.prototype.join.call(arguments, ' ');
-                if (shouldSuppress(message)) {
-                    return;
-                }
-                originalLog.apply(console, arguments);
-            };
-            
-            console.info = function() {
-                const message = Array.prototype.join.call(arguments, ' ');
-                if (shouldSuppress(message)) {
-                    return;
-                }
-                originalInfo.apply(console, arguments);
-            };
-            
-            // Suppress unhandled errors
-            window.addEventListener('error', function(e) {
-                if (e.message && shouldSuppress(e.message)) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, true);
-            
-            // Suppress unhandled promise rejections
-            window.addEventListener('unhandledrejection', function(e) {
-                if (e.reason && shouldSuppress(e.reason.toString())) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, true);
-            
-        })();
-    </script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/vendors/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
-    <style>
-        body {
-            background-color: #f7f6fb;
-        }
-        .form-container {
-            background: #fff;
-            padding: 30px 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            max-width: 600px;
-            margin: 40px auto;
-        }
-        h2 {
-            text-align: center;
-            color: #5B2C8E;
-            font-weight: bold;
-            margin-bottom: 25px;
-        }
-        label {
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-        .btn-primary {
-            background-color: #5B2C8E;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #4a2476;
-        }
-        a.back-link {
-            display: block;
-            margin-top: 15px;
-            text-align: center;
-            color: #5B2C8E;
-            text-decoration: none;
-        }
-        a.back-link:hover {
-            text-decoration: underline;
-        }
-        .alert {
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #5B2C8E;
-            box-shadow: 0 0 0 0.2rem rgba(91, 44, 142, 0.25);
-        }
-        .file-upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            background-color: #fafafa;
-            transition: all 0.3s ease;
-        }
-        .file-upload-area:hover {
-            border-color: #5B2C8E;
-            background-color: #f0f0ff;
-        }
-        .file-upload-area.dragover {
-            border-color: #5B2C8E;
-            background-color: #f0f0ff;
-        }
-        .file-preview {
-            margin-top: 10px;
-            text-align: center;
-        }
-        .file-preview img {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .file-info {
-            margin-top: 8px;
-            font-size: 0.9em;
-            color: #666;
-        }
-        .character-count {
-            font-size: 0.8em;
-            color: #666;
-            text-align: right;
-            margin-top: 5px;
-        }
-        .character-count.warning {
-            color: #ff9800;
-        }
-        .character-count.danger {
-            color: #f44336;
-        }
-        .required {
-            color: #f44336;
-        }
-        .form-text {
-            font-size: 0.85em;
-            color: #666;
-        }
-    </style>
+    <!-- META ============================================= -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- FAVICONS ICON ============================================= -->
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/images/favicon.png" type="image/x-icon" />
+    
+    <!-- PAGE TITLE ============================================= -->
+    <title>Tạo CLB mới - Student Club Management</title>
+    
+    <!-- All PLUGINS CSS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/assets.css">
+    
+    <!-- TYPOGRAPHY ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/typography.css">
+    
+    <!-- SHORTCODES ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shortcodes/shortcodes.css">
+    
+    <!-- STYLESHEETS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/dashboard.css">
+    <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
+    
 </head>
-
-<body>
-
-    <%@ include file="/view/layout/header.jsp" %>
-
-    <div class="form-container">
-        <h2>Tạo CLB Mới</h2>
-
-        <!-- Error Message -->
-        <c:if test="${not empty errorMessage}">
-            <div class="alert alert-danger" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> ${errorMessage}
-            </div>
-        </c:if>
-
-        <!-- Success Message -->
-        <c:if test="${not empty successMessage}">
-            <div class="alert alert-success" role="alert">
-                <i class="fas fa-check-circle"></i> ${successMessage}
-            </div>
-        </c:if>
-
-        <!-- Form -->
-        <form id="createClubForm" action="${pageContext.request.contextPath}/createClub" 
-              method="post" enctype="multipart/form-data" novalidate>
-
-            <!-- Tên CLB -->
-            <div class="mb-3">
-                <label for="clubName" class="form-label">Tên CLB <span class="required">*</span></label>
-                <input type="text" id="clubName" name="clubName" class="form-control" 
-                       placeholder="Nhập tên CLB" maxlength="100" required>
-                <div class="form-text">Tên CLB không được vượt quá 100 ký tự</div>
-                <div class="invalid-feedback">Vui lòng nhập tên CLB</div>
-            </div>
-
-            <!-- Mô tả -->
-            <div class="mb-3">
-                <label for="description" class="form-label">Mô tả <span class="required">*</span></label>
-                <textarea id="description" name="description" rows="4" class="form-control" 
-                          placeholder="Giới thiệu ngắn gọn về CLB, mục tiêu, hoạt động..." 
-                          maxlength="500" required></textarea>
-                <div class="character-count" id="descriptionCount">0/500 ký tự</div>
-                <div class="form-text">Mô tả không được vượt quá 500 ký tự</div>
-                <div class="invalid-feedback">Vui lòng nhập mô tả CLB</div>
-            </div>
-
-            <!-- Logo -->
-            <div class="mb-3">
-                <label for="logo" class="form-label">Logo CLB <span class="required">*</span></label>
-                <div class="file-upload-area" id="fileUploadArea">
-                    <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
-                    <p class="mb-1">Kéo thả file vào đây hoặc click để chọn</p>
-                    <p class="text-muted small">Chỉ chấp nhận file ảnh: JPG, PNG, GIF, WEBP (tối đa 5MB)</p>
+<body class="ttr-opened-sidebar ttr-pinned-sidebar">
+    
+    <!-- Header start -->
+    <jsp:include page="../layout/header.jsp"/>
+    <!-- Header end -->
+    
+    <!-- Left sidebar menu start -->
+    <div class="ttr-sidebar">
+        <div class="ttr-sidebar-wrapper content-scroll">
+            <div class="ttr-sidebar-logo">
+                <a href="${pageContext.request.contextPath}/home">
+                    <img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
+                </a>
+                <div class="ttr-sidebar-toggle-button">
+                    <i class="ti-arrow-left"></i>
                 </div>
-                <input type="file" id="logo" name="logo" class="form-control d-none" 
-                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" required>
-                <div class="file-preview" id="filePreview" style="display: none;">
-                    <img id="previewImage" src="" alt="Preview">
-                    <div class="file-info">
-                        <span id="fileName"></span>
-                        <span id="fileSize"></span>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="removeFile">
-                        <i class="fas fa-trash"></i> Xóa
-                    </button>
-                </div>
-                <div class="invalid-feedback">Vui lòng chọn logo cho CLB</div>
             </div>
-
-            <!-- Thể loại CLB -->
-            <div class="mb-3">
-                <label for="clubTypes" class="form-label">Thể loại CLB <span class="required">*</span></label>
-                <select id="clubTypes" name="clubTypes" class="form-select" required>
-                    <option value="">-- Chọn thể loại --</option>
-                    <c:forEach var="c" items="${categoryList}">
-                        <option value="${c.name}">${c.name}</option>
-                    </c:forEach>
-                </select>
-                <div class="form-text">Chọn thể loại phù hợp với hoạt động của CLB</div>
-                <div class="invalid-feedback">Vui lòng chọn thể loại CLB</div>
-            </div>
-
-            <!-- Mã sinh viên (Chủ tịch CLB) -->
-            <div class="mb-3">
-                <label for="createdBy" class="form-label">Mã người tạo (Chủ tịch CLB) <span class="required">*</span></label>
-                <input type="text" id="createdBy" name="createdBy" class="form-control" 
-                       placeholder="Nhập mã người tạo" pattern="[0-9]+" maxlength="10" required>
-                <div class="form-text">Mã sinh viên của người sẽ làm chủ tịch CLB</div>
-                <div class="invalid-feedback">Vui lòng nhập mã sinh viên hợp lệ</div>
-            </div>
-
-            <!-- Thông tin bổ sung -->
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i>
-                <strong>Lưu ý:</strong> CLB sẽ được tạo với trạng thái Active và có thể hoạt động ngay lập tức.
-            </div>
-
-            <!-- Nút submit -->
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary px-5" id="submitBtn">
-                    <i class="fas fa-plus"></i> Tạo CLB
-                </button>
-                <button type="button" class="btn btn-outline-secondary px-4 ms-2" onclick="resetForm()">
-                    <i class="fas fa-undo"></i> Làm mới
-                </button>
-            </div>
-        </form>
-
-        <a href="${pageContext.request.contextPath}/viewAllClubs" class="back-link">
-            <i class="fas fa-arrow-left"></i> Quay lại danh sách CLB
-        </a>
+            <nav class="ttr-sidebar-navi">
+                <ul>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/home" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-home"></i></span>
+                            <span class="ttr-label">Trang chủ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/viewAllClubs" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-layout-list-post"></i></span>
+                            <span class="ttr-label">Danh sách CLB</span>
+                        </a>
+                    </li>
+                    <li class="show">
+                        <a href="${pageContext.request.contextPath}/createClub" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="ti-plus"></i></span>
+                            <span class="ttr-label">Tạo CLB mới</span>
+                        </a>
+                    </li>
+                    <li class="ttr-seperate"></li>
+                </ul>
+            </nav>
+        </div>
     </div>
+    <!-- Left sidebar menu end -->
 
-    <%@ include file="/view/layout/footer.jsp" %>
+    <!--Main container start -->
+    <main class="ttr-wrapper">
+        <div class="container-fluid">
+            <div class="db-breadcrumb">
+                <h4 class="breadcrumb-title">Tạo Câu Lạc Bộ mới</h4>
+                <ul class="db-breadcrumb-list">
+                    <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i>Trang chủ</a></li>
+                    <li><a href="${pageContext.request.contextPath}/viewAllClubs">Danh sách CLB</a></li>
+                    <li>Tạo mới</li>
+                </ul>
+            </div>    
+            
+            <!-- Create Club Form -->
+            <div class="row">
+                <div class="col-lg-12 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Thông tin CLB</h4>
+                        </div>
+                        <div class="widget-inner">
+                            
+                            <c:if test="${not empty error}">
+                                <div class="alert alert-danger alert-dismissible fade show">
+                                    <i class="fa fa-exclamation-circle"></i> ${error}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </c:if>
+                            
+                            <c:if test="${not empty success}">
+                                <div class="alert alert-success alert-dismissible fade show">
+                                    <i class="fa fa-check-circle"></i> ${success}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </c:if>
+                            
+                            <form action="${pageContext.request.contextPath}/createClub" method="POST" enctype="multipart/form-data" class="edit-profile">
+                                
+                                <!-- Hidden field for CreatedBy (from session) -->
+                                <input type="hidden" name="createdBy" value="${sessionScope.userId}">
+                                
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Tên CLB <span class="text-danger">*</span></label>
+                                            <div>
+                                                <input class="form-control" type="text" name="clubName" 
+                                                       value="${param.clubName}" required 
+                                                       placeholder="Nhập tên câu lạc bộ">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 col-sm-6 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Loại CLB <span class="text-danger">*</span></label>
+                                            <div>
+                                                <select class="form-control" name="clubTypes" required>
+                                                    <option value="">-- Chọn loại CLB --</option>
+                                                    <option value="Thể thao" ${param.clubTypes == 'Thể thao' ? 'selected' : ''}>Thể thao</option>
+                                                    <option value="Văn hóa" ${param.clubTypes == 'Văn hóa' ? 'selected' : ''}>Văn hóa</option>
+                                                    <option value="Học thuật" ${param.clubTypes == 'Học thuật' ? 'selected' : ''}>Học thuật</option>
+                                                    <option value="Nghệ thuật" ${param.clubTypes == 'Nghệ thuật' ? 'selected' : ''}>Nghệ thuật</option>
+                                                    <option value="Công nghệ" ${param.clubTypes == 'Công nghệ' ? 'selected' : ''}>Công nghệ</option>
+                                                    <option value="Tình nguyện" ${param.clubTypes == 'Tình nguyện' ? 'selected' : ''}>Tình nguyện</option>
+                                                    <option value="Khác" ${param.clubTypes == 'Khác' ? 'selected' : ''}>Khác</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Mô tả CLB <span class="text-danger">*</span></label>
+                                            <div>
+                                                <textarea class="form-control" name="description" rows="6" 
+                                                          required placeholder="Mô tả về câu lạc bộ, mục đích, hoạt động...">${param.description}</textarea>
+                                                <small class="form-text text-muted">
+                                                    Mô tả chi tiết về mục đích, hoạt động và thành tựu của CLB
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 col-sm-6 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Logo CLB <span class="text-danger">*</span></label>
+                                            <div>
+                                                <input class="form-control" type="file" name="logo" 
+                                                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" 
+                                                       required>
+                                                <small class="form-text text-muted">
+                                                    Upload ảnh logo (JPG, PNG, GIF, WEBP). Tối đa 5MB.
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 col-sm-6 m-b30">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Trạng thái</label>
+                                            <div>
+                                                <select class="form-control" name="status">
+                                                    <option value="Active" ${param.status == 'Active' || empty param.status ? 'selected' : ''}>Active</option>
+                                                    <option value="Inactive" ${param.status == 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                                </select>
+                                                <small class="form-text text-muted">
+                                                    Chọn "Active" để CLB hiển thị công khai
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="seperator"></div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-save"></i> Tạo CLB
+                                        </button>
+                                        <a href="${pageContext.request.contextPath}/viewAllClubs" 
+                                           class="btn btn-secondary">
+                                            <i class="fa fa-times"></i> Hủy
+                                        </a>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Info Card -->
+            <div class="row">
+                <div class="col-lg-12 m-b30">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Hướng dẫn</h4>
+                        </div>
+                        <div class="widget-inner">
+                            <div class="noti-box-list">
+                                <ul>
+                                    <li>
+                                        <span class="notification-icon dashbg-primary">
+                                            <i class="fa fa-info"></i>
+                                        </span>
+                                        <span class="notification-text">
+                                            <strong>Tên CLB:</strong> Đặt tên ngắn gọn, dễ nhớ và thể hiện được mục đích của CLB
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span class="notification-icon dashbg-green">
+                                            <i class="fa fa-check"></i>
+                                        </span>
+                                        <span class="notification-text">
+                                            <strong>Mô tả:</strong> Giới thiệu rõ ràng về mục đích, hoạt động chính và lợi ích khi tham gia CLB
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span class="notification-icon dashbg-yellow">
+                                            <i class="fa fa-image"></i>
+                                        </span>
+                                        <span class="notification-text">
+                                            <strong>Logo CLB:</strong> Upload ảnh logo đẹp, rõ ràng. Kích thước tối đa 5MB. Định dạng: JPG, PNG, GIF, WEBP
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span class="notification-icon dashbg-gray">
+                                            <i class="fa fa-lightbulb-o"></i>
+                                        </span>
+                                        <span class="notification-text">
+                                            <strong>Loại CLB:</strong> Chọn đúng loại để dễ dàng tìm kiếm và quản lý
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span class="notification-icon dashbg-red">
+                                            <i class="fa fa-eye"></i>
+                                        </span>
+                                        <span class="notification-text">
+                                            <strong>Trạng thái:</strong> Chọn "Active" để CLB hiển thị công khai cho sinh viên
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+    <div class="ttr-overlay"></div>
 
-    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+    <!-- External JavaScripts -->
+    <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/popper.min.js"></script>
-    <script>
-        // Character count for description
-        const descriptionTextarea = document.getElementById('description');
-        const descriptionCount = document.getElementById('descriptionCount');
-        
-        descriptionTextarea.addEventListener('input', function() {
-            const length = this.value.length;
-            const maxLength = 500;
-            
-            descriptionCount.textContent = `${length}/${maxLength} ký tự`;
-            
-            if (length > maxLength * 0.9) {
-                descriptionCount.className = 'character-count danger';
-            } else if (length > maxLength * 0.7) {
-                descriptionCount.className = 'character-count warning';
-            } else {
-                descriptionCount.className = 'character-count';
-            }
-        });
-
-        // File upload handling
-        const fileUploadArea = document.getElementById('fileUploadArea');
-        const fileInput = document.getElementById('logo');
-        const filePreview = document.getElementById('filePreview');
-        const previewImage = document.getElementById('previewImage');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
-        const removeFileBtn = document.getElementById('removeFile');
-
-        // Click to select file
-        fileUploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        // Drag and drop
-        fileUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            fileUploadArea.classList.add('dragover');
-        });
-
-        fileUploadArea.addEventListener('dragleave', () => {
-            fileUploadArea.classList.remove('dragover');
-        });
-
-        fileUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            fileUploadArea.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFileSelect(files[0]);
-            }
-        });
-
-        // File input change
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFileSelect(e.target.files[0]);
-            }
-        });
-
-        // Remove file
-        removeFileBtn.addEventListener('click', () => {
-            fileInput.value = '';
-            filePreview.style.display = 'none';
-            fileUploadArea.style.display = 'block';
-        });
-
-        function handleFileSelect(file) {
-            // Validate file type
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Chỉ chấp nhận file ảnh: JPG, JPEG, PNG, GIF, WEBP');
-                return;
-            }
-
-            // Validate file size (5MB)
-            const maxSize = 5 * 1024 * 1024;
-            if (file.size > maxSize) {
-                alert('Kích thước file không được vượt quá 5MB');
-                return;
-            }
-
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                fileName.textContent = file.name;
-                fileSize.textContent = formatFileSize(file.size);
-                
-                fileUploadArea.style.display = 'none';
-                filePreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // Form validation
-        const form = document.getElementById('createClubForm');
-        const submitBtn = document.getElementById('submitBtn');
-
-        form.addEventListener('submit', function(e) {
-            if (!form.checkValidity()) {
-                e.preventDefault();
-                e.stopPropagation();
-            } else {
-                // Show loading state
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...';
-                submitBtn.disabled = true;
-            }
-            form.classList.add('was-validated');
-        });
-
-        // Reset form
-        function resetForm() {
-            form.reset();
-            form.classList.remove('was-validated');
-            filePreview.style.display = 'none';
-            fileUploadArea.style.display = 'block';
-            descriptionCount.textContent = '0/500 ký tự';
-            descriptionCount.className = 'character-count';
-            submitBtn.innerHTML = '<i class="fas fa-plus"></i> Tạo CLB';
-            submitBtn.disabled = false;
-        }
-
-        // Real-time validation
-        const inputs = form.querySelectorAll('input, textarea, select');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.checkValidity()) {
-                    this.classList.remove('is-invalid');
-                    this.classList.add('is-valid');
-                } else {
-                    this.classList.remove('is-valid');
-                    this.classList.add('is-invalid');
-                }
-            });
-        });
-    </script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/vendors/scroll/scrollbar.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/admin.js"></script>
 </body>
 </html>
+

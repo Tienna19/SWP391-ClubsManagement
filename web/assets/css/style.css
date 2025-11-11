@@ -197,7 +197,7 @@
 	margin:0;
 	padding:0;
 	list-style:none;
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 	font-size:14px;
 }
 .topbar-left ul li{
@@ -240,7 +240,7 @@
 	padding:0 10px 0px 0 !important;
 	height: 18px;
 	color:#000;
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 	font-size: 14px;
 }
 .header-lang-bx.bootstrap-select.btn-group .dropdown-toggle .caret{
@@ -1759,14 +1759,14 @@ footer .widget_services ul li:hover {
     background-size: cover;
     background-position: center;
     padding: 0 0 20px;
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 }
 .footer-bottom {
     background-color:#303030;
     padding: 25px 0;
     color: #b0b0b0;
 	border-top:1px solid rgba(255,255,255,0.05);
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 }
 .footer-bottom ul {
     margin: 0;
@@ -2171,12 +2171,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5e14', end
 }
 .event-time .event-date{
 	font-size: 55px;
-    font-family: rubik;
+    font-family: 'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
     font-weight: 700;
     line-height: 55px;
 }
 .event-info .event-title{
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 	font-weight:500;
 	margin-bottom:5px;
 	font-size:24px;
@@ -2184,15 +2184,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5e14', end
 .event-info .media-post{
 	margin-bottom:10px;
 }
-.event-info .media-post li a{
-	text-transform: capitalize;
-    font-size: 14px;
-	color:#757575;
-}
 .event-info p{
 	color: #454545;
     margin-bottom: 0;
-    font-family: rubik;
+    font-family: 'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 24px;
@@ -2335,7 +2330,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 }
 .counter-style-1 span{
 	font-size:45px;
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 	font-weight:700;
 }
 .counter-style-1 .counter-text{
@@ -2757,7 +2752,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 	font-size: 120px;
 	font-weight: 300;
 	line-height: 90px;
-	font-family:rubik;
+	font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
 	color:#fff;
 }
 .priceing-doller {
@@ -3249,4 +3244,31 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 	.courses-filter {
 		padding: 15px 15px 0 15px;
 	}
+        .profile-content-bx .list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+}
+.profile-content-bx h3, .profile-content-bx h4 {
+    font-weight: 600;
+}
+.profile-bx img {
+    border: 4px solid #eee;
+}
+.profile-content-bx label {
+    font-weight: 600;
+}
+.profile-content-bx input, 
+.profile-content-bx select {
+    border-radius: 8px;
+}
+.profile-bx {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #e2e2e2;
+}
+.profile-bx h4 {
+    margin-bottom: 15px;
+}
 }
