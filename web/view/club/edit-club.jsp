@@ -336,8 +336,7 @@
 </head>
 <body class="ttr-opened-sidebar ttr-pinned-sidebar">
 
-    <jsp:include page="partials/leader-header.jsp"/>
-    <jsp:include page="partials/leader-sidebar.jsp"/>
+    <jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
 
     <c:set var="logoSrc" value=""/>
     <c:if test="${not empty club.logo}">

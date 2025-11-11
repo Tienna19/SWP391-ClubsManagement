@@ -1,23 +1,20 @@
 package controller.club;
 
 import dal.ClubDAO;
-import dal.MembershipDAO;
 import dal.CreateClubRequestDAO;
-import model.Club;
 import model.Category;
 import model.CreateClubRequest;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.sql.Timestamp;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
 
 // @WebServlet annotation removed - servlet is configured in web.xml
 @MultipartConfig(
@@ -26,7 +23,7 @@ import java.util.UUID;
 )
 public class CreateClubServlet extends HttpServlet {
 
-    private static final String UPLOAD_DIR = "uploads";
+    private static final String UPLOAD_DIR = "assets/images/Club";
     private static final String[] ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"};
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -52,6 +49,7 @@ public class CreateClubServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
+        String savedLogoPath = null;
         try {
             // ✅ Validate input parameters
             String clubName = request.getParameter("clubName");
@@ -97,19 +95,8 @@ public class CreateClubServlet extends HttpServlet {
             }
 
             // ✅ Process file upload with unique name
-            String uniqueFileName = generateUniqueFileName(fileName);
-            String uploadPath = getServletContext().getRealPath("/" + UPLOAD_DIR);
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String filePath = uploadPath + File.separator + uniqueFileName;
-            try (InputStream input = filePart.getInputStream()) {
-                Files.copy(input, new File(filePath).toPath());
-            }
-
-            String logo = UPLOAD_DIR + "/" + uniqueFileName;
+            savedLogoPath = storeLogoFile(filePart);
+            String logo = savedLogoPath;
 
             // ✅ Create Club Request object (NOT directly creating Club)
             CreateClubRequest clubRequest = new CreateClubRequest(
@@ -132,11 +119,7 @@ public class CreateClubServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/home");
             } else {
                 // Database error - delete uploaded file and show error
-                try {
-                    Files.deleteIfExists(new File(filePath).toPath());
-                } catch (Exception ex) {
-                    System.err.println("Could not delete uploaded file: " + ex.getMessage());
-                }
+                deleteLogoFile(savedLogoPath);
                 throw new Exception("Lỗi khi gửi yêu cầu tạo CLB");
             }
 
@@ -146,6 +129,9 @@ public class CreateClubServlet extends HttpServlet {
             handleError(request, response, e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            if (savedLogoPath != null) {
+                deleteLogoFile(savedLogoPath);
+            }
             handleError(request, response, "Lỗi khi tạo CLB: " + e.getMessage());
         }
     }
@@ -165,18 +151,83 @@ public class CreateClubServlet extends HttpServlet {
         return false;
     }
 
-    /**
-     * Generate unique file name to avoid conflicts
-     */
-    private String generateUniqueFileName(String originalFileName) {
-        String extension = "";
-        int lastDotIndex = originalFileName.lastIndexOf('.');
-        if (lastDotIndex > 0) {
-            extension = originalFileName.substring(lastDotIndex);
+    private Path getSourceUploadDir() {
+        return Paths.get(System.getProperty("user.dir"), "web", "assets", "images", "Club");
+    }
+
+    private Path getDeploymentUploadDir() {
+        String realRoot = getServletContext().getRealPath("/");
+        return Paths.get(realRoot, "assets", "images", "Club");
+    }
+
+    private void deleteLogoFile(String relativePath) {
+        if (relativePath == null || relativePath.trim().isEmpty()) {
+            return;
         }
-        
-        String uniqueId = UUID.randomUUID().toString();
-        return uniqueId + extension;
+        try {
+            Path fileName = Paths.get(relativePath).getFileName();
+            if (fileName == null) {
+                return;
+            }
+            Path sourcePath = getSourceUploadDir().resolve(fileName);
+            Files.deleteIfExists(sourcePath);
+        } catch (Exception ignored) {
+        }
+        try {
+            Path fileName = Paths.get(relativePath).getFileName();
+            if (fileName == null) {
+                return;
+            }
+            Path deployPath = getDeploymentUploadDir().resolve(fileName);
+            Files.deleteIfExists(deployPath);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private String storeLogoFile(Part filePart) throws IOException {
+        String originalFileName = filePart.getSubmittedFileName();
+        String[] nameParts = splitFileName(originalFileName);
+        String baseName = nameParts[0];
+        String extension = nameParts[1];
+
+        Path sourceDir = getSourceUploadDir();
+        Files.createDirectories(sourceDir);
+
+        String availableFileName = resolveUniqueFileName(sourceDir, baseName, extension);
+        Path sourceFile = sourceDir.resolve(availableFileName);
+
+        try (InputStream inputStream = filePart.getInputStream()) {
+            Files.copy(inputStream, sourceFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        Path deploymentDir = getDeploymentUploadDir();
+        Files.createDirectories(deploymentDir);
+        Files.copy(sourceFile, deploymentDir.resolve(availableFileName), StandardCopyOption.REPLACE_EXISTING);
+
+        return UPLOAD_DIR + "/" + availableFileName;
+    }
+
+    private String[] splitFileName(String originalFileName) {
+        String safeName = Paths.get(originalFileName).getFileName().toString();
+        int dotIdx = safeName.lastIndexOf('.');
+        String base = dotIdx > 0 ? safeName.substring(0, dotIdx) : safeName;
+        String ext = dotIdx > 0 ? safeName.substring(dotIdx).toLowerCase() : "";
+
+        base = base.replaceAll("[^a-zA-Z0-9-_]", "-").replaceAll("-+", "-");
+        if (base.isBlank()) {
+            base = "club-logo";
+        }
+        return new String[]{base, ext};
+    }
+
+    private String resolveUniqueFileName(Path directory, String baseName, String extension) throws IOException {
+        String candidate = baseName + extension;
+        int counter = 1;
+        while (Files.exists(directory.resolve(candidate))) {
+            candidate = baseName + "-" + counter + extension;
+            counter++;
+        }
+        return candidate;
     }
 
     /**
