@@ -72,16 +72,8 @@ public class RegisterServlet extends HttpServlet {
         boolean success = dao.register(newUser);
 
         if (success) {
-            HttpSession session = request.getSession();
-            
-            // Set user information in session
-            session.setAttribute("account", newUser);
-            session.setAttribute("userId", newUser.getUserId());
-            session.setAttribute("roleId", newUser.getRoleId());
-            session.setAttribute("fullName", newUser.getFullName());
-            session.setAttribute("email", newUser.getEmail());
-            
-            response.sendRedirect("home");
+            request.setAttribute("message", "Đăng ký thành công!");
+            request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Đăng ký thất bại. Vui lòng thử lại!");
             request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);

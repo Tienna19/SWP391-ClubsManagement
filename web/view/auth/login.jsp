@@ -51,9 +51,15 @@
         <link class="skin" rel="stylesheet" type="text/css" href="assets/css/color/color-1.css">
 
     </head>
-    <c:if test="${not empty error}">
-        <div class="alert alert-danger">${error}</div>
-    </c:if>
+<c:choose>
+    <c:when test="${not empty error}">
+        <div class="alert alert-danger text-center">${error}</div>
+    </c:when>
+    <c:when test="${not empty message}">
+        <div class="alert alert-success text-center">${message}</div>
+    </c:when>
+</c:choose>
+
     <body id="bg">
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
@@ -86,23 +92,18 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="col-lg-12 m-b30">
                                         <div class="form-group form-forget">
                                             <button name="submit" type="submit" value="Submit" class="btn button-md">Đăng nhập</button>
-                                            <a href="forget-password.html" class="ml-auto">Quên mật khẩu?</a>
+                                            <a href="requestPassword" class="ml-auto">Quên mật khẩu?</a>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <h6>Đăng nhập</h6>
+                                        <h6>Đăng nhập bằng tài khoản khác</h6>
                                         <div class="d-flex">
-                                            <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
-                                            <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google Plus</a>
+                                            <a class="btn flex-fill m-r5 red google" href="google-login"><i class="fa fa-google"></i> Google</a>
+                                            <a href="admin-login" class="btn flex-fill m-r5 button-md">Tài khoản Admin cấp</a>
                                         </div>
-                                        <h6>Đăng nhập bằng tài khoản Admin cấp</h6>
-                                        <div class="d-flex">
-                                            <a href="admin-login">Bấm vô đây</a>
-                                            </div>
                                     </div>
                             </div>
                         </form>
