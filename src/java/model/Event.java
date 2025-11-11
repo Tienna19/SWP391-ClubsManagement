@@ -23,6 +23,8 @@ public class Event {
     private Timestamp registrationEnd;
     private int createdBy;
     private String status;
+    private String image;
+
 
     public Event() {
     }
@@ -195,6 +197,15 @@ public class Event {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    public String getImage() {
+    return image;
+    }
+
+    public void setImage(String image) {
+    this.image = image;
+    }
+
 
     @Override
     public String toString() {
@@ -211,6 +222,7 @@ public class Event {
                 ", registrationEnd=" + registrationEnd +
                 ", createdBy=" + createdBy +
                 ", status='" + status + '\'' +
+                ", image='" + image + '\'' +
                 '}';
     }
 }
