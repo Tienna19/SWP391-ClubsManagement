@@ -6,12 +6,13 @@ import dal.UserDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
 import model.Club;
 import model.User;
 
@@ -24,7 +25,7 @@ import model.User;
 )
 public class UpdateClubServlet extends HttpServlet {
     
-    private static final String UPLOAD_DIR = "uploads";
+    private static final String UPLOAD_DIR = "assets/images/Club";
     private static final String[] ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"};
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     
@@ -92,6 +93,7 @@ public class UpdateClubServlet extends HttpServlet {
             // Set attributes
             request.setAttribute("club", club);
             request.setAttribute("allUsers", allUsers);
+            request.setAttribute("activeMenu", "club-edit");
             
             request.getRequestDispatcher("/view/club/edit-club.jsp").forward(request, response);
             
@@ -107,6 +109,7 @@ public class UpdateClubServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         
+        String uploadedLogoPath = null;
         try {
             // Get form data
             int clubId = Integer.parseInt(request.getParameter("clubId"));
@@ -132,6 +135,7 @@ public class UpdateClubServlet extends HttpServlet {
             // Validate
             if (clubName == null || clubName.trim().isEmpty()) {
                 request.setAttribute("error", "Tên CLB không được để trống.");
+                request.setAttribute("activeMenu", "club-edit");
                 doGet(request, response);
                 return;
             }
@@ -172,40 +176,26 @@ public class UpdateClubServlet extends HttpServlet {
                 // Validate file
                 if (!isValidFileExtension(fileName)) {
                     request.setAttribute("error", "Chỉ chấp nhận file ảnh: JPG, JPEG, PNG, GIF, WEBP");
+                request.setAttribute("activeMenu", "club-edit");
                     doGet(request, response);
                     return;
                 }
                 
                 if (filePart.getSize() > MAX_FILE_SIZE) {
                     request.setAttribute("error", "Kích thước file không được vượt quá 5MB");
+                request.setAttribute("activeMenu", "club-edit");
                     doGet(request, response);
                     return;
                 }
                 
                 // Save new logo
-                String uniqueFileName = generateUniqueFileName(fileName);
-                String uploadPath = getServletContext().getRealPath("/" + UPLOAD_DIR);
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdirs();
+                uploadedLogoPath = storeLogoFile(filePart);
+
+                if (currentLogo != null && !currentLogo.trim().isEmpty()) {
+                    deleteExistingLogo(currentLogo);
                 }
-                
-                String filePath = uploadPath + File.separator + uniqueFileName;
-                try (InputStream input = filePart.getInputStream()) {
-                    Files.copy(input, new File(filePath).toPath());
-                }
-                
-                newLogo = UPLOAD_DIR + "/" + uniqueFileName;
-                
-                // Delete old logo if it exists and is in uploads folder
-                if (currentLogo != null && currentLogo.startsWith(UPLOAD_DIR)) {
-                    try {
-                        String oldFilePath = getServletContext().getRealPath("/" + currentLogo);
-                        Files.deleteIfExists(new File(oldFilePath).toPath());
-                    } catch (Exception ex) {
-                        System.err.println("Could not delete old logo: " + ex.getMessage());
-                    }
-                }
+
+                newLogo = uploadedLogoPath;
             }
             
             // Handle leader change
@@ -217,8 +207,8 @@ public class UpdateClubServlet extends HttpServlet {
             }
             
             // Update club info
-            club.setClubName(clubName);
-            club.setDescription(description);
+            club.setClubName(clubName.trim());
+            club.setDescription(description.trim());
             club.setClubTypes(clubTypes);
             club.setStatus(status);
             club.setLogo(newLogo);
@@ -227,16 +217,22 @@ public class UpdateClubServlet extends HttpServlet {
             boolean success = clubDAO.updateClub(club);
             
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/updateClub?clubId=" + clubId + "&success=true");
+                response.sendRedirect(request.getContextPath() + "/clubDashboard?clubId=" + clubId + "&message=update_success");
             } else {
                 request.setAttribute("error", "Cập nhật thất bại. Vui lòng thử lại.");
                 request.setAttribute("club", club);
                 doGet(request, response);
             }
             
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Dữ liệu không hợp lệ: " + e.getMessage());
+            request.getRequestDispatcher("/view/error.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi cập nhật: " + e.getMessage());
+            if (uploadedLogoPath != null) {
+                deleteExistingLogo(uploadedLogoPath);
+            }
+            request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
             request.getRequestDispatcher("/view/error.jsp").forward(request, response);
         }
     }
@@ -256,18 +252,75 @@ public class UpdateClubServlet extends HttpServlet {
         return false;
     }
     
-    /**
-     * Generate unique file name to avoid conflicts
-     */
-    private String generateUniqueFileName(String originalFileName) {
-        String extension = "";
-        int lastDotIndex = originalFileName.lastIndexOf('.');
-        if (lastDotIndex > 0) {
-            extension = originalFileName.substring(lastDotIndex);
+    private Path getSourceUploadDir() {
+        return Paths.get(System.getProperty("user.dir"), "web", "assets", "images", "Club");
+    }
+
+    private Path getDeploymentUploadDir() {
+        String realRoot = getServletContext().getRealPath("/");
+        return Paths.get(realRoot, "assets", "images", "Club");
+    }
+
+    private void deleteExistingLogo(String logoPath) {
+        if (logoPath == null || logoPath.trim().isEmpty()) {
+            return;
         }
-        
-        String uniqueId = UUID.randomUUID().toString();
-        return uniqueId + extension;
+        Path fileName = Paths.get(logoPath).getFileName();
+        if (fileName == null) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(getDeploymentUploadDir().resolve(fileName));
+        } catch (Exception ignored) {
+        }
+        try {
+            Files.deleteIfExists(getSourceUploadDir().resolve(fileName));
+        } catch (Exception ignored) {
+        }
+    }
+
+    private String storeLogoFile(Part part) throws IOException {
+        String[] nameParts = splitFileName(part.getSubmittedFileName());
+        String baseName = nameParts[0];
+        String extension = nameParts[1];
+
+        Path sourceDir = getSourceUploadDir();
+        Files.createDirectories(sourceDir);
+        String availableFileName = resolveUniqueFileName(sourceDir, baseName, extension);
+
+        Path sourceFile = sourceDir.resolve(availableFileName);
+        try (InputStream inputStream = part.getInputStream()) {
+            Files.copy(inputStream, sourceFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        Path deploymentDir = getDeploymentUploadDir();
+        Files.createDirectories(deploymentDir);
+        Files.copy(sourceFile, deploymentDir.resolve(availableFileName), StandardCopyOption.REPLACE_EXISTING);
+
+        return UPLOAD_DIR + "/" + availableFileName;
+    }
+
+    private String[] splitFileName(String originalFileName) {
+        String safeName = Paths.get(originalFileName).getFileName().toString();
+        int dotIdx = safeName.lastIndexOf('.');
+        String base = dotIdx > 0 ? safeName.substring(0, dotIdx) : safeName;
+        String ext = dotIdx > 0 ? safeName.substring(dotIdx).toLowerCase() : "";
+
+        base = base.replaceAll("[^a-zA-Z0-9-_]", "-").replaceAll("-+", "-");
+        if (base.isBlank()) {
+            base = "club-logo";
+        }
+        return new String[]{base, ext};
+    }
+
+    private String resolveUniqueFileName(Path directory, String baseName, String extension) throws IOException {
+        String candidate = baseName + extension;
+        int counter = 1;
+        while (Files.exists(directory.resolve(candidate))) {
+            candidate = baseName + "-" + counter + extension;
+            counter++;
+        }
+        return candidate;
     }
 }
 

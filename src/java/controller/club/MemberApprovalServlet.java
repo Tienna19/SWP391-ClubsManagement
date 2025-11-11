@@ -89,7 +89,8 @@ public class MemberApprovalServlet extends HttpServlet {
         request.setAttribute("statusFilter", statusFilter);
         request.setAttribute("requests", requests);
         request.setAttribute("pageTitle", "Phê duyệt thành viên");
-        request.setAttribute("activeMenu", "memberApprovals");
+        request.setAttribute("activeMenu", "members");
+        request.setAttribute("activeSubMenu", "members-approvals");
         request.setAttribute("pendingRequests", pendingCount);
 
         // Flash messages

@@ -63,6 +63,7 @@ public class MemberListServlet extends HttpServlet {
         request.setAttribute("pendingRequests", joinRequestDAO.getRequestsByClub(clubId, "Pending").size());
         request.setAttribute("pageTitle", "Danh sách thành viên");
         request.setAttribute("activeMenu", "members");
+        request.setAttribute("activeSubMenu", "members-list");
 
         request.getRequestDispatcher("/view/club/member-list.jsp").forward(request, response);
     }
@@ -86,10 +87,12 @@ public class MemberListServlet extends HttpServlet {
     }
 
     private boolean hasPermission(User user, int clubId, MemberDAO memberDAO) {
-        if (user.getRoleId() == 1) {
+        // RoleID 4 = Admin -> full access
+        if (user.getRoleId() == 4) {
             return true;
         }
-        if (user.getRoleId() == 2) {
+        // RoleID 3 = Club Leader -> must be leader of this club
+        if (user.getRoleId() == 3) {
             return memberDAO.isClubLeader(user.getUserId(), clubId);
         }
         return false;
