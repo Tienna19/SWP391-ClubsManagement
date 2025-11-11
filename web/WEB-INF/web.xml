@@ -5,6 +5,30 @@
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <servlet-class>controller.ManageUsersServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewEventsByClubServlet</servlet-name>
+        <servlet-class>ViewEventsByClubServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewAllEventsServlet</servlet-name>
+        <servlet-class>controller.ViewAllEventsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RegisterForEventServlet</servlet-name>
+        <servlet-class>controller.RegisterForEventServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CheckInServlet</servlet-name>
+        <servlet-class>controller.CheckInServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MyRegisteredEventsServlet</servlet-name>
+        <servlet-class>controller.MyRegisteredEventsServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -53,7 +77,6 @@
         <servlet-name>AddNewEventServlet</servlet-name>
         <url-pattern>/addNewEvent</url-pattern>
     </servlet-mapping>
-
     <!-- EditEventServlet -->
     <servlet>
         <servlet-name>EditEventServlet</servlet-name>
@@ -63,7 +86,6 @@
         <servlet-name>EditEventServlet</servlet-name>
         <url-pattern>/editEvent</url-pattern>
     </servlet-mapping>
-
     <!-- CancelEventServlet -->
     <servlet>
         <servlet-name>CancelEventServlet</servlet-name>
@@ -73,7 +95,6 @@
         <servlet-name>CancelEventServlet</servlet-name>
         <url-pattern>/cancelEvent</url-pattern>
     </servlet-mapping>
-
     <!-- ClubLeaderDashboardServlet -->
     <servlet>
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
@@ -83,7 +104,66 @@
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
         <url-pattern>/clubDashboard</url-pattern>
     </servlet-mapping>
-
+    <!-- AdminDashboardServlet -->
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>controller.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/adminDashboard</url-pattern>
+    </servlet-mapping>
+    <!-- ViewClubDetailServlet -->
+    <servlet>
+        <servlet-name>ViewClubDetailServlet</servlet-name>
+        <servlet-class>controller.club.ViewClubDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewClubDetailServlet</servlet-name>
+        <url-pattern>/clubDetail</url-pattern>
+    </servlet-mapping>
+    <!-- UpdateClubServlet -->
+    <servlet>
+        <servlet-name>UpdateClubServlet</servlet-name>
+        <servlet-class>controller.club.UpdateClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateClubServlet</servlet-name>
+        <url-pattern>/updateClub</url-pattern>
+    </servlet-mapping>
+    <!-- DeleteClubServlet -->
+    <servlet>
+        <servlet-name>DeleteClubServlet</servlet-name>
+        <servlet-class>controller.club.DeleteClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteClubServlet</servlet-name>
+        <url-pattern>/deleteClub</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <url-pattern>/ManageUsersServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewEventsByClubServlet</servlet-name>
+        <url-pattern>/ViewEventsByClubServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewAllEventsServlet</servlet-name>
+        <url-pattern>/ViewAllEventsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterForEventServlet</servlet-name>
+        <url-pattern>/RegisterForEventServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckInServlet</servlet-name>
+        <url-pattern>/CheckInServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MyRegisteredEventsServlet</servlet-name>
+        <url-pattern>/MyRegisteredEventsServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
