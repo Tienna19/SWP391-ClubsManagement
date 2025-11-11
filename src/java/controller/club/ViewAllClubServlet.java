@@ -79,10 +79,8 @@ public class ViewAllClubServlet extends HttpServlet {
 
             // Normalize logo paths for consistent rendering on JSP
             for (Club club : paginatedClubs) {
-                String logo = club.getLogo();
-                if (logo != null) {
-                    club.setLogo(logo.trim().replace("\\", "/"));
-                }
+            String normalizedLogo = normalizeLogoPath(club.getLogo());
+                club.setLogo(normalizedLogo);
             }
             
             // Get all categories for dropdown
@@ -157,5 +155,49 @@ public class ViewAllClubServlet extends HttpServlet {
         }
         
         return allClubs.subList(startIndex, endIndex);
+    }
+
+    /**
+     * Normalize logo path to a URL usable by JSP
+     */
+    private String normalizeLogoPath(String logo) {
+        if (logo == null || logo.trim().isEmpty()) {
+            return null;
+        }
+
+        String normalized = logo.trim().replace("\\", "/");
+
+        // If already absolute URL, return as-is
+        if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+            return normalized;
+        }
+
+        // Strip off local absolute prefix ending with /web/
+        int webIndex = normalized.indexOf("/web/");
+        if (webIndex >= 0) {
+            normalized = normalized.substring(webIndex + 4); // remove '/web'
+        }
+
+        // Ensure starts with single '/' and points to assets/uploads folder
+        if (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+
+        if (normalized.contains("assets/")) {
+            normalized = normalized.substring(normalized.indexOf("assets/"));
+        } else if (normalized.contains("uploads/")) {
+            normalized = normalized.substring(normalized.indexOf("uploads/"));
+        }
+
+        if (!normalized.startsWith("assets/") && !normalized.startsWith("uploads/")) {
+            // fallback - leave original relative path
+            normalized = normalized.startsWith("/") ? normalized.substring(1) : normalized;
+        }
+
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+
+        return normalized;
     }
 }

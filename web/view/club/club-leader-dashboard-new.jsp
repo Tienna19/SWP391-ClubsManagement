@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -33,8 +34,7 @@
 </head>
 <body class="ttr-opened-sidebar ttr-pinned-sidebar">
 
-    <jsp:include page="partials/leader-header.jsp"/>
-    <jsp:include page="partials/leader-sidebar.jsp"/>
+    <%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
 
     <!--Main container start -->
     <main class="ttr-wrapper">
@@ -104,6 +104,7 @@
                 </div>
                 
                 <!-- Club Status -->
+                <c:set var="statusProgress" value="${club.status eq 'Active' ? 100 : 50}" />
                 <div class="col-md-6 col-lg-3 col-xl-3 col-sm-6 col-12">
                     <div class="widget-card widget-bg4">                     
                         <div class="wc-item">
@@ -111,12 +112,12 @@
                             <span class="wc-des">Tình trạng CLB</span>
                             <span class="wc-stats">${club.status}</span>        
                             <div class="progress wc-progress">
-                                <div class="progress-bar" role="progressbar" style="width: ${club.status eq 'Active' ? '100' : '50'}%;" 
-                                     aria-valuenow="${club.status eq 'Active' ? '100' : '50'}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar" role="progressbar" style="width: 100%;" 
+                                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <span class="wc-progress-bx">
                                 <span class="wc-change">Hoạt động</span>
-                                <span class="wc-number ml-auto">${club.status eq 'Active' ? '100' : '50'}%</span>
+                                <span class="wc-number ml-auto">${statusProgress}%</span>
                             </span>
                         </div>                      
                     </div>
@@ -267,11 +268,14 @@
             eventLimit: true,
             events: [
                 <c:forEach items="${upcomingEvents}" var="event" varStatus="status">
+                <c:url var="eventUrl" value="/editEvent">
+                    <c:param name="eventId" value="${event.eventID}" />
+                </c:url>
                 {
-                    title: '${event.eventName}',
-                    start: '${event.startDate}',
-                    end: '${event.endDate}',
-                    url: '${pageContext.request.contextPath}/editEvent?eventId=${event.eventID}'
+                    title: '<c:out value="${event.eventName}" />',
+                    start: '<fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd\'T\'HH:mm:ss" />',
+                    end: '<fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd\'T\'HH:mm:ss" />',
+                    url: '<c:out value="${eventUrl}" />'
                 }<c:if test="${!status.last}">,</c:if>
                 </c:forEach>
             ]
