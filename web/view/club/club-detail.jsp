@@ -310,11 +310,34 @@
                             <i class="fa fa-trash"></i> Xóa
                         </button>
                     </c:if>
+                    
+<!--                    Request to join Club-->
                     <c:if test="${!isLeaderOrAdmin && club.status eq 'Active'}">
-                        <button onclick="joinClub()" class="btn btn-join">
-                            <i class="fa fa-user-plus"></i> Tham gia CLB
-                        </button>
+                        <c:choose>
+                        <c:when test="${isGuest}">
+                        <a class="btn btn-join" href="${pageContext.request.contextPath}/login?redirect=clubDetail&clubId=${club.clubId}">
+                            <i class="fa fa-sign-in"></i> Đăng nhập để tham gia
+                        </a>
+                        </c:when>
+                        <c:when test="${isMember}">
+                            <button class="btn btn-join" type="button" disabled>
+                                <i class="fa fa-check-circle"></i> Đã tham gia
+                            </button>
+                        </c:when>
+                        <c:when test="${joinPending}">
+                            <button class="btn btn-join" type="button" disabled>
+                                <i class="fa fa-hourglass-half"></i> Đã gửi yêu cầu
+                            </button>
+                        </c:when>
+                        <c:otherwise>
+            <!-- Điều hướng tới form join, mang theo clubId -->
+                            <a class="btn btn-join"  href="${pageContext.request.contextPath}/JoinClubServlet?clubId=${club.clubId}">
+                                <i class="fa fa-user-plus"></i> Tham gia CLB
+                            </a>
+                        </c:otherwise>
+                        </c:choose>
                     </c:if>
+
                 </div>
             </div>
         </div>
@@ -346,6 +369,32 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     </c:if>
+    
+    <!-- Flash messages từ Session (sau POST/Redirect) -->
+    <c:if test="${not empty sessionScope.flashSuccess}">
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fa fa-check-circle"></i> ${sessionScope.flashSuccess}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <c:remove var="flashSuccess" scope="session"/>
+    </c:if>
+
+    <c:if test="${not empty sessionScope.flashInfo}">
+        <div class="alert alert-info alert-dismissible fade show">
+            <i class="fa fa-info-circle"></i> ${sessionScope.flashInfo}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <c:remove var="flashInfo" scope="session"/>
+    </c:if>
+
+    <c:if test="${not empty sessionScope.flashError}">
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fa fa-exclamation-circle"></i> ${sessionScope.flashError}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <c:remove var="flashError" scope="session"/>
+    </c:if>
+
     
     <!-- Statistics -->
     <div class="stats-wrapper">

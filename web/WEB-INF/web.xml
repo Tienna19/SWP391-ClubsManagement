@@ -9,6 +9,18 @@
         <servlet-name>ManageUsersServlet</servlet-name>
         <servlet-class>controller.ManageUsersServlet</servlet-class>
     </servlet>
+    
+    <!-- JoinClubServlet -->
+<servlet>
+    <servlet-name>JoinClubServlet</servlet-name>
+    <servlet-class>controller.JoinClubServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>JoinClubServlet</servlet-name>
+    <url-pattern>/JoinClubServlet</url-pattern>
+</servlet-mapping>
+
     <servlet>
         <servlet-name>ViewEventsByClubServlet</servlet-name>
         <servlet-class>ViewEventsByClubServlet</servlet-class>
