@@ -1,5 +1,10 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+
+
 <header class="ttr-header">
     <div class="ttr-header-wrapper">
         <div class="ttr-toggle-sidebar ttr-material-button">
@@ -17,15 +22,15 @@
         <div class="ttr-header-menu">
             <ul class="ttr-header-navigation">
                 <li>
-                    <a href="${ctx}/home" class="ttr-material-button ttr-submenu-toggle">Trang ch&#7911;</a>
+                    <a href="${ctx}/home" class="ttr-material-button ttr-submenu-toggle">Trang chủ</a>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button ttr-submenu-toggle">MENU NHANH <i class="fa fa-angle-down"></i></a>
                     <div class="ttr-header-submenu">
                         <ul>
-                            <li><a href="${ctx}/admin-club-list">C&#225;c CLB</a></li>
-                            <li><a href="${ctx}/admin-event-list">S&#7921; ki&#7879;n</a></li>
-                            <li><a href="${ctx}/viewClubRequests">Y&#234;u c&#7847;u CLB</a></li>
+                            <li><a href="${ctx}/admin-club-list">Các CLB</a></li>
+                            <li><a href="${ctx}/admin-event-list">Sự kiện</a></li>
+                            <li><a href="${ctx}/viewClubRequests">Yêu cầu CLB</a></li>
                         </ul>
                     </div>
                 </li>
@@ -44,8 +49,8 @@
                     </a>
                     <div class="ttr-header-submenu">
                         <ul>
-                            <li><a href="${ctx}/profile">H&#7891; s&#417; c&#7911;a t&#244;i</a></li>
-                            <li><a href="${ctx}/logout">&#272;&#259;ng xu&#7845;t</a></li>
+                            <li><a href="${ctx}/profile">Hồ sơ của tôi</a></li>
+                            <li><a href="${ctx}/logout">Đăng xuất</a></li>
                         </ul>
                     </div>
                 </li>
@@ -53,6 +58,7 @@
         </div>
     </div>
 </header>
+
 <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
         <div class="ttr-sidebar-logo">
@@ -65,81 +71,102 @@
             <ul>
                 <c:set var="menu" value="${empty requestScope.activeMenu ? '' : requestScope.activeMenu}" />
                 <c:set var="sub" value="${empty requestScope.activeSubMenu ? '' : requestScope.activeSubMenu}" />
+
+                <!-- DASHBOARD -->
                 <li class="${menu eq 'dashboard' ? 'active open' : ''}">
                     <a href="${ctx}/adminDashboard" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-home"></i></span>
                         <span class="ttr-label">Dashboard</span>
                     </a>
                 </li>
+
+                <!-- CLB -->
                 <li class="${menu eq 'clubs' ? 'open active' : ''}">
                     <a href="${ctx}/admin-club-list" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-briefcase"></i></span>
-                        <span class="ttr-label">Qu&#7843;n l&#253; CLB</span>
+                        <span class="ttr-label">Quản lý CLB</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
                         <li class="${sub eq 'clubs-list' ? 'active' : ''}">
                             <a href="${ctx}/admin-club-list" class="ttr-material-button">
-                                <span class="ttr-label">Danh s&#225;ch CLB</span>
+                                <span class="ttr-label">Danh sách CLB</span>
                             </a>
                         </li>
                         <li class="${sub eq 'club-requests' ? 'active' : ''}">
                             <a href="${ctx}/viewClubRequests" class="ttr-material-button">
-                                <span class="ttr-label">Y&#234;u c&#7847;u t&#7841;o CLB</span>
+                                <span class="ttr-label">Yêu cầu tạo CLB</span>
                             </a>
                         </li>
                     </ul>
                 </li>
+
+                <!-- EVENTS -->
                 <li class="${menu eq 'events' ? 'open active' : ''}">
                     <a href="${ctx}/admin-event-list" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-calendar"></i></span>
-                        <span class="ttr-label">Qu&#7843;n l&#253; s&#7921; ki&#7879;n</span>
+                        <span class="ttr-label">Quản lý sự kiện</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
                         <li class="${sub eq 'events-list' ? 'active' : ''}">
                             <a href="${ctx}/admin-event-list" class="ttr-material-button">
-                                <span class="ttr-label">Danh s&#225;ch s&#7921; ki&#7879;n</span>
+                                <span class="ttr-label">Danh sách sự kiện</span>
                             </a>
                         </li>
                         <li class="${sub eq 'events-create' ? 'active' : ''}">
                             <a href="${ctx}/admin-event-create" class="ttr-material-button">
-                                <span class="ttr-label">T&#7841;o s&#7921; ki&#7879;n m&#7899;i</span>
+                                <span class="ttr-label">Tạo sự kiện mới</span>
                             </a>
                         </li>
                     </ul>
                 </li>
+
+                <!-- USERS -->
                 <li class="${menu eq 'users' ? 'open active' : ''}">
                     <a href="${ctx}/adminUsers" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-user"></i></span>
-                        <span class="ttr-label">Ng&#432;&#7901;i d&#249;ng</span>
+                        <span class="ttr-label">Người dùng</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
+                        <!-- Danh sách người dùng (màn cũ của nhóm) -->
                         <li class="${sub eq 'users-list' ? 'active' : ''}">
                             <a href="${ctx}/adminUsers" class="ttr-material-button">
-                                <span class="ttr-label">Danh s&#225;ch ng&#432;&#7901;i d&#249;ng</span>
+                                <span class="ttr-label">Danh sách người dùng</span>
+                            </a>
+                        </li>
+                        <!-- Quản lý người dùng (CRUD của bạn) -->
+                        <li class="${sub eq 'users-manage' ? 'active' : ''}">
+                            <a href="${ctx}/ManageUsersServlet" class="ttr-material-button">
+                                <span class="ttr-label">Quản lý người dùng</span>
                             </a>
                         </li>
                     </ul>
                 </li>
+
+                <!-- REPORTS -->
                 <li class="${menu eq 'reports' ? 'active open' : ''}">
                     <a href="${ctx}/systemReports" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-                        <span class="ttr-label">B&#225;o c&#225;o</span>
+                        <span class="ttr-label">Báo cáo</span>
                     </a>
                 </li>
+
+                <!-- SETTINGS -->
                 <li class="${menu eq 'settings' ? 'active open' : ''}">
                     <a href="${ctx}/systemSettings" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-settings"></i></span>
-                        <span class="ttr-label">C&#224;i &#273;&#7863;t h&#7879; th&#7889;ng</span>
+                        <span class="ttr-label">Cài đặt hệ thống</span>
                     </a>
                 </li>
+
                 <li class="ttr-seperate"></li>
             </ul>
         </nav>
     </div>
 </div>
+
 <script>
     (function() {
         var arrows = document.querySelectorAll('.ttr-sidebar-navi .ttr-arrow-icon');
