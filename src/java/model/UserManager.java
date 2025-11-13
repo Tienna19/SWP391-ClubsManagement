@@ -14,6 +14,7 @@ public class UserManager {
     private String profileImage;
     private String status; // Active / Inactive
     private Date createdAt;
+    
 
     public UserManager() {}
 

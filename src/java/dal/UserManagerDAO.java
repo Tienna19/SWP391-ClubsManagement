@@ -24,7 +24,7 @@ public class UserManagerDAO extends DBContext {
                 u.setGender(rs.getNString("Gender"));
                 u.setRoleID(rs.getInt("RoleID"));
                 u.setProfileImage(rs.getString("ProfileImage"));
-                u.setStatus("Active"); // giả định, vì DB chưa có cột Status
+                u.setStatus(rs.getString("status"));
                 u.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 list.add(u);
             }
@@ -50,7 +50,7 @@ public class UserManagerDAO extends DBContext {
                 u.setGender(rs.getNString("Gender"));
                 u.setRoleID(rs.getInt("RoleID"));
                 u.setProfileImage(rs.getString("ProfileImage"));
-                u.setStatus("Active");
+                u.setStatus(rs.getString("status"));
                 u.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 list.add(u);
             }
@@ -73,71 +73,106 @@ public class UserManagerDAO extends DBContext {
 
     // Thêm user mới
     public boolean addUser(UserManager u) throws SQLException {
-        String sql = "INSERT INTO Users (FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setNString(1, u.getFullName());
-            ps.setString(2, u.getEmail());
-            ps.setString(3, u.getPasswordHash() != null ? u.getPasswordHash() : "123456"); // default password
-            ps.setString(4, u.getPhoneNumber());
-            ps.setNString(5, u.getAddress());
-            ps.setNString(6, u.getGender());
-            ps.setInt(7, u.getRoleID());
-            ps.setString(8, u.getProfileImage());
-            return ps.executeUpdate() > 0;
+    String sql = "INSERT INTO Users "
+            + "(FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage, Status) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Active')";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+        ps.setNString(1, u.getFullName());
+        ps.setString(2, u.getEmail());
+
+        // ---- PASSWORD ----
+        // Nếu servlet đã hash => dùng luôn.
+        ps.setString(3, u.getPasswordHash());
+
+        ps.setString(4, u.getPhoneNumber());
+        ps.setNString(5, u.getAddress());
+        ps.setNString(6, u.getGender());
+        ps.setInt(7, u.getRoleID());
+
+        // ---- AVATAR ----
+        if (u.getProfileImage() != null && !u.getProfileImage().isBlank()) {
+            ps.setString(8, u.getProfileImage());     // ảnh upload
+        } else {
+            ps.setString(8, "assets/images/default-avatar.png");  // ảnh mặc định
         }
+
+        return ps.executeUpdate() > 0;
     }
+}
+
 
     // Cập nhật thông tin người dùng
-    public boolean updateUser(UserManager user) throws SQLException {
-        String sql = "UPDATE Users SET FullName=?, Email=?, PhoneNumber=?, Address=?, "
-                   + "Gender=?, RoleID=? WHERE UserID=?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setNString(1, user.getFullName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getPhoneNumber());
-            ps.setNString(4, user.getAddress());
-            ps.setNString(5, user.getGender());
-            ps.setInt(6, user.getRoleID());
-            ps.setInt(7, user.getUserID());
-            return ps.executeUpdate() > 0;
-        }
-    }
+    public boolean updateUser(UserManager u) throws SQLException {
+    StringBuilder sql = new StringBuilder("UPDATE Users SET fullName=?, email=?, phoneNumber=?, address=?, gender=?, roleID=?");
 
-//    // Xóa tạm thời (Deactivate)
-//    public boolean deactivateUser(int userId) throws SQLException {
-//        String sql = "UPDATE Users SET RoleID = 0 WHERE UserID = ?"; // hoặc gán cờ Status nếu có
-//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-//            ps.setInt(1, userId);
-//            return ps.executeUpdate() > 0;
-//        }
-//    }
-    
-    // Deactive tài khoản bằng cách gắn tiền tố vào email
-        public boolean deactivateUser(int userId) throws SQLException {
-            String sql = "UPDATE Users SET Email = '[DEACTIVATED]_' + Email WHERE UserID = ? AND Email NOT LIKE '[DEACTIVATED]%'";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, userId);
+    if (u.getPasswordHash() != null) {
+        sql.append(", passwordHash=?");
+    }
+    if (u.getProfileImage() != null) {
+        sql.append(", profileImage=?");
+    }
+    sql.append(" WHERE userID=?");
+
+    try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+        int idx = 1;
+        ps.setString(idx++, u.getFullName());
+        ps.setString(idx++, u.getEmail());
+        ps.setString(idx++, u.getPhoneNumber());
+        ps.setString(idx++, u.getAddress());
+        ps.setString(idx++, u.getGender());
+        ps.setInt(idx++, u.getRoleID());
+
+        if (u.getPasswordHash() != null) {
+            ps.setString(idx++, u.getPasswordHash());
+        }
+        if (u.getProfileImage() != null) {
+            ps.setString(idx++, u.getProfileImage());
+        }
+
+        ps.setInt(idx, u.getUserID());
         return ps.executeUpdate() > 0;
     }
 }
 
     
-    // Helper method
-    private UserManager extractUser(ResultSet rs) throws SQLException {
-        UserManager u = new UserManager();
-        u.setUserID(rs.getInt("UserID"));
-        u.setFullName(rs.getNString("FullName"));
-        u.setEmail(rs.getString("Email"));
-        u.setPhoneNumber(rs.getString("PhoneNumber"));
-        u.setAddress(rs.getNString("Address"));
-        u.setGender(rs.getNString("Gender"));
-        u.setRoleID(rs.getInt("RoleID"));
-        u.setProfileImage(rs.getString("ProfileImage"));
-        u.setCreatedAt(rs.getTimestamp("CreatedAt"));
-        u.setStatus("Active");
-        return u;
+    public boolean deactivateUser(int userId) throws SQLException {
+    String sql = "UPDATE Users SET status = 'Inactive' WHERE userID = ?";
+    PreparedStatement st = connection.prepareStatement(sql);
+    st.setInt(1, userId);
+    return st.executeUpdate() > 0;
     }
+    
+    public boolean activateUser(int userId) throws SQLException {
+    String sql = "UPDATE Users SET status = 'Active' WHERE userID = ?";
+    PreparedStatement st = connection.prepareStatement(sql);
+    st.setInt(1, userId);
+    return st.executeUpdate() > 0;
+    }
+
+
+    private UserManager extractUser(ResultSet rs) throws SQLException {
+    UserManager u = new UserManager();
+    u.setUserID(rs.getInt("UserID"));
+    u.setFullName(rs.getNString("FullName"));
+    u.setEmail(rs.getString("Email"));
+    u.setPhoneNumber(rs.getString("PhoneNumber"));
+    u.setAddress(rs.getNString("Address"));
+    u.setGender(rs.getNString("Gender"));
+    u.setRoleID(rs.getInt("RoleID"));
+    u.setProfileImage(rs.getString("ProfileImage"));
+    u.setCreatedAt(rs.getTimestamp("CreatedAt"));
+    u.setStatus(rs.getString("status"));
+    // ĐỌC TỪ CỘT Status MỚI THÊM
+    try {
+        u.setStatus(rs.getString("Status"));
+    } catch (SQLException e) {
+        u.setStatus("Active"); // fallback nếu DB chưa có cột
+    }
+    return u;
+}
+
     
     // Lấy danh sách user theo trang
     public List<UserManager> getUsersByPage(int start, int total) {
@@ -158,6 +193,7 @@ public class UserManagerDAO extends DBContext {
             u.setGender(rs.getString("Gender"));
             u.setRoleID(rs.getInt("RoleID"));
             u.setProfileImage(rs.getString("ProfileImage"));
+            u.setStatus(rs.getString("status"));
             list.add(u);
         }
     } catch (Exception e) {
