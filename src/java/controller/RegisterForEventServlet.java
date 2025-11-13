@@ -2,6 +2,9 @@ package controller;
 
 import dal.EventRegistrationDAO;
 import model.Event;
+import model.User;      // ❗ Nếu class user của bạn tên khác (UserAccount, Users, ...)
+// thì đổi lại import + tên kiểu cho phù hợp
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -19,76 +22,131 @@ public class RegisterForEventServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.getWriter().println("✅ Servlet POST handled successfully!");
-        try {
-            int eventId = Integer.parseInt(request.getParameter("eventId"));
-            Integer userIdObj = (Integer) request.getSession().getAttribute("userId");
 
-            if (userIdObj == null) {
-                request.setAttribute("message", "⚠️ Please log in to register for this event.");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        int eventId = -1;
+
+        try {
+            // 1. Lấy eventId từ form
+            String idParam = request.getParameter("eventId");
+            if (idParam == null) {
+                request.setAttribute("message", "❌ Thiếu mã sự kiện.");
+                forwardToList(request, response);
+                return;
+            }
+            eventId = Integer.parseInt(idParam);
+
+            // 2. Lấy user đang đăng nhập từ session (đối tượng "account")
+            HttpSession session = request.getSession(false);
+            User account = (session != null)
+                    ? (User) session.getAttribute("account")
+                    : null;
+
+            if (account == null) {
+                request.setAttribute("message", "⚠️ Bạn cần đăng nhập trước khi đăng ký sự kiện.");
                 forwardToDetail(eventId, request, response);
                 return;
             }
 
-            int userId = userIdObj;
-            Event event = dao.getEventById(eventId);
+            // ⚠️ Chỗ này dùng getter đúng với model của bạn:
+            // nếu là getUserID() thì đổi lại
+            int userId = account.getUserId();
 
+            // 3. Lấy thông tin sự kiện
+            Event event = dao.getEventById(eventId);
             if (event == null) {
-                request.setAttribute("message", "❌ Event not found.");
-                forwardToDetail(eventId, request, response);
+                request.setAttribute("message", "❌ Không tìm thấy sự kiện.");
+                forwardToList(request, response);
                 return;
             }
 
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            if (now.before(event.getRegistrationStart()) || now.after(event.getRegistrationEnd())) {
-                request.setAttribute("message", "⚠️ Registration is closed.");
-                forwardToDetail(eventId, request, response);
-                return;
+
+            // 4. Kiểm tra thời gian mở đăng ký
+            Timestamp regStart = event.getRegistrationStart();
+            Timestamp regEnd   = event.getRegistrationEnd();
+
+            if (now.before(event.getRegistrationStart())) {
+            // Chưa mở
+            request.setAttribute("message", "⚠️ Thời gian đăng ký cho sự kiện này CHƯA BẮT ĐẦU.");
+            forwardToDetail(eventId, request, response);
+            return;
             }
 
+            if (now.after(event.getRegistrationEnd())) {
+            // Đã kết thúc
+            request.setAttribute("message", "⚠️ Thời gian đăng ký sự kiện này đã KẾT THÚC.");
+            forwardToDetail(eventId, request, response);
+            return;
+            }
+            // 5. Kiểm tra đã đăng ký chưa
             if (dao.isAlreadyRegistered(userId, eventId)) {
-                request.setAttribute("message", "ℹ️ You are already registered for this event.");
+                request.setAttribute("message",
+                        "ℹ️ Bạn đã đăng ký sự kiện này trước đó rồi.");
                 forwardToDetail(eventId, request, response);
                 return;
             }
 
+            // 6. Kiểm tra sức chứa
             int current = dao.getCurrentRegistrations(eventId);
             if (current >= event.getCapacity()) {
-                request.setAttribute("message", "🚫 Event is full.");
+                request.setAttribute("message",
+                        "🚫 Sự kiện đã đủ số lượng người tham gia.");
                 forwardToDetail(eventId, request, response);
                 return;
             }
 
+            // 7. Thực hiện đăng ký
             boolean success = dao.registerForEvent(userId, eventId);
-            if (success)
-                request.setAttribute("message", "✅ Registration successful for: " + event.getEventName());
-            else
-                request.setAttribute("message", "❌ Registration failed. Try again later.");
+            if (success) {
+                request.setAttribute("message",
+                        "✅ Đăng ký thành công sự kiện: " + event.getEventName());
+            } else {
+                request.setAttribute("message",
+                        "❌ Đăng ký thất bại, vui lòng thử lại sau.");
+            }
 
+        } catch (NumberFormatException ex) {
+            request.setAttribute("message", "❌ Mã sự kiện không hợp lệ.");
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "⚠️ Error: " + e.getMessage());
+            request.setAttribute("message", "⚠️ Có lỗi xảy ra: " + e.getMessage());
         }
 
-        // Quay lại trang chi tiết sau khi xử lý
-        int eventId = Integer.parseInt(request.getParameter("eventId"));
-        forwardToDetail(eventId, request, response);
-        System.out.println(">>> Entered doPost");
-
+        // Sau khi xử lý xong, quay về trang chi tiết sự kiện
+        if (eventId > 0) {
+            forwardToDetail(eventId, request, response);
+        } else {
+            forwardToList(request, response);
+        }
     }
 
-    private void forwardToDetail(int eventId, HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    request.setAttribute("eventId", eventId); // truyền ID qua attribute
-    RequestDispatcher rd = request.getRequestDispatcher("/ViewAllEventsServlet");
-    rd.forward(request, response);
-}
+    // Quay lại chi tiết 1 event
+    private void forwardToDetail(int eventId,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+            throws ServletException, IOException {
 
-    
+        request.setAttribute("eventId", eventId);
+        RequestDispatcher rd = request.getRequestDispatcher("/ViewAllEventsServlet");
+        rd.forward(request, response);
+    }
+
+    // Quay lại danh sách events (fallback)
+    private void forwardToList(HttpServletRequest request,
+                               HttpServletResponse response)
+            throws ServletException, IOException {
+
+        RequestDispatcher rd = request.getRequestDispatcher("/ViewAllEventsServlet");
+        rd.forward(request, response);
+    }
+
     @Override
-protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
-    resp.getWriter().println("✅ GET working");
-}
-
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // Nếu ai đó gọi GET trực tiếp thì cho về list
+        resp.sendRedirect(req.getContextPath() + "/viewAllEvents");
+    }
 }

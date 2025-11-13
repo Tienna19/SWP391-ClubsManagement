@@ -673,22 +673,46 @@ function joinClub() {
 }
 
 function registerEvent(eventId) {
+    <%-- Nếu là khách (chưa đăng nhập) --%>
     <c:choose>
         <c:when test="${isGuest}">
-            // Guest needs to login first
             if (confirm('Bạn cần đăng nhập để đăng ký sự kiện.\nBạn có muốn đăng nhập ngay bây giờ?')) {
-                window.location.href = '${pageContext.request.contextPath}/login?redirect=clubDetail&clubId=${club.clubId}&eventId=' + eventId;
+                // redirect sang trang login, kèm theo redirect về lại clubDetail sau khi login
+                window.location.href =
+                    '${pageContext.request.contextPath}/login'
+                    + '?redirect=clubDetail'
+                    + '&clubId=${club.clubId}'
+                    + '&eventId=' + eventId;
             }
         </c:when>
         <c:otherwise>
-            // Logged in user can register
+            // Đã login -> gửi đơn đăng ký
             if (confirm('Bạn có muốn đăng ký tham gia sự kiện này?')) {
-                window.location.href = '${pageContext.request.contextPath}/registerEvent?eventId=' + eventId;
+                // set eventId vào input ẩn rồi submit form POST
+                document.getElementById('registerEventId').value = eventId;
+                document.getElementById('registerEventForm').submit();
             }
         </c:otherwise>
     </c:choose>
 }
 </script>
+
+<!-- Form ẩn để đăng ký sự kiện -->
+<form id="registerEventForm"
+      action="${pageContext.request.contextPath}/RegisterForEventServlet"
+      method="post"
+      style="display:none;">
+    <input type="hidden" name="eventId" id="registerEventId">
+</form>
+
+<!-- Form ẩn check-in sự kiện -->
+<form id="checkInForm"
+      action="${pageContext.request.contextPath}/EventCheckInServlet"
+      method="post"
+      style="display:none;">
+    <input type="hidden" name="eventId" value="${event.eventID}">
+</form>      
+
 
 </body>
 </html>
