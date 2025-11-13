@@ -5,10 +5,20 @@
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ManageUsersServlet</servlet-name>
-        <servlet-class>controller.ManageUsersServlet</servlet-class>
-    </servlet>
+    
+    <!-- ManageUsersServlet -->
+<servlet>
+    <servlet-name>ManageUsersServlet</servlet-name>
+    <servlet-class>controller.ManageUsersServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>ManageUsersServlet</servlet-name>
+    <url-pattern>/ManageUsersServlet</url-pattern>
+</servlet-mapping>
+
+
+
     
     <!-- JoinClubServlet -->
 <servlet>
@@ -215,10 +225,8 @@
         <url-pattern>/adminUsers</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>ManageUsersServlet</servlet-name>
-        <url-pattern>/ManageUsersServlet</url-pattern>
-    </servlet-mapping>
+    
+
     <servlet-mapping>
         <servlet-name>ViewEventsByClubServlet</servlet-name>
         <url-pattern>/ViewEventsByClubServlet</url-pattern>
