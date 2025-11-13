@@ -21,7 +21,7 @@ public class MembershipRole {
         this.membershipId = membershipId;
         this.clubId = clubId;
         this.userId = userId;
-        this.roleInClub = roleInClub;;
+        this.roleInClub = role;
         this.status = status;
     }
 
@@ -50,8 +50,16 @@ public class MembershipRole {
         return roleInClub;
     }
 
+    public String getRole() {
+        return roleInClub;
+    }
+
     public void setRoleInClub(String roleInClub) {
         this.roleInClub = roleInClub;
+    }
+
+    public void setRole(String role) {
+        this.roleInClub = role;
     }
 
     public String getStatus() { 

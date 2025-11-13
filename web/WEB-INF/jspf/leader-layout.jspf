@@ -1,7 +1,35 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
+<%@ page pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <c:set var="clubId" value="${not empty club ? club.clubId : param.clubId}" />
+
+<c:url var="dashboardUrl" value="/clubDashboard">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="clubDetailUrl" value="/clubDetail">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="updateClubUrl" value="/updateClub">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="memberListUrl" value="/memberList">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="memberApprovalsUrl" value="/memberApprovals">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="eventListUrl" value="/listEvents">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="addEventUrl" value="/addNewEvent">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="eventRequestUrl" value="/eventApprovals">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
+<c:url var="clubStatsUrl" value="/clubStatistics">
+    <c:param name="clubId" value="${clubId}" />
+</c:url>
 
 <header class="ttr-header">
     <div class="ttr-header-wrapper">
@@ -26,10 +54,10 @@
                     <a href="#" class="ttr-material-button ttr-submenu-toggle">Menu nhanh <i class="fa fa-angle-down"></i></a>
                     <div class="ttr-header-submenu">
                         <ul>
-                            <li><a href="${ctx}/clubDashboard?clubId=${clubId}">Dashboard CLB</a></li>
-                            <li><a href="${ctx}/clubDetail?clubId=${clubId}">Thông tin CLB</a></li>
-                            <li><a href="${ctx}/memberApprovals?clubId=${clubId}">Phê duyệt thành viên</a></li>
-                            <li><a href="${ctx}/listEvents?clubId=${clubId}">Sự kiện CLB</a></li>
+                            <li><a href="${dashboardUrl}">Dashboard CLB</a></li>
+                            <li><a href="${clubDetailUrl}">Thông tin CLB</a></li>
+                            <li><a href="${memberApprovalsUrl}">Phê duyệt thành viên</a></li>
+                            <li><a href="${eventListUrl}">Sự kiện CLB</a></li>
                         </ul>
                     </div>
                 </li>
@@ -49,7 +77,7 @@
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="${ctx}/profile">Hồ sơ của tôi</a></li>
-                            <li><a href="${ctx}/clubDetail?clubId=${clubId}">Chi tiết CLB</a></li>
+                            <li><a href="${clubDetailUrl}">Chi tiết CLB</a></li>
                             <li><a href="${ctx}/logout">Đăng xuất</a></li>
                         </ul>
                     </div>
@@ -72,19 +100,19 @@
             <c:set var="sub" value="${empty requestScope.activeSubMenu ? '' : requestScope.activeSubMenu}" />
             <ul>
                 <li>
-                    <a href="${ctx}/clubDashboard?clubId=${clubId}" class="ttr-material-button ${menu eq 'dashboard' ? 'active' : ''}">
+                    <a href="${dashboardUrl}" class="ttr-material-button ${menu eq 'dashboard' ? 'active' : ''}">
                         <span class="ttr-icon"><i class="ti-home"></i></span>
                         <span class="ttr-label">Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="${ctx}/clubDetail?clubId=${clubId}" class="ttr-material-button ${menu eq 'club' ? 'active' : ''}">
+                    <a href="${clubDetailUrl}" class="ttr-material-button ${menu eq 'club' ? 'active' : ''}">
                         <span class="ttr-icon"><i class="ti-info-alt"></i></span>
                         <span class="ttr-label">Thông tin CLB</span>
                     </a>
                 </li>
                 <li>
-                    <a href="${ctx}/updateClub?clubId=${clubId}" class="ttr-material-button ${menu eq 'club-edit' ? 'active' : ''}">
+                    <a href="${updateClubUrl}" class="ttr-material-button ${menu eq 'club-edit' ? 'active' : ''}">
                         <span class="ttr-icon"><i class="ti-pencil"></i></span>
                         <span class="ttr-label">Chỉnh sửa CLB</span>
                     </a>
@@ -97,12 +125,12 @@
                     </a>
                     <ul>
                         <li class="${sub eq 'members-list' ? 'active' : ''}">
-                            <a href="${ctx}/memberList?clubId=${clubId}" class="ttr-material-button">
+                            <a href="${memberListUrl}" class="ttr-material-button">
                                 <span class="ttr-label">Danh sách thành viên</span>
                             </a>
                         </li>
                         <li class="${sub eq 'members-approvals' ? 'active' : ''}">
-                            <a href="${ctx}/memberApprovals?clubId=${clubId}" class="ttr-material-button">
+                            <a href="${memberApprovalsUrl}" class="ttr-material-button">
                                 <span class="ttr-label">Phê duyệt thành viên</span>
                             </a>
                         </li>
@@ -116,24 +144,24 @@
                     </a>
                     <ul>
                         <li class="${sub eq 'events-list' ? 'active' : ''}">
-                            <a href="${ctx}/listEvents?clubId=${clubId}" class="ttr-material-button">
+                            <a href="${eventListUrl}" class="ttr-material-button">
                                 <span class="ttr-label">Danh sách sự kiện</span>
                             </a>
                         </li>
                         <li class="${sub eq 'events-create' ? 'active' : ''}">
-                            <a href="${ctx}/addNewEvent?clubId=${clubId}" class="ttr-material-button">
+                            <a href="${addEventUrl}" class="ttr-material-button">
                                 <span class="ttr-label">Tạo sự kiện mới</span>
                             </a>
                         </li>
                         <li class="${sub eq 'events-requests' ? 'active' : ''}">
-                            <a href="${ctx}/eventApprovals?clubId=${clubId}" class="ttr-material-button">
+                            <a href="${eventRequestUrl}" class="ttr-material-button">
                                 <span class="ttr-label">Yêu cầu sự kiện</span>
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="${ctx}/clubStatistics?clubId=${clubId}" class="ttr-material-button ${menu eq 'stats' ? 'active' : ''}">
+                    <a href="${clubStatsUrl}" class="ttr-material-button ${menu eq 'stats' ? 'active' : ''}">
                         <span class="ttr-icon"><i class="ti-bar-chart"></i></span>
                         <span class="ttr-label">Thống kê</span>
                     </a>
@@ -146,6 +174,19 @@
 
 <script>
     (function() {
+        function syncSubmenuVisibility(li) {
+            var submenu = li ? li.querySelector('ul') : null;
+            if (!submenu) return;
+            if (li.classList.contains('open')) {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        }
+
+        var items = document.querySelectorAll('.ttr-sidebar .ttr-sidebar-navi > ul > li');
+        items.forEach(syncSubmenuVisibility);
+
         var toggles = document.querySelectorAll('.sidebar-toggle');
         toggles.forEach(function(toggle) {
             toggle.addEventListener('click', function(event) {
@@ -154,6 +195,7 @@
                 if (!parentLi) return;
                 parentLi.classList.toggle('open');
                 parentLi.classList.toggle('active');
+                syncSubmenuVisibility(parentLi);
             });
         });
     })();

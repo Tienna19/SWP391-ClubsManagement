@@ -171,6 +171,20 @@ public class UserDAO extends DBContext {
         return false;
     }
 
+    // CẬP NHẬT ROLE (RoleID)
+    public boolean updateUserRole(int userId, int roleId) {
+        String sql = "UPDATE Users SET RoleID = ? WHERE UserID = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setInt(1, roleId);
+            st.setInt(2, userId);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating user role: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // GET ALL USERS (for dropdown, etc.)
     public java.util.List<User> getAllUsers() {
         java.util.List<User> userList = new java.util.ArrayList<>();

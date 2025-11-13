@@ -31,312 +31,208 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         body {
-            background: #f6f7fb;
-            font-family: 'Be Vietnam Pro', sans-serif;
+            background: #f5f6fb;
         }
+
+        .club-edit-wrapper {
+            padding: 24px 24px 48px;
+            min-height: calc(100vh - 120px);
+        }
+
         .club-edit-hero {
             position: relative;
-            padding: 56px 36px 120px;
-            background: linear-gradient(135deg, #5E35B1 0%, #7C4DFF 45%, #42A5F5 100%);
+            border-radius: 24px;
+            padding: 28px 32px;
+            background: linear-gradient(135deg, rgba(106, 79, 249, 0.9) 0%, rgba(79, 59, 190, 0.85) 45%, rgba(66, 133, 244, 0.85) 100%);
             color: #fff;
+            margin-bottom: 28px;
             overflow: hidden;
-            border-radius: 0 0 32px 32px;
-            margin-bottom: -84px;
         }
+
         .club-edit-hero::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 15% 30%, rgba(255,255,255,0.25), transparent 55%),
-                        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.2), transparent 45%);
+            background:
+                radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.25), transparent 60%),
+                radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.2), transparent 55%);
             pointer-events: none;
+            opacity: 0.8;
         }
-        .club-edit-hero .hero-content {
+
+        .club-edit-hero .container-fluid {
             position: relative;
             z-index: 1;
+        }
+
+        .hero-content {
             display: flex;
+            align-items: center;
+            gap: 28px;
             flex-wrap: wrap;
-            align-items: center;
-            gap: 32px;
         }
-        .club-edit-hero .hero-logo {
-            width: 110px;
-            height: 110px;
-            border-radius: 28px;
-            background: rgba(255,255,255,0.18);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 18px 40px rgba(15, 20, 63, 0.35);
-            padding: 10px;
-        }
-        .club-edit-hero .hero-logo img {
-            width: 100%;
-            height: 100%;
-            border-radius: 22px;
-            object-fit: cover;
-            background: #fff;
-        }
-        .club-edit-hero .hero-logo-placeholder {
-            width: 100%;
-            height: 100%;
-            border-radius: 22px;
-            background: rgba(255,255,255,0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #5E35B1;
-            font-size: 40px;
-        }
-        .club-edit-hero .hero-text h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
+
         .hero-title {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
             gap: 12px;
+            flex-wrap: wrap;
         }
+
+        .hero-text h1 {
+            font-size: 30px;
+            font-weight: 700;
+            margin: 0;
+        }
+
         .hero-badges {
             display: flex;
+            gap: 10px;
             flex-wrap: wrap;
-            gap: 12px;
+            margin-top: 8px;
         }
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
+            gap: 6px;
+            padding: 6px 14px;
             border-radius: 999px;
-            background: rgba(255,255,255,0.16);
+            background: rgba(255, 255, 255, 0.18);
             font-weight: 600;
-            font-size: 13px;
             letter-spacing: 0.3px;
         }
-        .hero-badges-inline {
-            margin-top: 6px;
-        }
-        .club-edit-container {
-            position: relative;
-            z-index: 2;
-        }
-        .edit-card, .info-card, .tips-card {
+
+        .club-edit-container .edit-card,
+        .club-edit-container .info-card,
+        .club-edit-container .tips-card {
+            border-radius: 20px;
+            border: 1px solid rgba(111, 118, 225, 0.12);
+            box-shadow: 0 16px 34px rgba(31, 43, 90, 0.08);
             background: #fff;
-            border-radius: 26px;
-            box-shadow: 0 24px 45px rgba(31, 43, 90, 0.08);
-            border: 1px solid rgba(94, 53, 177, 0.08);
-            overflow: hidden;
         }
-        .edit-card-header {
-            padding: 28px 32px 12px;
+
+        .club-edit-container .edit-card-header {
+            padding: 24px 28px 16px;
+            border-bottom: 1px solid rgba(226, 230, 247, 0.6);
         }
-        .edit-card-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2d2363;
-            margin: 0;
+
+        .club-edit-container .edit-card-body {
+            padding: 24px 28px 32px;
         }
-        .edit-card-header p {
-            margin-top: 6px;
-            margin-bottom: 0;
-            color: #767ca1;
-        }
-        .edit-card-body {
-            padding: 0 32px 32px;
-        }
+
         .form-section {
-            margin-bottom: 32px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(163, 172, 222, 0.35);
         }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
         .form-section-title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 16px;
+            gap: 10px;
             font-weight: 600;
-            color: #4a3ca8;
-            margin-bottom: 18px;
+            color: #4f3edf;
+            margin-bottom: 16px;
         }
+
         .form-section-title .icon {
             width: 34px;
             height: 34px;
-            border-radius: 12px;
-            background: rgba(94, 53, 177, 0.12);
-            color: #5E35B1;
+            border-radius: 10px;
+            background: rgba(79, 62, 223, 0.12);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            color: #4f3edf;
         }
-        .form-control, .form-select {
-            border-radius: 14px;
-            border: 1px solid #e1e6f0;
+
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            border: 1px solid rgba(148, 156, 194, 0.45);
             padding: 12px 16px;
-            font-size: 15px;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .form-control:focus, .form-select:focus, select.form-control:focus {
-            border-color: #5E35B1;
-            box-shadow: 0 0 0 3px rgba(94, 53, 177, 0.16);
-            outline: none;
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: rgba(79, 62, 223, 0.8);
+            box-shadow: 0 0 0 3px rgba(79, 62, 223, 0.18);
         }
-        textarea.form-control {
-            min-height: 140px;
-        }
-        .form-text {
-            font-size: 13px;
-        }
+
         .logo-preview {
-            border-radius: 18px;
-            border: 1px dashed rgba(94, 53, 177, 0.35);
-            padding: 18px;
-            background: rgba(94, 53, 177, 0.04);
-        }
-        .logo-preview img {
-            max-width: 180px;
-            border-radius: 16px;
-            box-shadow: 0 16px 25px rgba(31, 43, 90, 0.08);
-        }
-        .info-card, .tips-card {
-            padding: 26px;
-            margin-bottom: 24px;
-        }
-        .info-card h5, .tips-card h5 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2b2350;
-            margin-bottom: 18px;
-        }
-        .info-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .info-list li {
+            max-width: 80px;
+            max-height: 80px;
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(94, 53, 177, 0.15);
+            padding: 12px;
+            background: #fff;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(226, 231, 240, 0.6);
-            color: #656b87;
-            font-size: 14px;
-        }
-        .info-list li:last-child {
-            border-bottom: none;
-        }
-        .info-list .icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            background: rgba(94, 53, 177, 0.12);
-            color: #5E35B1;
-            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            box-shadow: 0 12px 24px rgba(31, 43, 90, 0.06);
         }
-        .info-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
+
+        .logo-preview img {
+            width: 100%;
+            height: auto;
+            max-height: 68px;
+            object-fit: contain;
+            border-radius: 12px;
         }
-        .info-badge.success {
-            background: rgba(76, 175, 80, 0.15);
-            color: #2e7d32;
+
+        .hero-logo.hero-logo--small {
+            width: 120px;
+            height: 120px;
+            padding: 10px;
+            border-radius: 24px;
+            box-shadow: 0 22px 36px rgba(12, 18, 54, 0.22);
+            background: rgba(255, 255, 255, 0.22);
         }
-        .info-badge.warning {
-            background: rgba(255, 179, 0, 0.18);
-            color: #d48806;
+
+        .hero-logo.hero-logo--small img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 18px;
         }
-        .tips-card ul {
-            padding-left: 20px;
-            margin-bottom: 0;
-        }
-        .tips-card ul li {
-            margin-bottom: 10px;
-            color: #5c6184;
-            line-height: 1.6;
-        }
-        .edit-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            margin-top: 12px;
-        }
-        .btn-rounded {
-            border-radius: 999px;
-            padding: 11px 22px;
-            font-weight: 600;
-            text-transform: none;
-        }
-        .font-weight-semibold {
-            font-weight: 600;
-        }
-        .btn-gradient {
-            background: linear-gradient(135deg, #5E35B1 0%, #7C4DFF 60%, #42A5F5 100%);
-            border: none;
-            color: #fff;
-            box-shadow: 0 18px 34px rgba(94, 53, 177, 0.25);
-        }
-        .btn-gradient:hover {
-            box-shadow: 0 24px 38px rgba(94, 53, 177, 0.35);
-        }
-        .btn-outline {
-            border: 1px solid rgba(94, 53, 177, 0.35);
-            color: #5E35B1;
-            background: rgba(94, 53, 177, 0.05);
-        }
-        .btn-outline:hover {
-            background: rgba(94, 53, 177, 0.12);
-            border-color: rgba(94, 53, 177, 0.55);
-        }
-        .btn-danger-soft {
-            background: rgba(244, 67, 54, 0.08);
-            color: #c62828;
-            border: none;
-        }
-        .btn-danger-soft:hover {
-            background: rgba(244, 67, 54, 0.18);
-        }
-        @media (max-width: 991px) {
-            .club-edit-hero {
-                padding: 40px 20px 110px;
-                margin-bottom: -70px;
-            }
-            .club-edit-hero .hero-text h1 {
-                font-size: 26px;
-            }
-            .edit-card-header, .edit-card-body {
-                padding: 24px;
-            }
-        }
+
         @media (max-width: 575px) {
+            .logo-preview {
+                max-width: 220px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
             .club-edit-hero {
-                border-radius: 0 0 24px 24px;
+                padding: 22px 20px;
+                border-radius: 20px;
             }
-            .edit-actions {
-                flex-direction: column;
-                align-items: stretch;
+
+            .hero-logo.hero-logo--small {
+                width: 100px;
+                height: 100px;
             }
-            .btn-rounded {
-                width: 100%;
-                justify-content: center;
+
+            .hero-text h1 {
+                font-size: 24px;
             }
         }
     </style>
 </head>
 <body class="ttr-opened-sidebar ttr-pinned-sidebar">
 
-    <jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
+    <%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
 
     <c:set var="logoSrc" value=""/>
     <c:if test="${not empty club.logo}">
@@ -377,7 +273,7 @@
         <div class="club-edit-hero">
             <div class="container-fluid">
                 <div class="hero-content">
-                    <div class="hero-logo">
+                    <div class="hero-logo hero-logo--small">
                         <c:choose>
                             <c:when test="${not empty logoSrc}">
                                 <img src="${logoSrc}" alt="${club.clubName}">

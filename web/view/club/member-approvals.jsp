@@ -119,7 +119,7 @@
     </style>
 </head>
 <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-<jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
+<%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
 
 <main class="ttr-wrapper">
     <div class="container-fluid">

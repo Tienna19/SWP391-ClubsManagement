@@ -29,50 +29,12 @@
     <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/color/color-1.css">
     
 </head>
-<body class="ttr-opened-sidebar ttr-pinned-sidebar">
+<body>
     
     <!-- Header start -->
     <jsp:include page="../layout/header.jsp"/>
     <!-- Header end -->
     
-    <!-- Left sidebar menu start -->
-    <div class="ttr-sidebar">
-        <div class="ttr-sidebar-wrapper content-scroll">
-            <div class="ttr-sidebar-logo">
-                <a href="${pageContext.request.contextPath}/home">
-                    <img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
-                </a>
-                <div class="ttr-sidebar-toggle-button">
-                    <i class="ti-arrow-left"></i>
-                </div>
-            </div>
-            <nav class="ttr-sidebar-navi">
-                <ul>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/home" class="ttr-material-button">
-                            <span class="ttr-icon"><i class="ti-home"></i></span>
-                            <span class="ttr-label">Trang chủ</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/viewAllClubs" class="ttr-material-button">
-                            <span class="ttr-icon"><i class="ti-layout-list-post"></i></span>
-                            <span class="ttr-label">Danh sách CLB</span>
-                        </a>
-                    </li>
-                    <li class="show">
-                        <a href="${pageContext.request.contextPath}/createClub" class="ttr-material-button">
-                            <span class="ttr-icon"><i class="ti-plus"></i></span>
-                            <span class="ttr-label">Tạo CLB mới</span>
-                        </a>
-                    </li>
-                    <li class="ttr-seperate"></li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-    <!-- Left sidebar menu end -->
-
     <!--Main container start -->
     <main class="ttr-wrapper">
         <div class="container-fluid">
@@ -271,7 +233,6 @@
             
         </div>
     </main>
-    <div class="ttr-overlay"></div>
 
     <!-- External JavaScripts -->
     <script src="${pageContext.request.contextPath}/assets/js/jquery.min.js"></script>
