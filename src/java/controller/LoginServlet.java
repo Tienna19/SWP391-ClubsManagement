@@ -29,16 +29,13 @@ public class LoginServlet extends HttpServlet {
         UserDAO dao = new UserDAO();
         User user = dao.getUserByEmail(email);
 
-        // Check password - support both BCrypt hashes and plain text (for backward compatibility)
+        // Check password - support BCrypt hashes 
         boolean passwordValid = false;
         if (user != null && user.getPasswordHash() != null) {
             // If stored password is a BCrypt hash, verify with BCrypt
             if (user.getPasswordHash().startsWith("$2a$")) {
                 passwordValid = BCrypt.checkpw(passwordHash, user.getPasswordHash());
-            } else {
-                // For backward compatibility, allow plain text password if stored password is plain text
-                passwordValid = passwordHash.equals(user.getPasswordHash());
-            }
+            } 
         }
 
         if (user != null && passwordValid) {
