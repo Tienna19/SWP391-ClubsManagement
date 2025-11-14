@@ -74,8 +74,6 @@ public class ViewEventDetailServlet extends HttpServlet {
                 // Convert back to requestID: eventID = -requestID - 1000000
                 int requestId = -(eventId + 1000000);
                 
-                System.out.println("Viewing event request with negative ID: " + eventId + " -> RequestID: " + requestId);
-                
                 // Get the event request
                 CreateEventRequest eventRequest = createEventRequestDAO.getRequestById(requestId);
                 if (eventRequest == null) {

@@ -46,6 +46,10 @@ Theme Version:	1.0.0
 					
 					$(".ttr-sidebar-navi li.show > ul").slideDown(200);
 					$(".ttr-sidebar-navi a").on("click", function(e) {
+						// Skip if this is a sidebar-toggle (handled by custom script)
+						if ($(this).hasClass("sidebar-toggle")) {
+							return;
+						}
 						var a = $(this);
 						$(this).next().is("ul") ? (e.preventDefault(), a.parent().hasClass("show") ? (a.parent().removeClass("show"), a.next().slideUp(200)) : (a.parent().parent().find(".show ul").slideUp(200), a.parent().parent().find("li").removeClass("show"), a.parent().toggleClass("show"), a.next().slideToggle(200))) : (a.parent().parent().find(".show ul").slideUp(200), a.parent().parent().find("li").removeClass("show"), a.parent().addClass("show"))
 					});

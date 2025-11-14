@@ -393,4 +393,151 @@ public class EventDAO extends DBContext {
         }
         return false;
     }
+    
+    /**
+     * Check if there are overlapping events for a club leader
+     * Two events overlap if: startA < endB AND startB < endA
+     * Checks both Events table and CreateEventRequests table
+     * @param clubIds List of club IDs where the user is a leader
+     * @param startDate Start date of the new/updated event
+     * @param endDate End date of the new/updated event
+     * @param excludeEventId Event ID to exclude from check (for edit operations), use -1 for new events
+     * @return true if there is an overlapping event, false otherwise
+     */
+    public boolean hasOverlappingEvents(List<Integer> clubIds, Timestamp startDate, Timestamp endDate, int excludeEventId) {
+        // Check if database connection is available
+        if (connection == null) {
+            System.err.println("Database connection is null. Cannot check overlapping events.");
+            return false;
+        }
+        
+        // If no clubs or dates are null, no overlap
+        if (clubIds == null || clubIds.isEmpty() || startDate == null || endDate == null) {
+            System.out.println("DEBUG: hasOverlappingEvents - Missing parameters. clubIds=" + clubIds + ", startDate=" + startDate + ", endDate=" + endDate);
+            return false;
+        }
+        
+        System.out.println("DEBUG: Checking overlap for clubIds=" + clubIds + ", startDate=" + startDate + ", endDate=" + endDate + ", excludeEventId=" + excludeEventId);
+        
+        // Check Events table
+        boolean hasOverlapInEvents = checkOverlapInEvents(clubIds, startDate, endDate, excludeEventId);
+        if (hasOverlapInEvents) {
+            System.out.println("DEBUG: Found overlap in Events table");
+            return true;
+        }
+        
+        // Check CreateEventRequests table (for club leader's pending/draft requests)
+        boolean hasOverlapInRequests = checkOverlapInCreateEventRequests(clubIds, startDate, endDate, excludeEventId);
+        if (hasOverlapInRequests) {
+            System.out.println("DEBUG: Found overlap in CreateEventRequests table");
+            return true;
+        }
+        
+        System.out.println("DEBUG: No overlap found");
+        return false;
+    }
+    
+    /**
+     * Check overlap in Events table
+     */
+    private boolean checkOverlapInEvents(List<Integer> clubIds, Timestamp startDate, Timestamp endDate, int excludeEventId) {
+        // Build SQL query to check for overlapping events
+        // Two events overlap if: (newStart < existingEnd) AND (existingStart < newEnd)
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM Events WHERE ClubID IN (");
+        for (int i = 0; i < clubIds.size(); i++) {
+            if (i > 0) sql.append(",");
+            sql.append("?");
+        }
+        sql.append(") AND StartDate < ? AND EndDate > ?");
+        
+        // Exclude the current event if editing
+        if (excludeEventId > 0) {
+            sql.append(" AND EventID != ?");
+        }
+        
+        try {
+            PreparedStatement st = connection.prepareStatement(sql.toString());
+            int paramIndex = 1;
+            
+            // Set club IDs
+            for (Integer clubId : clubIds) {
+                st.setInt(paramIndex++, clubId);
+            }
+            
+            // Set date parameters for overlap check
+            // Overlap condition: startDate < existingEndDate AND existingStartDate < endDate
+            st.setTimestamp(paramIndex++, endDate);   // existingEndDate > newStartDate
+            st.setTimestamp(paramIndex++, startDate); // existingStartDate < newEndDate
+            
+            // Exclude current event if editing
+            if (excludeEventId > 0) {
+                st.setInt(paramIndex++, excludeEventId);
+            }
+            
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("DEBUG: Found " + count + " overlapping events in Events table");
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking overlapping events in Events table: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    /**
+     * Check overlap in CreateEventRequests table
+     */
+    private boolean checkOverlapInCreateEventRequests(List<Integer> clubIds, Timestamp startDate, Timestamp endDate, int excludeEventId) {
+        // Build SQL query to check for overlapping event requests
+        // Exclude Draft status requests that are being edited (if excludeEventId < 0, it's a request ID)
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM CreateEventRequests WHERE ClubID IN (");
+        for (int i = 0; i < clubIds.size(); i++) {
+            if (i > 0) sql.append(",");
+            sql.append("?");
+        }
+        sql.append(") AND StartDate < ? AND EndDate > ?");
+        
+        // Exclude the current request if editing (excludeEventId < 0 means it's from CreateEventRequests)
+        if (excludeEventId < 0) {
+            // Convert negative eventId to requestId: eventId = -(requestId + 1000000)
+            int requestId = -(excludeEventId + 1000000);
+            sql.append(" AND RequestID != ?");
+        }
+        
+        try {
+            PreparedStatement st = connection.prepareStatement(sql.toString());
+            int paramIndex = 1;
+            
+            // Set club IDs
+            for (Integer clubId : clubIds) {
+                st.setInt(paramIndex++, clubId);
+            }
+            
+            // Set date parameters for overlap check
+            st.setTimestamp(paramIndex++, endDate);   // existingEndDate > newStartDate
+            st.setTimestamp(paramIndex++, startDate); // existingStartDate < newEndDate
+            
+            // Exclude current request if editing
+            if (excludeEventId < 0) {
+                int requestId = -(excludeEventId + 1000000);
+                st.setInt(paramIndex++, requestId);
+            }
+            
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("DEBUG: Found " + count + " overlapping event requests in CreateEventRequests table");
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking overlapping events in CreateEventRequests table: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

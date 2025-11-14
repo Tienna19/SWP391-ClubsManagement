@@ -22,7 +22,7 @@
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/admin-club-list">Các CLB</a></li>
-                            <li><a href="${pageContext.request.contextPath}/admin-event-list">Sự kiện</a></li>
+                            <li><a href="${pageContext.request.contextPath}/listEvents">Sự kiện</a></li>
                             <li><a href="${pageContext.request.contextPath}/viewClubRequests">Yêu cầu CLB</a></li>
                         </ul>
                     </div>

@@ -14,7 +14,7 @@
             <ul>
                 <li class="ttr-seperate"></li>
                 <li class="<c:if test='${activeMenu eq "dashboard"}'>active</c:if>">
-                    <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}"
+                    <a href="${pageContext.request.contextPath}/clubDashboard"
                        class="ttr-material-button <c:if test='${activeMenu eq "dashboard"}'>active</c:if>">
                         <span class="ttr-icon"><i class="ti-home"></i></span>
                         <span class="ttr-label">Dashboard</span>
