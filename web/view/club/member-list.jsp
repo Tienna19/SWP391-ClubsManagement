@@ -163,7 +163,7 @@
         <div class="db-breadcrumb">
             <h4 class="breadcrumb-title page-title">Thành viên CLB</h4>
             <ul class="db-breadcrumb-list">
-                <li><a href="${pageContext.request.contextPath}/clubDashboard?clubId=${clubId}"><i class="fa fa-home"></i>Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/clubDashboard"><i class="fa fa-home"></i>Dashboard</a></li>
                 <li>Thành viên</li>
             </ul>
         </div>

@@ -3,9 +3,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <c:set var="clubId" value="${not empty club ? club.clubId : param.clubId}" />
 
-<c:url var="dashboardUrl" value="/clubDashboard">
-    <c:param name="clubId" value="${clubId}" />
-</c:url>
+<c:url var="dashboardUrl" value="/clubDashboard" />
 <c:url var="clubDetailUrl" value="/clubDetail">
     <c:param name="clubId" value="${clubId}" />
 </c:url>
@@ -153,11 +151,13 @@
                                 <span class="ttr-label">Tạo sự kiện mới</span>
                             </a>
                         </li>
-                        <li class="${sub eq 'events-requests' ? 'active' : ''}">
-                            <a href="${eventRequestUrl}" class="ttr-material-button">
-                                <span class="ttr-label">Yêu cầu sự kiện</span>
-                            </a>
-                        </li>
+                        <c:if test="${sessionScope.account.roleId == 4}">
+                            <li class="${sub eq 'events-requests' ? 'active' : ''}">
+                                <a href="${eventRequestUrl}" class="ttr-material-button">
+                                    <span class="ttr-label">Yêu cầu sự kiện</span>
+                                </a>
+                            </li>
+                        </c:if>
                     </ul>
                 </li>
                 <li>
@@ -174,28 +174,42 @@
 
 <script>
     (function() {
-        function syncSubmenuVisibility(li) {
-            var submenu = li ? li.querySelector('ul') : null;
-            if (!submenu) return;
-            if (li.classList.contains('open')) {
-                submenu.style.display = 'block';
-            } else {
-                submenu.style.display = 'none';
-            }
+        // Wait for DOM and jQuery to be ready
+        if (typeof jQuery === 'undefined') {
+            setTimeout(arguments.callee, 50);
+            return;
         }
+        
+        jQuery(document).ready(function($) {
+            // Handle sidebar-toggle items (override admin.js behavior)
+            $(".ttr-sidebar-navi .sidebar-toggle").off('click').on("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var $this = $(this);
+                var $parentLi = $this.closest('li');
+                var $submenu = $parentLi.find('> ul');
+                
+                if ($parentLi.hasClass('show')) {
+                    // Close this menu
+                    $parentLi.removeClass('show open active');
+                    $submenu.slideUp(200);
+                } else {
+                    // Close other open menus
+                    $(".ttr-sidebar-navi > ul > li.show").each(function() {
+                        $(this).removeClass('show open active');
+                        $(this).find('> ul').slideUp(200);
+                    });
+                    
+                    // Open this menu
+                    $parentLi.addClass('show open active');
+                    $submenu.slideDown(200);
+                }
+            });
 
-        var items = document.querySelectorAll('.ttr-sidebar .ttr-sidebar-navi > ul > li');
-        items.forEach(syncSubmenuVisibility);
-
-        var toggles = document.querySelectorAll('.sidebar-toggle');
-        toggles.forEach(function(toggle) {
-            toggle.addEventListener('click', function(event) {
-                event.preventDefault();
-                var parentLi = this.closest('li');
-                if (!parentLi) return;
-                parentLi.classList.toggle('open');
-                parentLi.classList.toggle('active');
-                syncSubmenuVisibility(parentLi);
+            // Prevent event propagation for submenu links
+            $(".ttr-sidebar .ttr-sidebar-navi > ul > li > ul > li > a").on("click", function(e) {
+                e.stopPropagation();
             });
         });
     })();

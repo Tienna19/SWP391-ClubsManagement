@@ -217,7 +217,7 @@ public class UpdateClubServlet extends HttpServlet {
             boolean success = clubDAO.updateClub(club);
             
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/clubDashboard?clubId=" + clubId + "&message=update_success");
+                response.sendRedirect(request.getContextPath() + "/clubDashboard?message=update_success");
             } else {
                 request.setAttribute("error", "Cập nhật thất bại. Vui lòng thử lại.");
                 request.setAttribute("club", club);

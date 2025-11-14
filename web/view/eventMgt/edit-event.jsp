@@ -96,196 +96,27 @@
 			border-color: #bee5eb;
 			color: #0c5460;
 		}
+		
+		/* Ensure FontAwesome icons use FontAwesome font in admin sidebar */
+		body.admin-theme-loaded .ttr-sidebar [class*="fa-"],
+		body.admin-theme-loaded .ttr-sidebar .fa,
+		body.admin-theme-loaded .ttr-arrow-icon [class*="fa-"],
+		body.admin-theme-loaded .ttr-arrow-icon .fa {
+			font-family: 'FontAwesome' !important;
+		}
 	</style>
 	
 </head>
-<body class="ttr-opened-sidebar ttr-pinned-sidebar">
-	
-	<!-- header start -->
-	<header class="ttr-header">
-		<div class="ttr-header-wrapper">
-			<!--sidebar menu toggler start -->
-			<div class="ttr-toggle-sidebar ttr-material-button">
-				<i class="ti-close ttr-open-icon"></i>
-				<i class="ti-menu ttr-close-icon"></i>
-			</div>
-			<!--sidebar menu toggler end -->
-			<!--logo start -->
-			<div class="ttr-logo-box">
-				<div>
-					<a href="${pageContext.request.contextPath}/home" class="ttr-logo">
-						<img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/assets/images/logo-mobile.png" width="30" height="30">
-						<img class="ttr-logo-desktop" alt="" src="${pageContext.request.contextPath}/assets/images/logo-white.png" width="160" height="27">
-					</a>
-				</div>
-			</div>
-			<!--logo end -->
-			<div class="ttr-header-menu">
-				<!-- header left menu start -->
-				<ul class="ttr-header-navigation">
-					<li>
-						<a href="${pageContext.request.contextPath}/home" class="ttr-material-button ttr-submenu-toggle">TRANG CHỦ</a>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">MENU NHANH <i class="fa fa-angle-down"></i></a>
-						<div class="ttr-header-submenu">
-							<ul>
-								<li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
-								<li><a href="${pageContext.request.contextPath}/listEvents">Sự kiện</a></li>
-								<c:if test="${not empty club}">
-								<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
-								</c:if>
-							</ul>
-						</div>
-					</li>
-				</ul>
-				<!-- header left menu end -->
-			</div>
-			<div class="ttr-header-right ttr-with-seperator">
-				<!-- header right menu start -->
-				<ul class="ttr-header-navigation">
-					<li>
-						<c:choose>
-							<c:when test="${not empty sessionScope.account}">
-								<a href="#" class="ttr-material-button ttr-submenu-toggle" style="display: flex; align-items: center; gap: 10px; padding: 5px 15px;">
-									<c:choose>
-										<c:when test="${not empty sessionScope.account.profileImage}">
-											<span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-												<img alt="${sessionScope.account.fullName}" src="${pageContext.request.contextPath}/${sessionScope.account.profileImage}" style="width: 100%; height: 100%; object-fit: cover;">
-											</span>
-										</c:when>
-										<c:otherwise>
-											<span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0;">
-												${not empty sessionScope.account.fullName ? sessionScope.account.fullName.substring(0, 1).toUpperCase() : 'U'}
-											</span>
-										</c:otherwise>
-									</c:choose>
-									<span class="ttr-user-name" style="color: #fff; font-size: 14px; font-weight: 500; white-space: nowrap;">
-										${not empty sessionScope.account.fullName ? sessionScope.account.fullName : 'User'}
-									</span>
-								</a>
-								<div class="ttr-header-submenu">
-									<ul>
-										<li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
-										<c:if test="${not empty club}">
-										<li><a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}">Chi tiết CLB</a></li>
-										</c:if>
-										<li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
-									</ul>
-								</div>
-							</c:when>
-							<c:otherwise>
-								<a href="${pageContext.request.contextPath}/login" class="ttr-material-button" style="padding: 5px 15px;">Đăng nhập</a>
-								<a href="${pageContext.request.contextPath}/register" class="ttr-material-button" style="padding: 5px 15px;">Đăng ký</a>
-							</c:otherwise>
-						</c:choose>
-					</li>
-				</ul>
-				<!-- header right menu end -->
-			</div>
-			<!--header search panel start -->
-			<div class="ttr-search-bar">
-				<form class="ttr-search-form">
-					<div class="ttr-search-input-wrapper">
-						<input type="text" name="qq" placeholder="Tìm kiếm..." class="ttr-search-input">
-						<button type="submit" name="search" class="ttr-search-submit"><i class="ti-arrow-right"></i></button>
-					</div>
-					<span class="ttr-search-close ttr-search-toggle">
-						<i class="ti-close"></i>
-					</span>
-				</form>
-			</div>
-			<!--header search panel end -->
-		</div>
-	</header>
-	<!-- header end -->
-	<!-- Left sidebar menu start -->
-	<div class="ttr-sidebar">
-		<div class="ttr-sidebar-wrapper content-scroll">
-			<!-- side menu logo start -->
-			<div class="ttr-sidebar-logo">
-				<a href="${pageContext.request.contextPath}/home">
-					<img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
-				</a>
-				<div class="ttr-sidebar-toggle-button">
-					<i class="ti-arrow-left"></i>
-				</div>
-			</div>
-			<!-- side menu logo end -->
-			<!-- sidebar menu start -->
-			<nav class="ttr-sidebar-navi">
-				<ul>
-					<li class="ttr-seperate"></li>
-					<li>
-						<a href="${pageContext.request.contextPath}/clubDashboard" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-home"></i></span>
-							<span class="ttr-label">Dashboard</span>
-						</a>
-					</li>
-					<li>
-						<a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-info-alt"></i></span>
-							<span class="ttr-label">Thông tin CLB</span>
-						</a>
-					</li>
-					<li>
-						<a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-pencil"></i></span>
-							<span class="ttr-label">Chỉnh sửa CLB</span>
-						</a>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-							<span class="ttr-label">Thành viên</span>
-							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-						</a>
-						<ul>
-							<li>
-								<a href="${pageContext.request.contextPath}/memberList?clubId=${club.clubId}" class="ttr-material-button">
-									<span class="ttr-label">Danh sách TV</span>
-								</a>
-							</li>
-							<li>
-								<a href="${pageContext.request.contextPath}/memberApprovals?clubId=${club.clubId}" class="ttr-material-button">
-									<span class="ttr-label">Phê duyệt thành viên</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li class="show">
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-							<span class="ttr-label">Sự kiện</span>
-							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-						</a>
-						<ul>
-							<li>
-								<a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
-									<span class="ttr-label">Danh sách sự kiện</span>
-								</a>
-							</li>
-							<li>
-								<a href="${pageContext.request.contextPath}/addNewEvent" class="ttr-material-button">
-									<span class="ttr-label">Tạo sự kiện mới</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="${pageContext.request.contextPath}/clubStatistics?clubId=${club.clubId}" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-							<span class="ttr-label">Thống kê</span>
-						</a>
-					</li>
-					<li class="ttr-seperate"></li>
-				</ul>
-				<!-- sidebar menu end -->
-			</nav>
-			<!-- sidebar menu end -->
-		</div>
-	</div>
-	<!-- Left sidebar menu end -->
+<body class="ttr-opened-sidebar ttr-pinned-sidebar <c:if test='${sessionScope.account.roleId == 4}'>admin-theme-loaded</c:if>">
+
+<c:choose>
+	<c:when test="${sessionScope.account.roleId == 4}">
+		<%@ include file="/WEB-INF/jspf/admin-layout.jspf" %>
+	</c:when>
+	<c:otherwise>
+		<%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
+	</c:otherwise>
+</c:choose>
 
 	<!--Main container start -->
 	<main class="ttr-wrapper">
@@ -402,22 +233,41 @@
 											<div class="text-danger" id="endTimeError"></div>
 										</div>
 									</div>
+									<div class="col-12">
+										<div class="text-danger" id="overlapError" style="display: none;"></div>
+									</div>
 									<div class="col-12 m-t20">
 										<div class="ml-auto m-b5">
 											<h3>4. Thời gian đăng ký</h3>
 										</div>
 									</div>
+									<c:set var="regStartValue" value="" />
+									<c:if test="${not empty param.registrationStart}">
+										<c:set var="regStartValue" value="${param.registrationStart}" />
+									</c:if>
+									<c:if test="${empty param.registrationStart and not empty event.registrationStart}">
+										<fmt:formatDate value="${event.registrationStart}" pattern="yyyy-MM-dd'T'HH:mm" var="regStartFormatted" />
+										<c:set var="regStartValue" value="${regStartFormatted}" />
+									</c:if>
+									<c:set var="regEndValue" value="" />
+									<c:if test="${not empty param.registrationEnd}">
+										<c:set var="regEndValue" value="${param.registrationEnd}" />
+									</c:if>
+									<c:if test="${empty param.registrationEnd and not empty event.registrationEnd}">
+										<fmt:formatDate value="${event.registrationEnd}" pattern="yyyy-MM-dd'T'HH:mm" var="regEndFormatted" />
+										<c:set var="regEndValue" value="${regEndFormatted}" />
+									</c:if>
 									<div class="form-group col-6">
-										<label class="col-form-label">Bắt đầu đăng ký</label>
+										<label class="col-form-label">Bắt đầu đăng ký <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${not empty param.registrationStart ? param.registrationStart : event.registrationStart}">
+											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${regStartValue}" required>
 											<div class="text-danger" id="regStartTimeError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
-										<label class="col-form-label">Kết thúc đăng ký</label>
+										<label class="col-form-label">Kết thúc đăng ký <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${not empty param.registrationEnd ? param.registrationEnd : event.registrationEnd}">
+											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${regEndValue}" required>
 											<div class="text-danger" id="regEndTimeError"></div>
 										</div>
 									</div>
@@ -502,10 +352,12 @@ $(document).ready(function() {
     $('#startTime').on('change input blur', function() {
         validateEventDate();
         validateRegistrationDates(); // Re-validate registration dates when event start changes
+        checkEventOverlap(); // Check for overlapping events
     });
 
     $('#endTime').on('change input blur', function() {
         validateEndDate();
+        checkEventOverlap(); // Check for overlapping events
     });
 
     $('#regStartTime, #regEndTime').on('change input blur', function() {
@@ -648,47 +500,62 @@ function validateEventForm() {
         }
     }
     
-    // Validate registration dates if provided
-    if ($('#regStartTime').val() || $('#regEndTime').val()) {
+    // Validate registration dates (required fields)
+    if (!$('#regStartTime').val()) {
+        $('#regStartTime').addClass('is-invalid');
+        $('#regStartTimeError').text('Thời gian bắt đầu đăng ký là bắt buộc');
+        isValid = false;
+    } else {
+        $('#regStartTime').removeClass('is-invalid');
+        $('#regStartTimeError').text('');
+    }
+    
+    if (!$('#regEndTime').val()) {
+        $('#regEndTime').addClass('is-invalid');
+        $('#regEndTimeError').text('Thời gian kết thúc đăng ký là bắt buộc');
+        isValid = false;
+    } else {
+        $('#regEndTime').removeClass('is-invalid');
+        $('#regEndTimeError').text('');
+    }
+    
+    // Validate registration dates logic if both are provided
+    if ($('#regStartTime').val() && $('#regEndTime').val()) {
         var startDate = new Date($('#startTime').val());
         var now = new Date();
-        var regStart = $('#regStartTime').val() ? new Date($('#regStartTime').val()) : null;
-        var regEnd = $('#regEndTime').val() ? new Date($('#regEndTime').val()) : null;
+        var regStart = new Date($('#regStartTime').val());
+        var regEnd = new Date($('#regEndTime').val());
         
         // Validate registration start
-        if (regStart) {
-            if (regStart <= now) {
-                $('#regStartTime').addClass('is-invalid');
-                $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải sau hôm nay');
-                isValid = false;
-            } else if (regStart >= startDate) {
-                $('#regStartTime').addClass('is-invalid');
-                $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải trước ngày sự kiện');
-                isValid = false;
-            } else {
-                $('#regStartTime').removeClass('is-invalid');
-                $('#regStartTimeError').text('');
-            }
+        if (regStart <= now) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải sau hôm nay');
+            isValid = false;
+        } else if (regStart >= startDate) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải trước ngày sự kiện');
+            isValid = false;
+        } else {
+            $('#regStartTime').removeClass('is-invalid');
+            $('#regStartTimeError').text('');
         }
         
         // Validate registration end
-        if (regEnd) {
-            if (regEnd <= now) {
-                $('#regEndTime').addClass('is-invalid');
-                $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau hôm nay');
-                isValid = false;
-            } else if (regEnd >= startDate) {
-                $('#regEndTime').addClass('is-invalid');
-                $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải trước ngày sự kiện');
-                isValid = false;
-            } else {
-                $('#regEndTime').removeClass('is-invalid');
-                $('#regEndTimeError').text('');
-            }
+        if (regEnd <= now) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau hôm nay');
+            isValid = false;
+        } else if (regEnd >= startDate) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải trước ngày sự kiện');
+            isValid = false;
+        } else {
+            $('#regEndTime').removeClass('is-invalid');
+            $('#regEndTimeError').text('');
         }
         
         // Cross-validation: reg start should be before reg end
-        if (regStart && regEnd && regStart >= regEnd) {
+        if (regStart >= regEnd) {
             $('#regEndTime').addClass('is-invalid');
             $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau thời gian bắt đầu');
             isValid = false;
@@ -779,6 +646,68 @@ function validateRegistrationDates() {
     }
 }
 
+// Check for overlapping events via AJAX
+var overlapCheckTimeout = null;
+function checkEventOverlap() {
+    // Clear previous timeout
+    if (overlapCheckTimeout) {
+        clearTimeout(overlapCheckTimeout);
+    }
+    
+    // Debounce: wait 500ms after user stops typing
+    overlapCheckTimeout = setTimeout(function() {
+        var startDate = $('#startTime').val();
+        var endDate = $('#endTime').val();
+        
+        // Only check if both dates are provided and valid
+        if (!startDate || !endDate) {
+            $('#overlapError').text('').hide();
+            $('#startTime, #endTime').removeClass('is-invalid');
+            return;
+        }
+        
+        // Validate date range first
+        var start = new Date(startDate);
+        var end = new Date(endDate);
+        if (end <= start) {
+            // Invalid date range, let other validation handle it
+            return;
+        }
+        
+        // Get eventId from hidden input
+        var eventId = $('input[name="eventId"]').val() || '';
+        
+        // Make AJAX request to check overlap
+        $.ajax({
+            url: '${pageContext.request.contextPath}/checkEventOverlap',
+            type: 'POST',
+            data: {
+                startDate: startDate,
+                endDate: endDate,
+                eventId: eventId
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (!response.valid && response.message) {
+                    // Show overlap error
+                    $('#overlapError').text(response.message).show();
+                    $('#startTime, #endTime').addClass('is-invalid');
+                } else {
+                    // No overlap
+                    $('#overlapError').text('').hide();
+                    // Only remove invalid class if other validations pass
+                    if (!$('#startTimeError').text() && !$('#endTimeError').text()) {
+                        $('#startTime, #endTime').removeClass('is-invalid');
+                    }
+                }
+            },
+            error: function() {
+                // Silently fail - server-side validation will catch it
+                console.error('Error checking event overlap');
+            }
+        });
+    }, 500);
+}
 
 function showAlert(message, type) {
     var alertClass = type === 'success' ? 'alert-success' :

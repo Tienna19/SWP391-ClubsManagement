@@ -84,12 +84,12 @@
                             <c:set var="eventsCreateClass" value="active" />
                         </c:if>
                         <li class="${eventsListClass}">
-                            <a href="${pageContext.request.contextPath}/admin-event-list" class="ttr-material-button">
+                            <a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
                                 <span class="ttr-label">Danh sách sự kiện</span>
                             </a>
                         </li>
                         <li class="${eventsCreateClass}">
-                            <a href="${pageContext.request.contextPath}/admin-event-create" class="ttr-material-button">
+                            <a href="${pageContext.request.contextPath}/addNewEvent" class="ttr-material-button">
                                 <span class="ttr-label">Tạo sự kiện mới</span>
                             </a>
                         </li>
