@@ -60,13 +60,13 @@
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
             <div class="account-form">
-                <div class="account-head" style="background-image:url(assets/images/background/bg2.jpg);">
+                <div class="account-head" style="background-image:url(assets/images/bg2.jpg);">
                     <a href="home"><img src="assets/images/logo-white-2.png" alt=""></a>
                 </div>
                 <div class="account-form-inner">
                     <div class="account-container">
                         <div class="heading-bx left">
-                            <h2 class="title-head">Đăng kí <span>Ngay</span></h2>
+                            <h2 class="title-head">Đăng kí <span>Nhanh</span></h2>
                             <p>Đã có tài khoản? <a href="login">Đăng nhập</a></p>
                         </div>	
                         <form class="contact-bx" action="register" method="post">
@@ -106,13 +106,7 @@
                                 <div class="col-lg-12 m-b30">
                                     <button name="submit" type="submit" value="Submit" class="btn button-md">Đăng kí</button>
                                 </div>
-                                <div class="col-lg-12">
-                                    <h6>Đăng kí </h6>
-                                    <div class="d-flex">
-                                        <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
-                                        <a class="btn flex-fill m-l5 google-plus" href="#"><i class="fa fa-google-plus"></i>Google Plus</a>
-                                    </div>
-                                </div>
+
                             </div>
                         </form>
                     </div>
