@@ -64,7 +64,7 @@
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
             <div class="account-form">
-                <div class="account-head" style="background-image:url(assets/images/background/bg2.jpg);">
+                <div class="account-head" style="background-image:url(assets/images/bg2.jpg);">
                     <a href="home"><img src="assets/images/logo-white-2.png" alt=""></a>
                 </div>
                 <div class="account-form-inner">
@@ -99,9 +99,9 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <h6>Đăng nhập bằng tài khoản khác</h6>
+                                        <h6>Các phương thức khác</h6>
                                         <div class="d-flex">
-                                            <a class="btn flex-fill m-r5 red google" href="google-login"><i class="fa fa-google"></i> Google</a>
+                                            <a class="btn flex-fill m-r5 google-plus" href="google-login"><i class="fa fa-google-plus"></i> Google</a>
                                             <a href="admin-login" class="btn flex-fill m-r5 button-md">Tài khoản Admin cấp</a>
                                         </div>
                                     </div>
