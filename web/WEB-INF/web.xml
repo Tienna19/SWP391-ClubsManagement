@@ -5,32 +5,28 @@
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
-    
     <!-- ManageUsersServlet -->
-<servlet>
-    <servlet-name>ManageUsersServlet</servlet-name>
-    <servlet-class>controller.ManageUsersServlet</servlet-class>
-</servlet>
-
-<servlet-mapping>
-    <servlet-name>ManageUsersServlet</servlet-name>
-    <url-pattern>/ManageUsersServlet</url-pattern>
-</servlet-mapping>
-
-
-
-    
+    <servlet>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <servlet-class>controller.ManageUsersServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EventCheckInServlet</servlet-name>
+        <servlet-class>controller.EventCheckInServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <url-pattern>/ManageUsersServlet</url-pattern>
+    </servlet-mapping>
     <!-- JoinClubServlet -->
-<servlet>
-    <servlet-name>JoinClubServlet</servlet-name>
-    <servlet-class>controller.JoinClubServlet</servlet-class>
-</servlet>
-
-<servlet-mapping>
-    <servlet-name>JoinClubServlet</servlet-name>
-    <url-pattern>/JoinClubServlet</url-pattern>
-</servlet-mapping>
-
+    <servlet>
+        <servlet-name>JoinClubServlet</servlet-name>
+        <servlet-class>controller.JoinClubServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JoinClubServlet</servlet-name>
+        <url-pattern>/JoinClubServlet</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>ViewEventsByClubServlet</servlet-name>
         <servlet-class>ViewEventsByClubServlet</servlet-class>
@@ -123,7 +119,6 @@
         <servlet-name>CancelEventServlet</servlet-name>
         <url-pattern>/cancelEvent</url-pattern>
     </servlet-mapping>
-
     <!-- ApproveRejectEventServlet (Admin) -->
     <servlet>
         <servlet-name>ApproveRejectEventServlet</servlet-name>
@@ -133,7 +128,6 @@
         <servlet-name>ApproveRejectEventServlet</servlet-name>
         <url-pattern>/approveRejectEvent</url-pattern>
     </servlet-mapping>
-
     <!-- ViewEventDetailServlet -->
     <servlet>
         <servlet-name>ViewEventDetailServlet</servlet-name>
@@ -143,7 +137,6 @@
         <servlet-name>ViewEventDetailServlet</servlet-name>
         <url-pattern>/viewEvent</url-pattern>
     </servlet-mapping>
-
     <!-- ClubLeaderDashboardServlet -->
     <servlet>
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
@@ -153,7 +146,6 @@
         <servlet-name>ClubLeaderDashboardServlet</servlet-name>
         <url-pattern>/clubDashboard</url-pattern>
     </servlet-mapping>
-
     <!-- AdminDashboardServlet -->
     <servlet>
         <servlet-name>AdminDashboardServlet</servlet-name>
@@ -163,7 +155,6 @@
         <servlet-name>AdminDashboardServlet</servlet-name>
         <url-pattern>/adminDashboard</url-pattern>
     </servlet-mapping>
-
     <!-- ViewClubDetailServlet -->
     <servlet>
         <servlet-name>ViewClubDetailServlet</servlet-name>
@@ -173,7 +164,6 @@
         <servlet-name>ViewClubDetailServlet</servlet-name>
         <url-pattern>/clubDetail</url-pattern>
     </servlet-mapping>
-
     <!-- UpdateClubServlet -->
     <servlet>
         <servlet-name>UpdateClubServlet</servlet-name>
@@ -183,7 +173,6 @@
         <servlet-name>UpdateClubServlet</servlet-name>
         <url-pattern>/updateClub</url-pattern>
     </servlet-mapping>
-
     <!-- DeleteClubServlet -->
     <servlet>
         <servlet-name>DeleteClubServlet</servlet-name>
@@ -193,8 +182,6 @@
         <servlet-name>DeleteClubServlet</servlet-name>
         <url-pattern>/deleteClub</url-pattern>
     </servlet-mapping>
-
-
     <!-- ViewClubRequestsServlet (Admin) -->
     <servlet>
         <servlet-name>ViewClubRequestsServlet</servlet-name>
@@ -204,7 +191,6 @@
         <servlet-name>ViewClubRequestsServlet</servlet-name>
         <url-pattern>/viewClubRequests</url-pattern>
     </servlet-mapping>
-
     <!-- ApproveClubRequestServlet (Admin) -->
     <servlet>
         <servlet-name>ApproveClubRequestServlet</servlet-name>
@@ -214,7 +200,6 @@
         <servlet-name>ApproveClubRequestServlet</servlet-name>
         <url-pattern>/approveClubRequest</url-pattern>
     </servlet-mapping>
-
     <!-- AdminUserListServlet -->
     <servlet>
         <servlet-name>AdminUserListServlet</servlet-name>
@@ -224,9 +209,6 @@
         <servlet-name>AdminUserListServlet</servlet-name>
         <url-pattern>/adminUsers</url-pattern>
     </servlet-mapping>
-
-    
-
     <servlet-mapping>
         <servlet-name>ViewEventsByClubServlet</servlet-name>
         <url-pattern>/ViewEventsByClubServlet</url-pattern>
@@ -234,6 +216,7 @@
     <servlet-mapping>
         <servlet-name>ViewAllEventsServlet</servlet-name>
         <url-pattern>/ViewAllEventsServlet</url-pattern>
+        <url-pattern>/viewAllEvents</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RegisterForEventServlet</servlet-name>
@@ -247,7 +230,10 @@
         <servlet-name>MyRegisteredEventsServlet</servlet-name>
         <url-pattern>/MyRegisteredEventsServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>EventCheckInServlet</servlet-name>
+        <url-pattern>/EventCheckInServlet</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
@@ -266,4 +252,12 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/view/error.jsp</location>
     </error-page>
+    <context-param>
+    <param-name>GOOGLE_CLIENT_ID</param-name>
+    <param-value>413146930977-atqeb8s48a9efuqm7grru57tth8qvi01.apps.googleusercontent.com</param-value>
+</context-param>
+<context-param>
+    <param-name>GOOGLE_CLIENT_SECRET</param-name>
+    <param-value>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</param-value>
+</context-param>
 </web-app>
