@@ -220,4 +220,72 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
+    public boolean insertUserGoogle(String fullName, String email, String avatar) {
+        // Kiểm tra kết nối database
+        if (connection == null) {
+            System.err.println("❌ Database connection is null in insertUserGoogle");
+            return false;
+        }
+
+        // Kiểm tra tham số đầu vào
+        if (email == null || email.trim().isEmpty()) {
+            System.err.println("❌ Email is null or empty in insertUserGoogle");
+            return false;
+        }
+
+        // Nếu fullName null, sử dụng email làm tên
+        if (fullName == null || fullName.trim().isEmpty()) {
+            fullName = email.split("@")[0]; // Lấy phần trước @ làm tên
+            System.out.println("⚠️ FullName is null, using email prefix: " + fullName);
+        }
+
+        String sql = "INSERT INTO Users "
+                + "(FullName, Email, PasswordHash, PhoneNumber, Address, Gender, RoleID, ProfileImage, CreatedAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, fullName);
+            st.setString(2, email);
+            st.setString(3, BCrypt.hashpw("google_oauth_user", BCrypt.gensalt())); // mật khẩu giả
+            // Sử dụng setNull() thay vì setString(null) để đảm bảo NULL được set đúng cách
+            st.setNull(4, java.sql.Types.VARCHAR); // Phone
+            st.setNull(5, java.sql.Types.VARCHAR); // Address
+            st.setNull(6, java.sql.Types.VARCHAR); // Gender
+            st.setInt(7, 1);       // RoleID mặc định
+            // Avatar có thể null, sử dụng setString hoặc setNull
+            if (avatar != null && !avatar.trim().isEmpty()) {
+                st.setString(8, avatar);
+            } else {
+                st.setNull(8, java.sql.Types.VARCHAR);
+            }
+            st.setTimestamp(9, new java.sql.Timestamp(System.currentTimeMillis()));
+
+            int rowsAffected = st.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("✅ User created successfully: " + email);
+                return true;
+            } else {
+                System.err.println("❌ No rows affected when inserting user: " + email);
+                return false;
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("❌ SQL Error inserting user: " + email);
+            System.err.println("   SQL State: " + e.getSQLState());
+            System.err.println("   Error Code: " + e.getErrorCode());
+            System.err.println("   Message: " + e.getMessage());
+            e.printStackTrace();
+
+            // Log thêm thông tin nếu là lỗi constraint
+            if (e.getErrorCode() == 2627 || e.getErrorCode() == 2601) {
+                System.err.println("   ⚠️ Duplicate email detected: " + email);
+            }
+            return false;
+        } catch (Exception e) {
+            System.err.println("❌ Unexpected error inserting user: " + email);
+            System.err.println("   Error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

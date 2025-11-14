@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
-                                    <p>Đã có tài khoản? <a href="login">Đăng nhập</a></p>
+                                    <p>Quay về <a href="login">Đăng nhập</a></p>
                                 </div>
                             </div>
                         </form>
