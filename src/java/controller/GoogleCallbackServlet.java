@@ -16,9 +16,19 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 @WebServlet(name = "GoogleCallbackServlet", urlPatterns = {"/google-callback"})
 public class GoogleCallbackServlet extends HttpServlet {
 
-    private final String CLIENT_ID = "413146930977-atqeb8s48a9efuqm7grru57tth8qvi01.apps.googleusercontent.com";
-    private final String CLIENT_SECRET = "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";
+    private String CLIENT_ID;
+    private String CLIENT_SECRET;
     private final String REDIRECT_URI = "http://localhost:9999/ClubManagerTest/google-callback";
+
+    @Override
+    public void init() throws ServletException {
+        CLIENT_ID = getServletContext().getInitParameter("GOOGLE_CLIENT_ID");
+        CLIENT_SECRET = getServletContext().getInitParameter("GOOGLE_CLIENT_SECRET");
+
+        if (CLIENT_ID == null || CLIENT_SECRET == null) {
+            throw new ServletException("Không tìm thấy cấu hình Google Client ID/Secret trong web.xml");
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,7 +41,7 @@ public class GoogleCallbackServlet extends HttpServlet {
         }
 
         try {
-            // 1️⃣ Lấy token từ Google
+            // Lấy token từ gg
             GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
                     new NetHttpTransport(),
                     GsonFactory.getDefaultInstance(),
@@ -41,7 +51,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                     REDIRECT_URI
             ).execute();
 
-            // 2️⃣ Lấy thông tin user từ idToken
+            // Lấy tt user
             GoogleIdToken idToken = tokenResponse.parseIdToken();
             if (idToken == null) {
                 throw new ServletException("Không thể xác thực với Google.");
@@ -62,7 +72,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                 throw new ServletException("Không thể lấy email từ Google. Vui lòng thử lại!");
             }
 
-            // 3️⃣ Kiểm tra user tồn tại → insert nếu mới
+            // Kiểm tra user mới
             UserDAO dao = new UserDAO();
             User user = dao.getUserByEmail(email);
             if (user == null) {
@@ -90,7 +100,7 @@ public class GoogleCallbackServlet extends HttpServlet {
                 System.out.println("✅ User đã tồn tại: " + email + " (UserID: " + user.getUserId() + ")");
             }
 
-            // 4️⃣ Tạo session
+            // Tạo session
             HttpSession session = request.getSession(true);
             session.setAttribute("account", user);
             session.setAttribute("userId", user.getUserId());
@@ -98,7 +108,7 @@ public class GoogleCallbackServlet extends HttpServlet {
             session.setAttribute("fullName", user.getFullName());
             session.setAttribute("email", user.getEmail());
 
-            // 5️⃣ Xử lý redirect theo role hoặc redirect tạm
+            // Redirect theo role
             String redirect = (String) session.getAttribute("redirect");
             String clubId = (String) session.getAttribute("clubId");
             String eventId = (String) session.getAttribute("eventId");
