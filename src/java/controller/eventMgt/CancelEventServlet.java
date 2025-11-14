@@ -250,13 +250,8 @@ public class CancelEventServlet extends HttpServlet {
     }
 
     private String determineEventListView(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Object roleObj = session.getAttribute("roleId");
-            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
-                return "/view/admin/admin-event-list.jsp";
-            }
-        }
+        // Always use list-events.jsp for both admin and club leader
+        // The JSP will automatically choose the correct layout based on user role
         return "/view/eventMgt/list-events.jsp";
     }
 

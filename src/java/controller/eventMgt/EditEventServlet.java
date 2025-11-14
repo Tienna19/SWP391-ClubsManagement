@@ -8,6 +8,7 @@ package controller.eventMgt;
 import dal.EventDAO;
 import dal.ClubDAO;
 import dal.CreateEventRequestDAO;
+import dal.MemberDAO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -90,28 +92,35 @@ public class EditEventServlet extends HttpServlet {
                 // So: requestID = -(eventID + 1000000)
                 int requestId = -(eventId + 1000000);
                 
-                System.out.println("Editing event request with ID: " + requestId + " from CreateEventRequests table");
                 CreateEventRequest eventRequest = createEventRequestDAO.getRequestById(requestId);
                 if (eventRequest != null) {
-                    System.out.println("Found event request - Status: " + eventRequest.getStatus());
                     // Convert CreateEventRequest to Event format
                     event = convertRequestToEvent(eventRequest);
                 }
             } else {
                 // This is an event from Events table (eventID is positive)
-                System.out.println("Editing event with ID: " + eventId + " from Events table");
                 event = eventDAO.getEventById(eventId);
             }
             
             if (event == null) {
-                request.setAttribute("message", "Event not found");
+                request.setAttribute("message", "Không tìm thấy sự kiện");
                 request.setAttribute("messageType", "danger");
                 request.getRequestDispatcher(determineEventListView(request)).forward(request, response);
                 return;
             }
 
-            // Get all clubs for dropdown
-            List<Club> clubs = clubDAO.getAllClubs();
+            // Get user from session
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+            
+            User user = (User) session.getAttribute("account");
+            int userRoleId = user.getRoleId();
+            
+            // Get clubs based on user role
+            List<Club> clubs = getClubsForUser(user);
             
             // Set attributes for JSP
             request.setAttribute("event", event);
@@ -283,7 +292,15 @@ public class EditEventServlet extends HttpServlet {
             }
 
             if (endDateStr == null || endDateStr.trim().isEmpty()) {
-                errors.append("End date is required.<br>");
+                errors.append("Ngày kết thúc là bắt buộc.<br>");
+            }
+
+            if (registrationStartStr == null || registrationStartStr.trim().isEmpty()) {
+                errors.append("Thời gian bắt đầu đăng ký là bắt buộc.<br>");
+            }
+
+            if (registrationEndStr == null || registrationEndStr.trim().isEmpty()) {
+                errors.append("Thời gian kết thúc đăng ký là bắt buộc.<br>");
             }
 
             // Parse and validate data types
@@ -335,33 +352,51 @@ public class EditEventServlet extends HttpServlet {
                 if (registrationStartStr != null && !registrationStartStr.trim().isEmpty()) {
                     LocalDateTime regStartDateTime = LocalDateTime.parse(registrationStartStr);
                     registrationStart = Timestamp.valueOf(regStartDateTime);
-                } else {
-                    // Default to current time if not provided
-                    registrationStart = Timestamp.valueOf(LocalDateTime.now());
                 }
             } catch (DateTimeParseException e) {
-                errors.append("Invalid registration start date format.<br>");
+                errors.append("Định dạng thời gian bắt đầu đăng ký không hợp lệ.<br>");
             }
 
             try {
                 if (registrationEndStr != null && !registrationEndStr.trim().isEmpty()) {
                     LocalDateTime regEndDateTime = LocalDateTime.parse(registrationEndStr);
                     registrationEnd = Timestamp.valueOf(regEndDateTime);
-                } else {
-                    // Default to 7 days from now if not provided
-                    registrationEnd = Timestamp.valueOf(LocalDateTime.now().plusDays(7));
                 }
             } catch (DateTimeParseException e) {
-                errors.append("Invalid registration end date format.<br>");
+                errors.append("Định dạng thời gian kết thúc đăng ký không hợp lệ.<br>");
             }
 
             // Validate date logic
             if (startDate != null && endDate != null && startDate.after(endDate)) {
-                errors.append("Start date must be before end date.<br>");
+                errors.append("Ngày bắt đầu phải trước ngày kết thúc.<br>");
+            }
+
+            // Validate that registration dates are not null after parsing (required fields)
+            if (registrationStart == null) {
+                errors.append("Thời gian bắt đầu đăng ký là bắt buộc và phải có định dạng hợp lệ.<br>");
+            }
+            
+            if (registrationEnd == null) {
+                errors.append("Thời gian kết thúc đăng ký là bắt buộc và phải có định dạng hợp lệ.<br>");
             }
 
             if (registrationStart != null && registrationEnd != null && registrationStart.after(registrationEnd)) {
-                errors.append("Registration start date must be before registration end date.<br>");
+                errors.append("Thời gian bắt đầu đăng ký phải trước thời gian kết thúc đăng ký.<br>");
+            }
+
+            // Check for overlapping events if user is a club leader
+            if (userRoleId == 3 && startDate != null && endDate != null) {
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+                
+                // Use eventId from the beginning of doPost method (already parsed)
+                // If eventId < 0, it's from CreateEventRequests table (not in Events table yet), so use -1 to not exclude anything
+                // If eventId > 0, it's from Events table, so exclude this event from overlap check
+                int excludeEventId = (eventId > 0) ? eventId : -1;
+                
+                if (!clubIds.isEmpty() && eventDAO.hasOverlappingEvents(clubIds, startDate, endDate, excludeEventId)) {
+                    errors.append("Bạn đã có sự kiện khác diễn ra trong khoảng thời gian này. Một club leader không thể có 2 sự kiện diễn ra cùng lúc.<br>");
+                }
             }
 
             // Set default values for optional fields
@@ -394,8 +429,8 @@ public class EditEventServlet extends HttpServlet {
                 request.setAttribute("registrationStart", registrationStartStr);
                 request.setAttribute("registrationEnd", registrationEndStr);
                 
-                // Get clubs for dropdown
-                List<Club> clubs = clubDAO.getAllClubs();
+                // Get clubs for dropdown based on user role
+                List<Club> clubs = getClubsForUser(user);
                 request.setAttribute("clubs", clubs);
                 
                 request.getRequestDispatcher("/view/eventMgt/edit-event.jsp").forward(request, response);
@@ -434,7 +469,7 @@ public class EditEventServlet extends HttpServlet {
 
             if (success) {
                 // Success - redirect back to edit form with success message
-                request.setAttribute("message", "Event '" + escapeHtml(eventName) + "' has been updated successfully");
+                request.setAttribute("message", "Sự kiện '" + escapeHtml(eventName) + "' đã được cập nhật thành công");
                 request.setAttribute("messageType", "success");
                 
                 // Re-load the updated event/request and clubs for the form
@@ -450,14 +485,13 @@ public class EditEventServlet extends HttpServlet {
                     updatedEvent = eventDAO.getEventById(eventId);
                 }
                 
-                List<Club> clubs = clubDAO.getAllClubs();
+                List<Club> clubs = getClubsForUser(user);
                 request.setAttribute("event", updatedEvent);
                 request.setAttribute("clubs", clubs);
                 
                 request.getRequestDispatcher("/view/eventMgt/edit-event.jsp").forward(request, response);
             } else {
-                //.r
-                request.setAttribute("message", "Failed to update event. Please try again.");
+                request.setAttribute("message", "Cập nhật sự kiện thất bại. Vui lòng thử lại.");
                 request.setAttribute("messageType", "danger");
                 
                 // Re-populate form data
@@ -472,8 +506,8 @@ public class EditEventServlet extends HttpServlet {
                 request.setAttribute("registrationStart", registrationStartStr);
                 request.setAttribute("registrationEnd", registrationEndStr);
                 
-                // Get clubs for dropdown
-                List<Club> clubs = clubDAO.getAllClubs();
+                // Get clubs for dropdown based on user role
+                List<Club> clubs = getClubsForUser(user);
                 request.setAttribute("clubs", clubs);
                 
                 request.getRequestDispatcher("/view/eventMgt/edit-event.jsp").forward(request, response);
@@ -493,13 +527,8 @@ public class EditEventServlet extends HttpServlet {
     }
 
     private String determineEventListView(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Object roleObj = session.getAttribute("roleId");
-            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
-                return "/view/admin/admin-event-list.jsp";
-            }
-        }
+        // Always use list-events.jsp for both admin and club leader
+        // The JSP will automatically choose the correct layout based on user role
         return "/view/eventMgt/list-events.jsp";
     }
 
@@ -555,6 +584,37 @@ public class EditEventServlet extends HttpServlet {
             extension = originalFileName.substring(lastDotIndex);
         }
         return System.currentTimeMillis() + "_" + originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
+    }
+
+    /**
+     * Get clubs list based on user role
+     * @param user User object
+     * @return List of clubs (all for admin, only leader clubs for club leader)
+     */
+    private List<Club> getClubsForUser(User user) {
+        List<Club> clubs;
+        int userRoleId = user.getRoleId();
+        
+        if (userRoleId == 4) {
+            // Admin: show all clubs
+            clubs = clubDAO.getAllClubs();
+        } else if (userRoleId == 3) {
+            // Club Leader: show only clubs where user is leader
+            MemberDAO memberDAO = new MemberDAO();
+            List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+            clubs = new ArrayList<>();
+            for (Integer clubId : clubIds) {
+                Club club = clubDAO.getClubById(clubId);
+                if (club != null) {
+                    clubs.add(club);
+                }
+            }
+        } else {
+            // Other roles: no clubs
+            clubs = new ArrayList<>();
+        }
+        
+        return clubs;
     }
 
     /**

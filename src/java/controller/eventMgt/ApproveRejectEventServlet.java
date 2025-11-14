@@ -93,16 +93,6 @@ public class ApproveRejectEventServlet extends HttpServlet {
                 return;
             }
             
-            // Debug: Log all values from CreateEventRequest
-            System.out.println("=== CreateEventRequest retrieved from database ===");
-            System.out.println("RequestID: " + eventRequest.getRequestID());
-            System.out.println("EventName: " + eventRequest.getEventName());
-            System.out.println("RegistrationStart from DB: " + eventRequest.getRegistrationStart());
-            System.out.println("RegistrationEnd from DB: " + eventRequest.getRegistrationEnd());
-            System.out.println("StartDate: " + eventRequest.getStartDate());
-            System.out.println("EndDate: " + eventRequest.getEndDate());
-            System.out.println("==================================================");
-            
             // Check if request is in Pending status
             if (!"Pending".equals(eventRequest.getStatus())) {
                 request.setAttribute("message", "Only Pending event requests can be approved/rejected");
@@ -114,17 +104,22 @@ public class ApproveRejectEventServlet extends HttpServlet {
             if ("approve".equals(action)) {
                 // APPROVE: Move event from CreateEventRequests to Events table with Published status
                 handleApproval(eventRequest, user.getUserId());
-                request.setAttribute("message", "Sự kiện đã được phê duyệt thành công.");
-                request.setAttribute("messageType", "success");
+                session.setAttribute("flashMessage", "Sự kiện đã được phê duyệt thành công.");
+                session.setAttribute("flashType", "success");
             } else if ("reject".equals(action)) {
                 // REJECT: Just update status in CreateEventRequests
                 handleRejection(eventRequest, user.getUserId());
-                request.setAttribute("message", "Yêu cầu sự kiện đã được cập nhật trạng thái thành công.");
-                request.setAttribute("messageType", "success");
+                session.setAttribute("flashMessage", "Yêu cầu sự kiện đã được từ chối.");
+                session.setAttribute("flashType", "success");
             }
             
-            // Redirect back to list events
-            response.sendRedirect(request.getContextPath() + "/listEvents");
+            // Redirect back to appropriate page
+            String redirectTo = request.getParameter("redirectTo");
+            if ("eventApprovals".equals(redirectTo)) {
+                response.sendRedirect(request.getContextPath() + "/eventApprovals");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/listEvents");
+            }
             
         } catch (NumberFormatException e) {
             request.setAttribute("message", "Invalid event ID format.");
@@ -143,29 +138,19 @@ public class ApproveRejectEventServlet extends HttpServlet {
      * Handle approval: Move event from CreateEventRequests to Events table with Published status
      */
     private void handleApproval(CreateEventRequest eventRequest, int adminId) throws Exception {
-        System.out.println("=== Starting approval process for Request ID: " + eventRequest.getRequestID() + " ===");
-        System.out.println("Event Name: " + eventRequest.getEventName());
-        System.out.println("Club ID: " + eventRequest.getClubID());
-        System.out.println("User ID (Creator): " + eventRequest.getUserID());
-        
         // Handle null values for RegistrationStart and RegistrationEnd
         // Database requires NOT NULL, so set defaults if null
         java.sql.Timestamp registrationStart = eventRequest.getRegistrationStart();
         java.sql.Timestamp registrationEnd = eventRequest.getRegistrationEnd();
         
-        System.out.println("Original RegistrationStart: " + registrationStart);
-        System.out.println("Original RegistrationEnd: " + registrationEnd);
-        
         // Only set defaults if values are actually null (not provided in the request)
         // If values exist in database, use them as-is
         if (registrationStart == null) {
-            System.out.println("WARNING: RegistrationStart is null, setting default to current time");
             // Default to current time if not provided
             registrationStart = new java.sql.Timestamp(System.currentTimeMillis());
         }
         
         if (registrationEnd == null) {
-            System.out.println("WARNING: RegistrationEnd is null, setting default to 7 days from now");
             // Default to 7 days from now if not provided
             long sevenDaysInMillis = 7L * 24 * 60 * 60 * 1000;
             registrationEnd = new java.sql.Timestamp(System.currentTimeMillis() + sevenDaysInMillis);
@@ -174,14 +159,12 @@ public class ApproveRejectEventServlet extends HttpServlet {
         // Validate and adjust registration dates if needed
         // Ensure registration dates are before event start date
         if (registrationStart != null && eventRequest.getStartDate() != null && registrationStart.after(eventRequest.getStartDate())) {
-            System.out.println("WARNING: RegistrationStart is after event StartDate, adjusting to 1 day before event start");
             // If registration start is after event start, set it to 1 day before event start
             long oneDayInMillis = 24L * 60 * 60 * 1000;
             registrationStart = new java.sql.Timestamp(eventRequest.getStartDate().getTime() - oneDayInMillis);
         }
         
         if (registrationEnd != null && eventRequest.getStartDate() != null && registrationEnd.after(eventRequest.getStartDate())) {
-            System.out.println("WARNING: RegistrationEnd is after event StartDate, adjusting to 1 day before event start");
             // If registration end is after event start, set it to 1 day before event start
             long oneDayInMillis = 24L * 60 * 60 * 1000;
             registrationEnd = new java.sql.Timestamp(eventRequest.getStartDate().getTime() - oneDayInMillis);
@@ -190,7 +173,6 @@ public class ApproveRejectEventServlet extends HttpServlet {
         // Ensure registration end is after registration start
         if (registrationStart != null && registrationEnd != null && 
             (registrationEnd.before(registrationStart) || registrationEnd.equals(registrationStart))) {
-            System.out.println("WARNING: RegistrationEnd is before or equal to RegistrationStart, adjusting to 1 day after registration start");
             // Set registration end to 1 day after registration start
             long oneDayInMillis = 24L * 60 * 60 * 1000;
             registrationEnd = new java.sql.Timestamp(registrationStart.getTime() + oneDayInMillis);
@@ -212,17 +194,10 @@ public class ApproveRejectEventServlet extends HttpServlet {
             eventRequest.getImage() // Can be null
         );
         
-        System.out.println("Attempting to insert event into Events table...");
-        System.out.println("Final RegistrationStart: " + registrationStart);
-        System.out.println("Final RegistrationEnd: " + registrationEnd);
-        
         int eventId = eventDAO.insertEvent(event);
         if (eventId <= 0) {
-            System.err.println("ERROR: Failed to insert event. EventDAO.insertEvent() returned: " + eventId);
             throw new Exception("Failed to create event in Events table. Please check the server logs for details.");
         }
-        
-        System.out.println("✅ Event created successfully with ID: " + eventId);
         
         // 2. Update request status to Approved
         boolean updated = createEventRequestDAO.updateRequestStatus(
@@ -234,9 +209,6 @@ public class ApproveRejectEventServlet extends HttpServlet {
         if (!updated) {
             throw new Exception("Failed to update event request status");
         }
-        
-        System.out.println("✅ Event request " + eventRequest.getRequestID() + 
-                          " approved. Event created with ID: " + eventId);
     }
     
     /**
@@ -252,8 +224,6 @@ public class ApproveRejectEventServlet extends HttpServlet {
         if (!updated) {
             throw new Exception("Failed to update event request status");
         }
-        
-        System.out.println("❌ Event request " + eventRequest.getRequestID() + " rejected");
     }
     
     /**
@@ -278,13 +248,8 @@ public class ApproveRejectEventServlet extends HttpServlet {
     }
 
     private String determineEventListView(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Object roleObj = session.getAttribute("roleId");
-            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
-                return "/view/admin/admin-event-list.jsp";
-            }
-        }
+        // Always use list-events.jsp for both admin and club leader
+        // The JSP will automatically choose the correct layout based on user role
         return "/view/eventMgt/list-events.jsp";
     }
 }

@@ -303,7 +303,7 @@
             <div class="col-lg-3 col-md-3 text-md-end">
                 <div class="d-flex d-md-block flex-wrap justify-content-center gap-2 action-buttons">
                     <c:if test="${isLeaderOrAdmin}">
-                        <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}" class="btn btn-glass">
+                        <a href="${pageContext.request.contextPath}/clubDashboard" class="btn btn-glass">
                             <i class="fa fa-dashboard"></i> Dashboard
                         </a>
                         <button onclick="confirmDelete()" class="btn btn-glass">

@@ -274,181 +274,27 @@
 			font-weight: 600;
 			cursor: not-allowed;
 		}
+		
+		/* Ensure FontAwesome icons use FontAwesome font in admin sidebar */
+		body.admin-theme-loaded .ttr-sidebar [class*="fa-"],
+		body.admin-theme-loaded .ttr-sidebar .fa,
+		body.admin-theme-loaded .ttr-arrow-icon [class*="fa-"],
+		body.admin-theme-loaded .ttr-arrow-icon .fa {
+			font-family: 'FontAwesome' !important;
+		}
 	</style>
 	
 </head>
-<body class="ttr-opened-sidebar ttr-pinned-sidebar">
-	
-	<!-- header start -->
-	<header class="ttr-header">
-		<div class="ttr-header-wrapper">
-			<!--sidebar menu toggler start -->
-			<div class="ttr-toggle-sidebar ttr-material-button">
-				<i class="ti-close ttr-open-icon"></i>
-				<i class="ti-menu ttr-close-icon"></i>
-			</div>
-			<!--sidebar menu toggler end -->
-			<!--logo start -->
-			<div class="ttr-logo-box">
-				<div>
-					<a href="${pageContext.request.contextPath}/home" class="ttr-logo">
-						<img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/assets/images/logo-mobile.png" width="30" height="30">
-						<img class="ttr-logo-desktop" alt="" src="${pageContext.request.contextPath}/assets/images/logo-white.png" width="160" height="27">
-					</a>
-				</div>
-			</div>
-			<!--logo end -->
-			<div class="ttr-header-menu">
-				<!-- header left menu start -->
-				<ul class="ttr-header-navigation">
-					<li>
-						<a href="${pageContext.request.contextPath}/home" class="ttr-material-button ttr-submenu-toggle">TRANG CHỦ</a>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button ttr-submenu-toggle">MENU NHANH <i class="fa fa-angle-down"></i></a>
-						<div class="ttr-header-submenu">
-							<ul>
-								<li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
-								<li><a href="${pageContext.request.contextPath}/listEvents">Sự kiện</a></li>
-							</ul>
-						</div>
-					</li>
-				</ul>
-				<!-- header left menu end -->
-			</div>
-			<div class="ttr-header-right ttr-with-seperator">
-				<!-- header right menu start -->
-				<ul class="ttr-header-navigation">
-					<li>
-						<c:choose>
-							<c:when test="${not empty sessionScope.account}">
-								<a href="#" class="ttr-material-button ttr-submenu-toggle" style="display: flex; align-items: center; gap: 10px; padding: 5px 15px;">
-									<c:choose>
-										<c:when test="${not empty sessionScope.account.profileImage}">
-											<span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-												<img alt="${sessionScope.account.fullName}" src="${pageContext.request.contextPath}/${sessionScope.account.profileImage}" style="width: 100%; height: 100%; object-fit: cover;">
-											</span>
-										</c:when>
-										<c:otherwise>
-											<span class="ttr-user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #6f42c1; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0;">
-												${not empty sessionScope.account.fullName ? sessionScope.account.fullName.substring(0, 1).toUpperCase() : 'U'}
-											</span>
-										</c:otherwise>
-									</c:choose>
-									<span class="ttr-user-name" style="color: #fff; font-size: 14px; font-weight: 500; white-space: nowrap;">
-										${not empty sessionScope.account.fullName ? sessionScope.account.fullName : 'User'}
-									</span>
-								</a>
-								<div class="ttr-header-submenu">
-									<ul>
-										<li><a href="${pageContext.request.contextPath}/profile">Hồ sơ của tôi</a></li>
-										<li><a href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
-									</ul>
-								</div>
-							</c:when>
-							<c:otherwise>
-								<a href="${pageContext.request.contextPath}/login" class="ttr-material-button" style="padding: 5px 15px;">Đăng nhập</a>
-								<a href="${pageContext.request.contextPath}/register" class="ttr-material-button" style="padding: 5px 15px;">Đăng ký</a>
-							</c:otherwise>
-						</c:choose>
-					</li>
-				</ul>
-				<!-- header right menu end -->
-			</div>
-		</div>
-	</header>
-	<!-- header end -->
-	<!-- Left sidebar menu start -->
-	<div class="ttr-sidebar">
-		<div class="ttr-sidebar-wrapper content-scroll">
-			<!-- side menu logo start -->
-			<div class="ttr-sidebar-logo">
-				<a href="${pageContext.request.contextPath}/home">
-					<img alt="" src="${pageContext.request.contextPath}/assets/images/logo.png" width="122" height="27">
-				</a>
-				<div class="ttr-sidebar-toggle-button">
-					<i class="ti-arrow-left"></i>
-				</div>
-			</div>
-			<!-- side menu logo end -->
-			<!-- sidebar menu start -->
-			<nav class="ttr-sidebar-navi">
-				<ul>
-					<li class="ttr-seperate"></li>
-					<li>
-						<a href="${pageContext.request.contextPath}/clubDashboard" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-home"></i></span>
-							<span class="ttr-label">Dashboard</span>
-						</a>
-					</li>
-					<c:if test="${not empty club}">
-					<li>
-						<a href="${pageContext.request.contextPath}/clubDetail?clubId=${club.clubId}" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-info-alt"></i></span>
-							<span class="ttr-label">Thông tin CLB</span>
-						</a>
-					</li>
-					<li>
-						<a href="${pageContext.request.contextPath}/updateClub?clubId=${club.clubId}" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-pencil"></i></span>
-							<span class="ttr-label">Chỉnh sửa CLB</span>
-						</a>
-					</li>
-					<li>
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-user"></i></span>
-							<span class="ttr-label">Thành viên</span>
-							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-						</a>
-						<ul>
-							<li>
-								<a href="${pageContext.request.contextPath}/memberList?clubId=${club.clubId}" class="ttr-material-button">
-									<span class="ttr-label">Danh sách TV</span>
-								</a>
-							</li>
-							<li>
-								<a href="${pageContext.request.contextPath}/memberApprovals?clubId=${club.clubId}" class="ttr-material-button">
-									<span class="ttr-label">Phê duyệt thành viên</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					</c:if>
-					<li class="show">
-						<a href="#" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-calendar"></i></span>
-							<span class="ttr-label">Sự kiện</span>
-							<span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
-						</a>
-						<ul style="display: block;">
-							<li>
-								<a href="${pageContext.request.contextPath}/listEvents" class="ttr-material-button">
-									<span class="ttr-label">Danh sách sự kiện</span>
-								</a>
-							</li>
-							<li>
-								<a href="${pageContext.request.contextPath}/addNewEvent" class="ttr-material-button">
-									<span class="ttr-label">Tạo sự kiện mới</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<c:if test="${not empty club}">
-					<li>
-						<a href="${pageContext.request.contextPath}/clubStatistics?clubId=${club.clubId}" class="ttr-material-button">
-							<span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-							<span class="ttr-label">Thống kê</span>
-						</a>
-					</li>
-					</c:if>
-					<li class="ttr-seperate"></li>
-				</ul>
-				<!-- sidebar menu end -->
-			</nav>
-			<!-- sidebar menu end -->
-		</div>
-	</div>
-	<!-- Left sidebar menu end -->
+<body class="ttr-opened-sidebar ttr-pinned-sidebar <c:if test='${sessionScope.account.roleId == 4}'>admin-theme-loaded</c:if>">
+
+<c:choose>
+	<c:when test="${sessionScope.account.roleId == 4}">
+		<%@ include file="/WEB-INF/jspf/admin-layout.jspf" %>
+	</c:when>
+	<c:otherwise>
+		<%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
+	</c:otherwise>
+</c:choose>
 
 	<!--Main container start -->
 	<main class="ttr-wrapper">
