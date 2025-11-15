@@ -76,6 +76,8 @@ public class EventApprovalsServlet extends HttpServlet {
             
             // Get club information for each request
             Map<Integer, Club> clubsMap = new HashMap<>();
+            // Map to store eventId for each requestID (for viewEvent link)
+            Map<Integer, Integer> eventIdMap = new HashMap<>();
             for (CreateEventRequest req : pendingRequests) {
                 if (!clubsMap.containsKey(req.getClubID())) {
                     Club club = clubDAO.getClubById(req.getClubID());
@@ -83,6 +85,9 @@ public class EventApprovalsServlet extends HttpServlet {
                         clubsMap.put(req.getClubID(), club);
                     }
                 }
+                // Calculate eventId for viewEvent: eventId = -(requestID + 1000000)
+                int eventId = -(req.getRequestID() + 1000000);
+                eventIdMap.put(req.getRequestID(), eventId);
             }
             
             // Get flash messages from session
@@ -98,6 +103,7 @@ public class EventApprovalsServlet extends HttpServlet {
             // Set attributes for JSP
             request.setAttribute("pendingRequests", pendingRequests);
             request.setAttribute("clubsMap", clubsMap);
+            request.setAttribute("eventIdMap", eventIdMap);
             request.setAttribute("activeMenu", "events");
             request.setAttribute("activeSubMenu", "events-requests");
             request.setAttribute("pageTitle", "Yêu cầu sự kiện");

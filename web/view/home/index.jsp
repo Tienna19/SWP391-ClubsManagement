@@ -129,6 +129,7 @@
 			z-index: 1;
 		}
 		.hero-title {
+                    color: #ffffff;
 			font-size: 52px;
 			font-weight: 800;
 			margin-bottom: 20px;
