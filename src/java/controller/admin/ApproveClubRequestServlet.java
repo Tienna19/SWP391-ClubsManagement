@@ -3,6 +3,7 @@ package controller.admin;
 import dal.CreateClubRequestDAO;
 import dal.ClubDAO;
 import dal.MembershipDAO;
+import dal.UserDAO;
 import model.CreateClubRequest;
 import model.Club;
 
@@ -128,6 +129,14 @@ public class ApproveClubRequestServlet extends HttpServlet {
         if (!memberAdded) {
             System.err.println("⚠️ Warning: Club created but failed to add creator to Memberships!");
             // Continue anyway - club is created
+        }
+
+        // 3b. Update user global role to Club Leader (RoleID = 3)
+        UserDAO userDAO = new UserDAO();
+        boolean roleUpdated = userDAO.updateUserRole(clubRequest.getRequestedBy(), 3);
+        if (!roleUpdated) {
+            System.err.println("⚠️ Warning: Failed to update user " 
+                    + clubRequest.getRequestedBy() + " to Club Leader role.");
         }
 
         // 4. Update request status to Approved

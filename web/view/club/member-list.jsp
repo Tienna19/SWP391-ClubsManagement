@@ -156,14 +156,14 @@
     </style>
 </head>
 <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-<jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
+<%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
 
 <main class="ttr-wrapper">
     <div class="container-fluid">
         <div class="db-breadcrumb">
             <h4 class="breadcrumb-title page-title">Thành viên CLB</h4>
             <ul class="db-breadcrumb-list">
-                <li><a href="${pageContext.request.contextPath}/clubDashboard?clubId=${clubId}"><i class="fa fa-home"></i>Dashboard</a></li>
+                <li><a href="${pageContext.request.contextPath}/clubDashboard"><i class="fa fa-home"></i>Dashboard</a></li>
                 <li>Thành viên</li>
             </ul>
         </div>

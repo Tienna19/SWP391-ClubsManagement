@@ -96,12 +96,27 @@
 			border-color: #bee5eb;
 			color: #0c5460;
 		}
+		
+		/* Ensure FontAwesome icons use FontAwesome font in admin sidebar */
+		body.admin-theme-loaded .ttr-sidebar [class*="fa-"],
+		body.admin-theme-loaded .ttr-sidebar .fa,
+		body.admin-theme-loaded .ttr-arrow-icon [class*="fa-"],
+		body.admin-theme-loaded .ttr-arrow-icon .fa {
+			font-family: 'FontAwesome' !important;
+		}
 	</style>
 	
 </head>
-<body class="ttr-opened-sidebar ttr-pinned-sidebar">
+<body class="ttr-opened-sidebar ttr-pinned-sidebar <c:if test='${sessionScope.account.roleId == 4}'>admin-theme-loaded</c:if>">
 
-<jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
+<c:choose>
+	<c:when test="${sessionScope.account.roleId == 4}">
+		<%@ include file="/WEB-INF/jspf/admin-layout.jspf" %>
+	</c:when>
+	<c:otherwise>
+		<%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
+	</c:otherwise>
+</c:choose>
 
 	<!--Main container start -->
 	<main class="ttr-wrapper">
@@ -216,22 +231,25 @@
 											<div class="text-danger" id="endTimeError"></div>
 										</div>
 									</div>
+									<div class="col-12">
+										<div class="text-danger" id="overlapError" style="display: none;"></div>
+									</div>
 									<div class="col-12 m-t20">
 										<div class="ml-auto m-b5">
 											<h3>4. Thời gian đăng ký</h3>
 										</div>
 									</div>
 									<div class="form-group col-6">
-										<label class="col-form-label">Bắt đầu đăng ký</label>
+										<label class="col-form-label">Bắt đầu đăng ký <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${param.registrationStart}">
+											<input class="form-control" type="datetime-local" name="registrationStart" id="regStartTime" value="${param.registrationStart}" required>
 											<div class="text-danger" id="regStartTimeError"></div>
 										</div>
 									</div>
 									<div class="form-group col-6">
-										<label class="col-form-label">Kết thúc đăng ký</label>
+										<label class="col-form-label">Kết thúc đăng ký <span class="text-danger">*</span></label>
 										<div>
-											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${param.registrationEnd}">
+											<input class="form-control" type="datetime-local" name="registrationEnd" id="regEndTime" value="${param.registrationEnd}" required>
 											<div class="text-danger" id="regEndTimeError"></div>
 										</div>
 									</div>
@@ -303,10 +321,12 @@ $(document).ready(function() {
     $('#startTime').on('change input blur', function() {
         validateEventDate();
         validateRegistrationDates(); // Re-validate registration dates when event start changes
+        checkEventOverlap(); // Check for overlapping events
     });
 
     $('#endTime').on('change input blur', function() {
         validateEndDate();
+        checkEventOverlap(); // Check for overlapping events
     });
 
     $('#regStartTime, #regEndTime').on('change input blur', function() {
@@ -449,47 +469,62 @@ function validateEventForm() {
         }
     }
     
-    // Validate registration dates if provided
-    if ($('#regStartTime').val() || $('#regEndTime').val()) {
+    // Validate registration dates (required fields)
+    if (!$('#regStartTime').val()) {
+        $('#regStartTime').addClass('is-invalid');
+        $('#regStartTimeError').text('Thời gian bắt đầu đăng ký là bắt buộc');
+        isValid = false;
+    } else {
+        $('#regStartTime').removeClass('is-invalid');
+        $('#regStartTimeError').text('');
+    }
+    
+    if (!$('#regEndTime').val()) {
+        $('#regEndTime').addClass('is-invalid');
+        $('#regEndTimeError').text('Thời gian kết thúc đăng ký là bắt buộc');
+        isValid = false;
+    } else {
+        $('#regEndTime').removeClass('is-invalid');
+        $('#regEndTimeError').text('');
+    }
+    
+    // Validate registration dates logic if both are provided
+    if ($('#regStartTime').val() && $('#regEndTime').val()) {
         var startDate = new Date($('#startTime').val());
         var now = new Date();
-        var regStart = $('#regStartTime').val() ? new Date($('#regStartTime').val()) : null;
-        var regEnd = $('#regEndTime').val() ? new Date($('#regEndTime').val()) : null;
+        var regStart = new Date($('#regStartTime').val());
+        var regEnd = new Date($('#regEndTime').val());
         
         // Validate registration start
-        if (regStart) {
-            if (regStart <= now) {
-                $('#regStartTime').addClass('is-invalid');
-                $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải sau hôm nay');
-                isValid = false;
-            } else if (regStart >= startDate) {
-                $('#regStartTime').addClass('is-invalid');
-                $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải trước ngày sự kiện');
-                isValid = false;
-            } else {
-                $('#regStartTime').removeClass('is-invalid');
-                $('#regStartTimeError').text('');
-            }
+        if (regStart <= now) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải sau hôm nay');
+            isValid = false;
+        } else if (regStart >= startDate) {
+            $('#regStartTime').addClass('is-invalid');
+            $('#regStartTimeError').text('Thời gian bắt đầu đăng ký phải trước ngày sự kiện');
+            isValid = false;
+        } else {
+            $('#regStartTime').removeClass('is-invalid');
+            $('#regStartTimeError').text('');
         }
         
         // Validate registration end
-        if (regEnd) {
-            if (regEnd <= now) {
-                $('#regEndTime').addClass('is-invalid');
-                $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau hôm nay');
-                isValid = false;
-            } else if (regEnd >= startDate) {
-                $('#regEndTime').addClass('is-invalid');
-                $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải trước ngày sự kiện');
-                isValid = false;
-            } else {
-                $('#regEndTime').removeClass('is-invalid');
-                $('#regEndTimeError').text('');
-            }
+        if (regEnd <= now) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau hôm nay');
+            isValid = false;
+        } else if (regEnd >= startDate) {
+            $('#regEndTime').addClass('is-invalid');
+            $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải trước ngày sự kiện');
+            isValid = false;
+        } else {
+            $('#regEndTime').removeClass('is-invalid');
+            $('#regEndTimeError').text('');
         }
         
         // Cross-validation: reg start should be before reg end
-        if (regStart && regEnd && regStart >= regEnd) {
+        if (regStart >= regEnd) {
             $('#regEndTime').addClass('is-invalid');
             $('#regEndTimeError').text('Thời gian kết thúc đăng ký phải sau thời gian bắt đầu');
             isValid = false;
@@ -580,6 +615,65 @@ function validateRegistrationDates() {
     }
 }
 
+// Check for overlapping events via AJAX
+var overlapCheckTimeout = null;
+function checkEventOverlap() {
+    // Clear previous timeout
+    if (overlapCheckTimeout) {
+        clearTimeout(overlapCheckTimeout);
+    }
+    
+    // Debounce: wait 500ms after user stops typing
+    overlapCheckTimeout = setTimeout(function() {
+        var startDate = $('#startTime').val();
+        var endDate = $('#endTime').val();
+        
+        // Only check if both dates are provided and valid
+        if (!startDate || !endDate) {
+            $('#overlapError').text('').hide();
+            $('#startTime, #endTime').removeClass('is-invalid');
+            return;
+        }
+        
+        // Validate date range first
+        var start = new Date(startDate);
+        var end = new Date(endDate);
+        if (end <= start) {
+            // Invalid date range, let other validation handle it
+            return;
+        }
+        
+        // Make AJAX request to check overlap
+        $.ajax({
+            url: '${pageContext.request.contextPath}/checkEventOverlap',
+            type: 'POST',
+            data: {
+                startDate: startDate,
+                endDate: endDate,
+                eventId: '' // Empty for new events
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (!response.valid && response.message) {
+                    // Show overlap error
+                    $('#overlapError').text(response.message).show();
+                    $('#startTime, #endTime').addClass('is-invalid');
+                } else {
+                    // No overlap
+                    $('#overlapError').text('').hide();
+                    // Only remove invalid class if other validations pass
+                    if (!$('#startTimeError').text() && !$('#endTimeError').text()) {
+                        $('#startTime, #endTime').removeClass('is-invalid');
+                    }
+                }
+            },
+            error: function() {
+                // Silently fail - server-side validation will catch it
+                console.error('Error checking event overlap');
+            }
+        });
+    }, 500);
+}
 
 function showAlert(message, type) {
     var alertClass = type === 'success' ? 'alert-success' :

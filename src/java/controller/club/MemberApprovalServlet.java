@@ -204,10 +204,10 @@ public class MemberApprovalServlet extends HttpServlet {
     }
 
     private boolean hasPermission(User user, int clubId, MemberDAO memberDAO) {
-        if (user.getRoleId() == 1) {
+        if (user.getRoleId() == 4) {
             return true;
         }
-        if (user.getRoleId() == 2) {
+        if (user.getRoleId() == 3) {
             return memberDAO.isClubLeader(user.getUserId(), clubId);
         }
         return false;

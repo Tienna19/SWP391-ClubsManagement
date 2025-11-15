@@ -47,6 +47,67 @@
 	
 	<!-- Custom styles for events list -->
 	<style>
+		/* Ensure Themify icons font is loaded correctly */
+		@font-face {
+			font-family: 'themify';
+			src: url('${pageContext.request.contextPath}/assets/vendors/themify/fonts/themify9f24.eot?-fvbane');
+			src: url('${pageContext.request.contextPath}/assets/vendors/themify/fonts/themifyd41d.eot?#iefix-fvbane') format('embedded-opentype'),
+				 url('${pageContext.request.contextPath}/assets/vendors/themify/fonts/themify9f24.woff?-fvbane') format('woff'),
+				 url('${pageContext.request.contextPath}/assets/vendors/themify/fonts/themify9f24.ttf?-fvbane') format('truetype'),
+				 url('${pageContext.request.contextPath}/assets/vendors/themify/fonts/themify9f24.svg?-fvbane#themify') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		
+		/* Ensure Themify icons are displayed correctly */
+		[class^="ti-"], [class*=" ti-"] {
+			font-family: 'themify' !important;
+			font-style: normal;
+			font-weight: normal;
+			font-variant: normal;
+			text-transform: none;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+		
+		.ttr-icon [class^="ti-"], .ttr-icon [class*=" ti-"] {
+			font-family: 'themify' !important;
+		}
+		
+		/* Ensure sidebar font is loaded correctly with Vietnamese support */
+		body.admin-theme-loaded .ttr-sidebar,
+		body.admin-theme-loaded .ttr-sidebar *,
+		body.admin-theme-loaded .ttr-sidebar .ttr-label,
+		body.admin-theme-loaded .ttr-sidebar .ttr-material-button,
+		body.admin-theme-loaded .ttr-sidebar-navi,
+		body.admin-theme-loaded .ttr-sidebar-navi a,
+		body.admin-theme-loaded .ttr-sidebar-navi li {
+			font-family: 'Segoe UI', Tahoma, Arial, 'Helvetica Neue', sans-serif !important;
+			font-weight: normal !important;
+		}
+		
+		/* Override any Montserrat or Rubik fonts that don't support Vietnamese */
+		/* But exclude icon elements from this override */
+		body.admin-theme-loaded .ttr-sidebar *:not([class*="fa-"]):not([class*="ti-"]):not(.ttr-icon):not(.ttr-arrow-icon) {
+			font-family: 'Segoe UI', Tahoma, Arial, 'Helvetica Neue', sans-serif !important;
+		}
+		
+		/* Keep icon fonts for icon elements */
+		body.admin-theme-loaded .ttr-sidebar [class^="ti-"],
+		body.admin-theme-loaded .ttr-sidebar [class*=" ti-"],
+		body.admin-theme-loaded .ttr-icon {
+			font-family: 'themify' !important;
+		}
+		
+		/* Ensure FontAwesome icons use FontAwesome font */
+		body.admin-theme-loaded .ttr-sidebar [class*="fa-"],
+		body.admin-theme-loaded .ttr-sidebar .fa,
+		body.admin-theme-loaded .ttr-arrow-icon [class*="fa-"],
+		body.admin-theme-loaded .ttr-arrow-icon .fa {
+			font-family: 'FontAwesome' !important;
+		}
+		
 		.event-card {
 			transition: box-shadow 0.2s ease-in-out;
 		}
@@ -253,8 +314,15 @@
 	</style>
 	
 </head>
-<body class="ttr-opened-sidebar ttr-pinned-sidebar">
-<jsp:include page="/WEB-INF/jspf/leader-layout.jspf"/>
+<body class="ttr-opened-sidebar ttr-pinned-sidebar <c:if test='${sessionScope.account.roleId == 4}'>admin-theme-loaded</c:if>">
+<c:choose>
+    <c:when test="${sessionScope.account.roleId == 4}">
+        <%@ include file="/WEB-INF/jspf/admin-layout.jspf" %>
+    </c:when>
+    <c:otherwise>
+        <%@ include file="/WEB-INF/jspf/leader-layout.jspf" %>
+    </c:otherwise>
+</c:choose>
 
 	<!--Main container start -->
 	<main class="ttr-wrapper">
@@ -469,6 +537,82 @@
 			</div>
 			</c:if>
 			
+			<!-- Approved/Rejected Events Section (Admin only) -->
+			<c:if test="${sessionScope.account.roleId == 4 and not empty approvedEventsList}">
+			<div class="row m-b30">
+				<div class="col-lg-12">
+					<div class="widget-box">
+						<div class="wc-title">
+							<h4>Sự kiện đã phê duyệt</h4>
+						</div>
+						<div class="widget-inner">
+							<c:forEach var="event" items="${approvedEventsList}">
+								<div class="card-courses-list admin-courses event-card">
+									<div class="card-courses-media">
+										<c:choose>
+											<c:when test="${not empty event.image}">
+												<img src="${pageContext.request.contextPath}/${event.image}" alt="${event.eventName}" style="width: 100%; height: 150px; object-fit: cover;">
+											</c:when>
+											<c:otherwise>
+												<div style="background: #f0f0f0; height: 150px; display: flex; align-items: center; justify-content: center;">
+													<i class="fa fa-calendar" style="font-size: 48px; color: #ccc;"></i>
+												</div>
+											</c:otherwise>
+										</c:choose>
+									</div>
+									<div class="card-courses-full-dec">
+										<div class="card-courses-title">
+											<h4>${event.eventName}</h4>
+											<c:choose>
+												<c:when test="${event.status == 'Approved'}">
+													<span class="status-badge status-approved">Đã phê duyệt</span>
+												</c:when>
+												<c:when test="${event.status == 'Rejected'}">
+													<span class="status-badge status-rejected">Đã từ chối</span>
+												</c:when>
+												<c:otherwise>
+													<span class="status-badge status-${fn:toLowerCase(event.status)}">${event.status}</span>
+												</c:otherwise>
+											</c:choose>
+										</div>
+										<div class="card-courses-list-bx">
+											<ul class="card-courses-view">
+												<li>
+													<h5>Bắt đầu</h5>
+													<h4><fmt:formatDate value="${event.startDate}" pattern="dd/MM/yyyy HH:mm" /></h4>
+												</li>
+												<li>
+													<h5>Kết thúc</h5>
+													<h4><fmt:formatDate value="${event.endDate}" pattern="dd/MM/yyyy HH:mm" /></h4>
+												</li>
+												<li>
+													<h5>Địa điểm</h5>
+													<h4>${not empty event.location ? event.location : 'Chưa cập nhật'}</h4>
+												</li>
+											</ul>
+										</div>
+										<div class="row card-courses-dec">
+											<div class="col-md-12">
+												<div class="event-actions">
+													<a href="viewEvent?eventId=${event.eventID}" class="btn btn-info btn-sm">
+														<i class="fa fa-eye"></i> Xem chi tiết
+													</a>
+													<!-- Admin can edit approved events -->
+													<a href="editEvent?eventId=${event.eventID}" class="btn btn-warning btn-sm">
+														<i class="fa fa-edit"></i> Chỉnh sửa
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</c:forEach>
+						</div>
+					</div>
+				</div>
+			</div>
+			</c:if>
+			
 			<!-- Draft Events Section -->
 			<c:if test="${not empty draftEvents}">
 			<div class="row m-b30">
@@ -637,9 +781,7 @@
 											<i class="fa fa-times"></i> Hủy sự kiện
 										</button>
 									</c:if>
-																	<a href="deleteEvent?eventId=${event.eventID}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa sự kiện này?')">
-																		<i class="fa fa-trash"></i> Xóa
-																	</a>
+																	<!-- Delete button removed - no one can delete events -->
 																</c:if>
 															</div>
 														</div>

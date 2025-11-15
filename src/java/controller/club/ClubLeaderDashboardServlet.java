@@ -34,15 +34,17 @@ public class ClubLeaderDashboardServlet extends HttpServlet {
             // Get user from session
             User user = (User) session.getAttribute("account");
             
-            // Try to get clubId from session first (set by login), then from parameter
+            // Get clubId from request parameter first (priority)
             Integer clubId = null;
-            Object currentClubId = session.getAttribute("currentClubId");
-            if (currentClubId != null) {
-                clubId = (Integer) currentClubId;
+            String clubIdParam = request.getParameter("clubId");
+            if (clubIdParam != null && !clubIdParam.isEmpty()) {
+                clubId = Integer.parseInt(clubIdParam);
+                session.setAttribute("currentClubId", clubId); // Update session with current clubId
             } else {
-                String clubIdParam = request.getParameter("clubId");
-                if (clubIdParam != null && !clubIdParam.isEmpty()) {
-                    clubId = Integer.parseInt(clubIdParam);
+                // Fallback to session if no clubId in parameter
+                Object currentClubId = session.getAttribute("currentClubId");
+                if (currentClubId != null) {
+                    clubId = (Integer) currentClubId;
                 }
             }
             

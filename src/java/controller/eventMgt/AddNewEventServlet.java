@@ -8,6 +8,7 @@ package controller.eventMgt;
 import dal.EventDAO;
 import dal.ClubDAO;
 import dal.CreateEventRequestDAO;
+import dal.MemberDAO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import jakarta.servlet.ServletException;
@@ -70,11 +72,40 @@ public class AddNewEventServlet extends HttpServlet {
         request.setAttribute("activeMenu", "events");
         request.setAttribute("activeSubMenu", "events-create");
         try {
+            // Get user from session
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+            
+            User user = (User) session.getAttribute("account");
+            int userRoleId = user.getRoleId();
+            
             // Get clubId parameter if provided
             String clubIdParam = request.getParameter("clubId");
             
-            // Get all clubs for dropdown
-            List<Club> clubs = clubDAO.getAllClubs();
+            // Get clubs based on user role
+            List<Club> clubs;
+            if (userRoleId == 4) {
+                // Admin: show all clubs
+                clubs = clubDAO.getAllClubs();
+            } else if (userRoleId == 3) {
+                // Club Leader: show only clubs where user is leader
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+                clubs = new ArrayList<>();
+                for (Integer clubId : clubIds) {
+                    Club club = clubDAO.getClubById(clubId);
+                    if (club != null) {
+                        clubs.add(club);
+                    }
+                }
+            } else {
+                // Other roles: no clubs
+                clubs = new ArrayList<>();
+            }
+            
             request.setAttribute("clubs", clubs);
             
             // Set selected club ID if provided
@@ -85,7 +116,7 @@ public class AddNewEventServlet extends HttpServlet {
             request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
         } catch (Exception e) {
             // Handle error
-            request.setAttribute("error", "Error loading clubs: " + e.getMessage());
+            request.setAttribute("error", "Lỗi khi tải danh sách CLB: " + e.getMessage());
             request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
             e.printStackTrace();
         }
@@ -198,9 +229,16 @@ public class AddNewEventServlet extends HttpServlet {
             }
 
             if (endDateStr == null || endDateStr.trim().isEmpty()) {
-                errors.append("End date is required.<br>");
+                errors.append("Ngày kết thúc là bắt buộc.<br>");
             }
 
+            if (registrationStartStr == null || registrationStartStr.trim().isEmpty()) {
+                errors.append("Thời gian bắt đầu đăng ký là bắt buộc.<br>");
+            }
+
+            if (registrationEndStr == null || registrationEndStr.trim().isEmpty()) {
+                errors.append("Thời gian kết thúc đăng ký là bắt buộc.<br>");
+            }
 
             // Parse and validate data types
             int clubId = 1; // Default hardcoded club ID as requested
@@ -255,35 +293,50 @@ public class AddNewEventServlet extends HttpServlet {
                 if (registrationStartStr != null && !registrationStartStr.trim().isEmpty()) {
                     LocalDateTime regStartDateTime = LocalDateTime.parse(registrationStartStr);
                     registrationStart = Timestamp.valueOf(regStartDateTime);
-                } else {
-                    // Default to current time if not provided
-                    registrationStart = Timestamp.valueOf(LocalDateTime.now());
                 }
             } catch (DateTimeParseException e) {
-                errors.append("Invalid registration start date format.<br>");
+                errors.append("Định dạng thời gian bắt đầu đăng ký không hợp lệ.<br>");
             }
 
             try {
                 if (registrationEndStr != null && !registrationEndStr.trim().isEmpty()) {
                     LocalDateTime regEndDateTime = LocalDateTime.parse(registrationEndStr);
                     registrationEnd = Timestamp.valueOf(regEndDateTime);
-                } else {
-                    // Default to 7 days from now if not provided
-                    registrationEnd = Timestamp.valueOf(LocalDateTime.now().plusDays(7));
                 }
             } catch (DateTimeParseException e) {
-                errors.append("Invalid registration end date format.<br>");
+                errors.append("Định dạng thời gian kết thúc đăng ký không hợp lệ.<br>");
             }
 
             // Validate date logic
             if (startDate != null && endDate != null && startDate.after(endDate)) {
-                errors.append("Start date must be before end date.<br>");
+                errors.append("Ngày bắt đầu phải trước ngày kết thúc.<br>");
+            }
+
+            // Validate that registration dates are not null after parsing (required fields)
+            if (registrationStart == null) {
+                errors.append("Thời gian bắt đầu đăng ký là bắt buộc và phải có định dạng hợp lệ.<br>");
+            }
+            
+            if (registrationEnd == null) {
+                errors.append("Thời gian kết thúc đăng ký là bắt buộc và phải có định dạng hợp lệ.<br>");
             }
 
             if (registrationStart != null && registrationEnd != null && registrationStart.after(registrationEnd)) {
-                errors.append("Registration start date must be before registration end date.<br>");
+                errors.append("Thời gian bắt đầu đăng ký phải trước thời gian kết thúc đăng ký.<br>");
             }
 
+            // Check for overlapping events if user is a club leader
+            if (userRoleId == 3 && startDate != null && endDate != null) {
+                MemberDAO memberDAO = new MemberDAO();
+                List<Integer> clubIds = memberDAO.getClubsWhereUserIsLeader(user.getUserId());
+                
+                if (!clubIds.isEmpty()) {
+                    boolean hasOverlap = eventDAO.hasOverlappingEvents(clubIds, startDate, endDate, -1);
+                    if (hasOverlap) {
+                        errors.append("Bạn đã có sự kiện khác diễn ra trong khoảng thời gian này. Một club leader không thể có 2 sự kiện diễn ra cùng lúc.<br>");
+                    }
+                }
+            }
 
             // Set default values for optional fields
             if (status == null || status.trim().isEmpty()) {
@@ -320,16 +373,16 @@ public class AddNewEventServlet extends HttpServlet {
                 if (eventId > 0) {
                     String message;
                     if ("Draft".equals(eventStatus)) {
-                        message = "Event '" + escapeHtml(eventName) + "' has been saved as draft successfully with ID: " + eventId;
+                        message = "Sự kiện '" + escapeHtml(eventName) + "' đã được lưu dưới dạng bản nháp thành công với ID: " + eventId;
                     } else {
-                        message = "Event '" + escapeHtml(eventName) + "' has been published successfully with ID: " + eventId;
+                        message = "Sự kiện '" + escapeHtml(eventName) + "' đã được công bố thành công với ID: " + eventId;
                     }
                     request.setAttribute("message", message);
                     request.setAttribute("messageType", "success");
                     request.setAttribute("eventId", eventId);
                     request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 } else {
-                    request.setAttribute("message", "Failed to create event. Please try again.");
+                    request.setAttribute("message", "Tạo sự kiện thất bại. Vui lòng thử lại.");
                     request.setAttribute("messageType", "danger");
                     request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 }
@@ -369,16 +422,16 @@ public class AddNewEventServlet extends HttpServlet {
                 if (requestId > 0) {
                     String message;
                     if ("Draft".equals(finalStatus)) {
-                        message = "Event '" + escapeHtml(eventName) + "' has been saved as draft successfully.";
+                        message = "Sự kiện '" + escapeHtml(eventName) + "' đã được lưu dưới dạng bản nháp thành công.";
                     } else {
-                        message = "Your event request '" + escapeHtml(eventName) + "' has been submitted successfully and is pending admin approval.";
+                        message = "Yêu cầu sự kiện '" + escapeHtml(eventName) + "' của bạn đã được gửi thành công và đang chờ phê duyệt từ quản trị viên.";
                     }
                     request.setAttribute("message", message);
                     request.setAttribute("messageType", "success");
                     request.setAttribute("requestId", requestId);
                     request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 } else {
-                    request.setAttribute("message", "Failed to submit event request. Please try again.");
+                    request.setAttribute("message", "Gửi yêu cầu sự kiện thất bại. Vui lòng thử lại.");
                     request.setAttribute("messageType", "danger");
                     request.getRequestDispatcher(determineAddEventView(request)).forward(request, response);
                 }
@@ -464,13 +517,8 @@ public class AddNewEventServlet extends HttpServlet {
     }
 
     private String determineAddEventView(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Object roleObj = session.getAttribute("roleId");
-            if (roleObj instanceof Integer && ((Integer) roleObj) == 4) {
-                return "/view/admin/admin-event-create.jsp";
-            }
-        }
+        // Always use add-event.jsp for both admin and club leader
+        // The JSP will automatically choose the correct layout based on user role
         return "/view/eventMgt/add-event.jsp";
     }
 }
