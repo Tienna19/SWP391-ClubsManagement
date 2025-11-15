@@ -130,7 +130,6 @@
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
-                        <!-- Danh sách người dùng (màn cũ của nhóm) -->
                         <li class="${sub eq 'users-list' ? 'active' : ''}">
                             <a href="${ctx}/adminUsers" class="ttr-material-button">
                                 <span class="ttr-label">Danh sách người dùng</span>
@@ -140,6 +139,11 @@
                         <li class="${sub eq 'users-manage' ? 'active' : ''}">
                             <a href="${ctx}/ManageUsersServlet" class="ttr-material-button">
                                 <span class="ttr-label">Quản lý người dùng</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="${ctx}/AssignRoleNewServlet" class="ttr-material-button">
+                                <span class="ttr-label">Vai trò (Mới)</span>
                             </a>
                         </li>
                     </ul>

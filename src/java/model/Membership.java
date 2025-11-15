@@ -2,6 +2,7 @@
 package model;
 
 import java.sql.Timestamp;
+import model.User;
 
 /**
  * Membership model class representing the Memberships table in the database
@@ -14,6 +15,7 @@ public class Membership {
     private String roleInClub; // Default: 'Member'
     private Timestamp joinDate; // Default: GETDATE()
     private String status; // Default: 'Active'
+    private User user;
 
     public Membership() {
     }
@@ -95,6 +97,16 @@ public class Membership {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    
     
     // Utility methods
     
