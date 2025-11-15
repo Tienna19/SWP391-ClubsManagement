@@ -40,8 +40,7 @@ public class ManageUsersServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        try {
-            // --------- 1. XỬ LÝ MESSAGE TRÊN URL (msg=...) ----------
+        try {            
             String msg = request.getParameter("msg");
             if (msg != null) {
                 String message = null;
@@ -84,10 +83,9 @@ public class ManageUsersServlet extends HttpServlet {
                 }
             }
 
-            // --------- 2. PHÂN TRANG + TÌM KIẾM ----------
             String keyword = request.getParameter("keyword");
             int page = 1;
-            int recordsPerPage = 10;
+            int recordsPerPage = 5;
 
             String pageParam = request.getParameter("page");
             if (pageParam != null) {
@@ -111,12 +109,10 @@ public class ManageUsersServlet extends HttpServlet {
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("keyword", keyword);
-
-            // active menu cho sidebar
+            
             request.setAttribute("activeMenu", "users");
             request.setAttribute("activeSubMenu", "users-management");
 
-            // --------- 3. FORWARD ĐẾN JSP ----------
             request.getRequestDispatcher("/view/admin/manageUsers.jsp")
                    .forward(request, response);
 
@@ -152,11 +148,11 @@ public class ManageUsersServlet extends HttpServlet {
                 // password
                 String plainPassword = request.getParameter("password");
                 if (plainPassword == null || plainPassword.isBlank()) {
-                    plainPassword = "123456"; // fallback
+                    plainPassword = "123456"; 
                 }
                 u.setPasswordHash(hashPassword(plainPassword));
 
-                // ảnh đại diện (optional)
+                // ảnh đại diện 
                 String avatarPath = handleUpload(request, "profileImage");
                 if (avatarPath != null) {
                     u.setProfileImage(avatarPath);
@@ -184,7 +180,7 @@ public class ManageUsersServlet extends HttpServlet {
                 if (newPassword != null && !newPassword.isBlank()) {
                     u.setPasswordHash(hashPassword(newPassword));
                 } else {
-                    u.setPasswordHash(null); // để DAO hiểu là "không cập nhật password"
+                    u.setPasswordHash(null); 
                 }
 
                 // ảnh: chỉ cập nhật nếu có chọn file
@@ -192,7 +188,7 @@ public class ManageUsersServlet extends HttpServlet {
                 if (avatarPath != null) {
                     u.setProfileImage(avatarPath);
                 } else {
-                    u.setProfileImage(null); // DAO xử lý không update cột này
+                    u.setProfileImage(null); 
                 }
                 boolean ok = dao.updateUser(u);
                 response.sendRedirect(baseUrl + (ok ? "update_success" : "update_error"));
@@ -200,13 +196,13 @@ public class ManageUsersServlet extends HttpServlet {
 
             } else if ("deactivate".equals(action)) {
                 int userId = Integer.parseInt(request.getParameter("userId"));
-                dao.deactivateUser(userId); // nhớ implement trong DAO
+                dao.deactivateUser(userId); 
                 response.sendRedirect(baseUrl + "deactivate_success");
                 return;
             }
             else if ("activate".equals(action)) {
                 int userId = Integer.parseInt(request.getParameter("userId"));
-                dao.activateUser(userId); // nhớ implement trong DAO
+                dao.activateUser(userId); 
                 response.sendRedirect(baseUrl + "reactivate_success");
                 return;
             }
@@ -223,7 +219,7 @@ public class ManageUsersServlet extends HttpServlet {
         }
     }
     
-    // ==================== HELPER: HASH PASSWORD ====================
+    // HASH PASSWORD 
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -240,7 +236,7 @@ public class ManageUsersServlet extends HttpServlet {
         }
     }
 
-    // ==================== HELPER: UPLOAD ẢNH ====================
+    // UPLOAD ẢNH 
     private String handleUpload(HttpServletRequest request, String fieldName)
             throws IOException, ServletException {
 
@@ -254,7 +250,7 @@ public class ManageUsersServlet extends HttpServlet {
             return null;
         }
 
-        // thư mục lưu ảnh trong project (tùy bạn chỉnh lại)
+        // thư mục lưu ảnh trong project 
         String uploadDir = getServletContext().getRealPath("/uploads/avatars");
         Files.createDirectories(Paths.get(uploadDir));
 
@@ -264,7 +260,6 @@ public class ManageUsersServlet extends HttpServlet {
         String fullPath = uploadDir + File.separator + safeName;
         part.write(fullPath);
 
-        // đường dẫn lưu vào DB (tương đối so với context)
         return "uploads/avatars/" + safeName;
     }
     

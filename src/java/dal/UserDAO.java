@@ -36,6 +36,7 @@ public class UserDAO extends DBContext {
                         rs.getString("Address"),
                         rs.getString("Gender"),
                         rs.getInt("RoleID"),
+                        rs.getString("Status"),
                         rs.getString("ProfileImage"),
                         rs.getTimestamp("CreatedAt")
                 );
@@ -101,6 +102,7 @@ public class UserDAO extends DBContext {
                         rs.getString("Address"),
                         rs.getString("Gender"),
                         rs.getInt("RoleID"),
+                        rs.getString("Status"),
                         rs.getString("ProfileImage"),
                         rs.getTimestamp("CreatedAt")
                 );

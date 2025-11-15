@@ -10,7 +10,6 @@
         <servlet-name>ManageUsersServlet</servlet-name>
         <servlet-class>controller.ManageUsersServlet</servlet-class>
     </servlet>
-    
     <servlet>
         <servlet-name>MyEventHistoryServlet</servlet-name>
         <servlet-class>controller.MyEventHistoryServlet</servlet-class>
@@ -20,6 +19,8 @@
         <url-pattern>/myEvents</url-pattern>
     </servlet-mapping>
     
+    
+
     <servlet-mapping>
         <servlet-name>ManageUsersServlet</servlet-name>
         <url-pattern>/ManageUsersServlet</url-pattern>
@@ -79,14 +80,6 @@
         <url-pattern>/createClub</url-pattern>
     </servlet-mapping>
     <!-- AddNewEventServlet -->
-    <servlet>
-        <servlet-name>AssignRoleServlet</servlet-name>
-        <servlet-class>controller.AssignRoleServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AssignRoleServlet</servlet-name>
-        <url-pattern>/AssignRoleServlet</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>ViewListEventsServlet</servlet-name>
         <servlet-class>controller.eventMgt.ViewListEventsServlet</servlet-class>
@@ -236,7 +229,6 @@
         <servlet-name>MyRegisteredEventsServlet</servlet-name>
         <url-pattern>/MyRegisteredEventsServlet</url-pattern>
     </servlet-mapping>
-    
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
@@ -255,4 +247,12 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/view/error.jsp</location>
     </error-page>
+    <context-param>
+        <param-name>GOOGLE_CLIENT_ID</param-name>
+        <param-value>413146930977-atqeb8s48a9efuqm7grru57tth8qvi01.apps.googleusercontent.com</param-value>
+    </context-param>
+    <context-param>
+        <param-name>GOOGLE_CLIENT_SECRET</param-name>
+        <param-value>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</param-value>
+    </context-param>
 </web-app>
