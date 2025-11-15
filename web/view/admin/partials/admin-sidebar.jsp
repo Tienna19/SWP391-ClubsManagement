@@ -113,18 +113,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="${reportsClass}">
-                    <a href="${pageContext.request.contextPath}/systemReports" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-                        <span class="ttr-label">Báo cáo</span>
-                    </a>
-                </li>
-                <li class="${settingsClass}">
-                    <a href="${pageContext.request.contextPath}/systemSettings" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-settings"></i></span>
-                        <span class="ttr-label">Cài đặt hệ thống</span>
-                    </a>
-                </li>
+              
                 <li class="ttr-seperate"></li>
             </ul>
         </nav>

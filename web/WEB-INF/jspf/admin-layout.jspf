@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8" %>
+<%@ page pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -29,7 +29,7 @@
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="${ctx}/admin-club-list">Các CLB</a></li>
-                            <li><a href="${ctx}/listEvents">Sự kiện</a></li>
+                            <li><a href="${ctx}/admin-event-list">Sự kiện</a></li>
                             <li><a href="${ctx}/viewClubRequests">Yêu cầu CLB</a></li>
                         </ul>
                     </div>
@@ -103,27 +103,22 @@
 
                 <!-- EVENTS -->
                 <li class="${menu eq 'events' ? 'open active' : ''}">
-                    <a href="${ctx}/listEvents" class="ttr-material-button">
+                    <a href="${ctx}/admin-event-list" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-calendar"></i></span>
                         <span class="ttr-label">Quản lý sự kiện</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
                         <li class="${sub eq 'events-list' ? 'active' : ''}">
-                            <a href="${ctx}/listEvents" class="ttr-material-button">
+                            <a href="${ctx}/admin-event-list" class="ttr-material-button">
                                 <span class="ttr-label">Danh sách sự kiện</span>
                             </a>
-                        </li>
-                        <li class="${sub eq 'events-create' ? 'active' : ''}">
-                            <a href="${ctx}/addNewEvent" class="ttr-material-button">
-                                <span class="ttr-label">Tạo sự kiện mới</span>
+                        </li>   
+                        <li class="${sub eq 'events-list' ? 'active' : ''}">
+                            <a href="${ctx}/admin-event-create" class="ttr-material-button">
+                                <span class="ttr-label">Tạo mới sự kiện</span>
                             </a>
-                        </li>
-                        <li class="${sub eq 'events-requests' ? 'active' : ''}">
-                            <a href="${ctx}/eventApprovals" class="ttr-material-button">
-                                <span class="ttr-label">Yêu cầu sự kiện</span>
-                            </a>
-                        </li>
+                        </li>  
                     </ul>
                 </li>
 
@@ -149,22 +144,7 @@
                         </li>
                     </ul>
                 </li>
-
-                <!-- REPORTS -->
-                <li class="${menu eq 'reports' ? 'active open' : ''}">
-                    <a href="${ctx}/systemReports" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-bar-chart"></i></span>
-                        <span class="ttr-label">Báo cáo</span>
-                    </a>
-                </li>
-
-                <!-- SETTINGS -->
-                <li class="${menu eq 'settings' ? 'active open' : ''}">
-                    <a href="${ctx}/systemSettings" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-settings"></i></span>
-                        <span class="ttr-label">Cài đặt hệ thống</span>
-                    </a>
-                </li>
+              
 
                 <li class="ttr-seperate"></li>
             </ul>

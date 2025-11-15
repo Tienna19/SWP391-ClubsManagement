@@ -303,12 +303,9 @@
             <div class="col-lg-3 col-md-3 text-md-end">
                 <div class="d-flex d-md-block flex-wrap justify-content-center gap-2 action-buttons">
                     <c:if test="${isLeaderOrAdmin}">
-                        <a href="${pageContext.request.contextPath}/clubDashboard" class="btn btn-glass">
+                        <a href="${pageContext.request.contextPath}/clubDashboard?clubId=${club.clubId}" class="btn btn-glass">
                             <i class="fa fa-dashboard"></i> Dashboard
                         </a>
-                        <button onclick="confirmDelete()" class="btn btn-glass">
-                            <i class="fa fa-trash"></i> Xóa
-                        </button>
                     </c:if>
                     
 <!--                    Request to join Club-->
@@ -446,20 +443,20 @@
             <!-- Admin/Leader View: Show Members & Events tabs -->
             <ul class="nav nav-tabs club-tabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-bs-toggle="tab" href="#members">
+                    <a class="nav-link active" href="#members" id="members-tab" data-bs-toggle="tab" role="tab" aria-controls="members" aria-selected="true">
                         <i class="fa fa-users"></i> Thành viên (${totalMembers})
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#events">
+                    <a class="nav-link" href="#events" id="events-tab" data-bs-toggle="tab" role="tab" aria-controls="events" aria-selected="false">
                         <i class="fa fa-calendar"></i> Sự kiện (${totalEvents})
                     </a>
                 </li>
             </ul>
             
-            <div class="tab-content p-3 border border-top-0 section-card">
+            <div class="tab-content club-tabs-content p-3 border border-top-0 section-card">
                 <!-- Members Tab -->
-                <div id="members" class="tab-pane active">
+                <div id="members" class="tab-pane fade show active" role="tabpanel" aria-labelledby="members-tab">
                     <c:if test="${empty members}">
                         <div class="alert alert-info">Chưa có thành viên nào.</div>
                     </c:if>
@@ -493,7 +490,7 @@
                 </div>
                 
                 <!-- Events Tab -->
-                <div id="events" class="tab-pane fade">
+                <div id="events" class="tab-pane fade" role="tabpanel" aria-labelledby="events-tab">
                     <c:if test="${empty events}">
                         <div class="alert alert-info">Chưa có sự kiện nào.</div>
                     </c:if>
