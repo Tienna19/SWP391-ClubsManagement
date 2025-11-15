@@ -239,6 +239,7 @@
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/viewAllClubs">Các CLB</a></li>
                             <li><a href="${pageContext.request.contextPath}/viewAllEvents">Sự kiện</a></li>
+                            <li><a href="${pageContext.request.contextPath}/myEvents">Sự kiện của tôi</a></li>
                             <c:if test="${not empty account}">
                                 <c:choose>
                                     <c:when test="${account.roleId == 3}">

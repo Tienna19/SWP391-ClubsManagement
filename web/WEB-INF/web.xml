@@ -10,10 +10,16 @@
         <servlet-name>ManageUsersServlet</servlet-name>
         <servlet-class>controller.ManageUsersServlet</servlet-class>
     </servlet>
+    
     <servlet>
-        <servlet-name>EventCheckInServlet</servlet-name>
-        <servlet-class>controller.EventCheckInServlet</servlet-class>
+        <servlet-name>MyEventHistoryServlet</servlet-name>
+        <servlet-class>controller.MyEventHistoryServlet</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>MyEventHistoryServlet</servlet-name>
+        <url-pattern>/myEvents</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>ManageUsersServlet</servlet-name>
         <url-pattern>/ManageUsersServlet</url-pattern>
@@ -230,10 +236,7 @@
         <servlet-name>MyRegisteredEventsServlet</servlet-name>
         <url-pattern>/MyRegisteredEventsServlet</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EventCheckInServlet</servlet-name>
-        <url-pattern>/EventCheckInServlet</url-pattern>
-    </servlet-mapping>
+    
     <welcome-file-list>
         <!--        <welcome-file>index.html</welcome-file>
         <welcome-file>home</welcome-file>-->
