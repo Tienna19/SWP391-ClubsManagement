@@ -27,6 +27,15 @@ public class UserDAO extends DBContext {
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
+                // Try to get status column (lowercase), if not exists use null
+                String status = null;
+                try {
+                    status = rs.getString("status");
+                } catch (SQLException e) {
+                    // Column doesn't exist, use null
+                    status = null;
+                }
+                
                 return new User(
                         rs.getInt("UserID"),
                         rs.getString("FullName"),
@@ -36,7 +45,7 @@ public class UserDAO extends DBContext {
                         rs.getString("Address"),
                         rs.getString("Gender"),
                         rs.getInt("RoleID"),
-                        rs.getString("Status"),
+                        status,
                         rs.getString("ProfileImage"),
                         rs.getTimestamp("CreatedAt")
                 );
@@ -93,6 +102,15 @@ public class UserDAO extends DBContext {
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
+                // Try to get status column (lowercase), if not exists use null
+                String status = null;
+                try {
+                    status = rs.getString("status");
+                } catch (SQLException e) {
+                    // Column doesn't exist, use null
+                    status = null;
+                }
+                
                 return new User(
                         rs.getInt("UserID"),
                         rs.getString("FullName"),
@@ -102,7 +120,7 @@ public class UserDAO extends DBContext {
                         rs.getString("Address"),
                         rs.getString("Gender"),
                         rs.getInt("RoleID"),
-                        rs.getString("Status"),
+                        status,
                         rs.getString("ProfileImage"),
                         rs.getTimestamp("CreatedAt")
                 );

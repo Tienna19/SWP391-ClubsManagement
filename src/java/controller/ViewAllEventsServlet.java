@@ -27,6 +27,7 @@ public class ViewAllEventsServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
+            // ====== 1. Nếu có eventId -> xem chi tiết ======
             String eventIdParam = request.getParameter("eventId");
             if (eventIdParam != null && !eventIdParam.isEmpty()) {
                 try {
@@ -45,7 +46,7 @@ public class ViewAllEventsServlet extends HttpServlet {
                 }
             }
 
-            //Đọc tham số tìm kiếm / lọc / phân trang 
+            // ====== 2. Đọc tham số tìm kiếm / lọc / phân trang ======
             String keyword = request.getParameter("keyword");
             String clubIdStr = request.getParameter("clubId");
             Integer clubId = null;
@@ -66,7 +67,7 @@ public class ViewAllEventsServlet extends HttpServlet {
             }
             int offset = (page - 1) * pageSize;
 
-            // Gọi DAO lấy data 
+            // ====== 3. Gọi DAO lấy data ======
             int totalRecords = eventDAO.countPublishedEvents(keyword, clubId);
             int totalPages = (int) Math.ceil(totalRecords * 1.0 / pageSize);
 
@@ -79,7 +80,7 @@ public class ViewAllEventsServlet extends HttpServlet {
             List<Event> events = eventDAO.searchPublishedEvents(keyword, clubId, offset, pageSize);
             List<EventClub> clubs = eventDAO.getPublishedClubs();
 
-            // Gán attribute cho JSP 
+            // ====== 4. Gán attribute cho JSP ======
             request.setAttribute("events", events);
             request.setAttribute("clubs", clubs);
             request.setAttribute("keyword", keyword);
@@ -88,6 +89,7 @@ public class ViewAllEventsServlet extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalRecords", totalRecords);
 
+            // ====== 5. Forward ======
             request.getRequestDispatcher("/view/events/viewAllEvents.jsp")
                    .forward(request, response);
 
