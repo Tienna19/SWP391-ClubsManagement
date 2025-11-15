@@ -47,8 +47,12 @@ public class ViewAllEventsServlet extends HttpServlet {
             }
 
             // ====== 2. Đọc tham số tìm kiếm / lọc / phân trang ======
-            String keyword = request.getParameter("keyword");
+            String keyword   = request.getParameter("keyword");
             String clubIdStr = request.getParameter("clubId");
+            String status    = request.getParameter("status");
+            String startFrom = request.getParameter("startFrom");
+            String startTo   = request.getParameter("startTo");
+
             Integer clubId = null;
             if (clubIdStr != null && !clubIdStr.isEmpty()) {
                 try {
@@ -68,7 +72,8 @@ public class ViewAllEventsServlet extends HttpServlet {
             int offset = (page - 1) * pageSize;
 
             // ====== 3. Gọi DAO lấy data ======
-            int totalRecords = eventDAO.countPublishedEvents(keyword, clubId);
+            int totalRecords = eventDAO.countPublishedEvents(
+                    keyword, clubId, status, startFrom, startTo);
             int totalPages = (int) Math.ceil(totalRecords * 1.0 / pageSize);
 
             if (totalPages == 0) totalPages = 1;
@@ -77,7 +82,8 @@ public class ViewAllEventsServlet extends HttpServlet {
                 offset = (page - 1) * pageSize;
             }
 
-            List<Event> events = eventDAO.searchPublishedEvents(keyword, clubId, offset, pageSize);
+            List<Event> events = eventDAO.searchPublishedEvents(
+                    keyword, clubId, status, startFrom, startTo, offset, pageSize);
             List<EventClub> clubs = eventDAO.getPublishedClubs();
 
             // ====== 4. Gán attribute cho JSP ======
@@ -85,6 +91,9 @@ public class ViewAllEventsServlet extends HttpServlet {
             request.setAttribute("clubs", clubs);
             request.setAttribute("keyword", keyword);
             request.setAttribute("selectedClubId", clubId);
+            request.setAttribute("selectedStatus", status);
+            request.setAttribute("startFrom", startFrom);
+            request.setAttribute("startTo", startTo);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalRecords", totalRecords);

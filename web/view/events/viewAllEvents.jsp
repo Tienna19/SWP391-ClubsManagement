@@ -28,10 +28,10 @@
             margin-bottom: 20px;
         }
         .event-hero h1 {
-            font-size: 34px;      /* TO HƠN */
+            font-size: 34px;
             margin-bottom: 8px;
             font-weight: 800;
-            color: #ffffff;       /* ĐẢM BẢO MÀU TRẮNG */
+            color: #ffffff;
         }
         .event-hero p {
             margin: 0;
@@ -138,10 +138,11 @@
                     </div>
                 </c:if>
 
-                <!-- Thanh TÌM KIẾM + LỌC CLB -->
+                <!-- Thanh TÌM KIẾM + LỌC -->
                 <div class="card m-b30 shadow-sm">
                     <div class="card-body">
-                        <form class="row g-3 align-items-end" method="get" action="${pageContext.request.contextPath}/viewAllEvents">
+                        <form class="row g-3" method="get" action="${pageContext.request.contextPath}/viewAllEvents">
+                            <!-- keyword -->
                             <div class="col-md-6">
                                 <label class="form-label">Tìm kiếm sự kiện</label>
                                 <input type="text"
@@ -150,6 +151,8 @@
                                        value="<c:out value='${keyword}'/>"
                                        placeholder="Nhập tên sự kiện, địa điểm...">
                             </div>
+
+                            <!-- club -->
                             <div class="col-md-3">
                                 <label class="form-label">Câu lạc bộ tổ chức</label>
                                 <select name="clubId" class="form-control">
@@ -164,8 +167,41 @@
                                     </c:forEach>
                                 </select>
                             </div>
-                            <div class="col-md-3 text-md-right">
-                                <button type="submit" class="btn btn-primary w-100" style="margin-top:27px;">
+
+                            <!-- status -->
+                            <div class="col-md-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select name="status" class="form-control">
+                                    <option value="">Published (mặc định)</option>
+                                    <option value="Draft"     ${selectedStatus == 'Draft'     ? 'selected' : ''}>Draft</option>
+                                    <option value="Published" ${selectedStatus == 'Published' ? 'selected' : ''}>Published</option>
+                                    <option value="Completed" ${selectedStatus == 'Completed' ? 'selected' : ''}>Completed</option>
+                                    <option value="Cancelled" ${selectedStatus == 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                                </select>
+                            </div>
+
+                            <!-- from -->
+                            <div class="col-md-3">
+                                <label class="form-label">Từ ngày</label>
+                                <input type="date"
+                                       name="startFrom"
+                                       class="form-control"
+                                       value="<c:out value='${startFrom}'/>">
+                            </div>
+
+                            <!-- to -->
+                            <div class="col-md-3">
+                                <label class="form-label">Đến ngày</label>
+                                <input type="date"
+                                       name="startTo"
+                                       class="form-control"
+                                       value="<c:out value='${startTo}'/>">
+                            </div>
+
+                            <!-- button -->
+                            <div class="col-md-3 offset-md-3 text-md-right">
+                                <label class="d-none d-md-block">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary w-100">
                                     <i class="fa fa-search mr-1"></i> Lọc sự kiện
                                 </button>
                             </div>
@@ -173,14 +209,12 @@
                     </div>
                 </div>
 
-                <!-- Không có sự kiện -->
                 <c:if test="${empty events}">
                     <div class="text-center text-muted m-t20">
-                        Hiện chưa có sự kiện Published nào phù hợp với bộ lọc.
+                        Hiện chưa có sự kiện phù hợp với bộ lọc.
                     </div>
                 </c:if>
 
-                <!-- Grid sự kiện -->
                 <c:if test="${not empty events}">
                     <div class="event-grid">
                         <c:forEach var="e" items="${events}">
@@ -244,6 +278,15 @@
                                     <c:if test="${selectedClubId != null}">
                                         <c:param name="clubId" value="${selectedClubId}"/>
                                     </c:if>
+                                    <c:if test="${not empty selectedStatus}">
+                                        <c:param name="status" value="${selectedStatus}"/>
+                                    </c:if>
+                                    <c:if test="${not empty startFrom}">
+                                        <c:param name="startFrom" value="${startFrom}"/>
+                                    </c:if>
+                                    <c:if test="${not empty startTo}">
+                                        <c:param name="startTo" value="${startTo}"/>
+                                    </c:if>
                                 </c:url>
                                 <li class="page-item">
                                     <a class="page-link" href="${prevUrl}">Trước</a>
@@ -260,6 +303,15 @@
                                     <c:if test="${selectedClubId != null}">
                                         <c:param name="clubId" value="${selectedClubId}"/>
                                     </c:if>
+                                    <c:if test="${not empty selectedStatus}">
+                                        <c:param name="status" value="${selectedStatus}"/>
+                                    </c:if>
+                                    <c:if test="${not empty startFrom}">
+                                        <c:param name="startFrom" value="${startFrom}"/>
+                                    </c:if>
+                                    <c:if test="${not empty startTo}">
+                                        <c:param name="startTo" value="${startTo}"/>
+                                    </c:if>
                                 </c:url>
                                 <li class="page-item ${currentPage == i ? 'active' : ''}">
                                     <a class="page-link" href="${pageUrl}">${i}</a>
@@ -275,6 +327,15 @@
                                     </c:if>
                                     <c:if test="${selectedClubId != null}">
                                         <c:param name="clubId" value="${selectedClubId}"/>
+                                    </c:if>
+                                    <c:if test="${not empty selectedStatus}">
+                                        <c:param name="status" value="${selectedStatus}"/>
+                                    </c:if>
+                                    <c:if test="${not empty startFrom}">
+                                        <c:param name="startFrom" value="${startFrom}"/>
+                                    </c:if>
+                                    <c:if test="${not empty startTo}">
+                                        <c:param name="startTo" value="${startTo}"/>
                                     </c:if>
                                 </c:url>
                                 <li class="page-item">
