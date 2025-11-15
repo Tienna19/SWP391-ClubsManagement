@@ -29,7 +29,7 @@
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="${ctx}/admin-club-list">Các CLB</a></li>
-                            <li><a href="${ctx}/admin-event-list">Sự kiện</a></li>
+                            <li><a href="${ctx}/admin-event-list">Sự kiện</a></li>                           
                             <li><a href="${ctx}/viewClubRequests">Yêu cầu CLB</a></li>
                         </ul>
                     </div>

@@ -20,7 +20,7 @@ public class CheckInServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        // Lấy eventId an toàn
+        // Lấy eventId 
         String eventIdParam = request.getParameter("eventId");
         int eventId = 0;
         try {
@@ -60,7 +60,6 @@ public class CheckInServlet extends HttpServlet {
             request.setAttribute("message", "⚠️ Lỗi: " + e.getMessage());
         }
 
-        // Luôn quay lại trang chi tiết sự kiện (giống flow của RegisterForEvent)
         forwardToDetail(eventId, request, response);
     }
 
@@ -69,7 +68,6 @@ public class CheckInServlet extends HttpServlet {
                                  HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Truyền eventId bằng attribute để ViewAllEventsServlet hiểu là hiển thị chi tiết
         request.setAttribute("eventId", eventId);
         RequestDispatcher rd = request.getRequestDispatcher("/ViewAllEventsServlet");
         rd.forward(request, response);
@@ -79,7 +77,6 @@ public class CheckInServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
-        // Không dùng GET cho check-in
         response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 }

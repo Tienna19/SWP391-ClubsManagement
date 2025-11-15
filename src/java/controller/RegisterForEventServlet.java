@@ -2,8 +2,7 @@ package controller;
 
 import dal.EventRegistrationDAO;
 import model.Event;
-import model.User;      // ❗ Nếu class user của bạn tên khác (UserAccount, Users, ...)
-// thì đổi lại import + tên kiểu cho phù hợp
+import model.User;      
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -50,8 +49,6 @@ public class RegisterForEventServlet extends HttpServlet {
                 return;
             }
 
-            // ⚠️ Chỗ này dùng getter đúng với model của bạn:
-            // nếu là getUserID() thì đổi lại
             int userId = account.getUserId();
 
             // 3. Lấy thông tin sự kiện
@@ -134,7 +131,7 @@ public class RegisterForEventServlet extends HttpServlet {
         rd.forward(request, response);
     }
 
-    // Quay lại danh sách events (fallback)
+    // Quay lại danh sách events 
     private void forwardToList(HttpServletRequest request,
                                HttpServletResponse response)
             throws ServletException, IOException {
@@ -146,7 +143,6 @@ public class RegisterForEventServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // Nếu ai đó gọi GET trực tiếp thì cho về list
         resp.sendRedirect(req.getContextPath() + "/viewAllEvents");
     }
 }

@@ -4,7 +4,6 @@ import dal.JoinClubRequestDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-// ĐỔI model.User theo class thực tế của bạn (ví dụ model.Account)
 import model.User;
 
 public class JoinClubServlet extends HttpServlet {
@@ -16,9 +15,7 @@ public class JoinClubServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        // LẤY USER THEO KEY THỰC TẾ (thường là "account")
         User authUser = (session == null) ? null : (User) session.getAttribute("account");
-        // Nếu dự án bạn dùng tên khác, đổi "account" cho đúng.
 
         String clubIdStr = request.getParameter("clubId");
         if (authUser == null) {
@@ -32,9 +29,8 @@ public class JoinClubServlet extends HttpServlet {
         }
 
         int clubId = Integer.parseInt(clubIdStr);
-        int userId = authUser.getUserId(); // đổi getter nếu khác
+        int userId = authUser.getUserId(); 
 
-        // Nếu đã là member/pending thì flash & quay lại trang CLB (UX tốt)
         if (dao.isAlreadyMember(userId, clubId)) {
             session.setAttribute("flashInfo", "Bạn đã là thành viên CLB này.");
             response.sendRedirect(request.getContextPath() + "/clubDetail?clubId=" + clubId);
@@ -47,7 +43,7 @@ public class JoinClubServlet extends HttpServlet {
         }
 
         // Prefill cho form
-        request.setAttribute("prefillFullName", authUser.getFullName()); // đổi getter nếu khác
+        request.setAttribute("prefillFullName", authUser.getFullName()); 
         request.setAttribute("prefillEmail", authUser.getEmail());
         request.setAttribute("prefillUserId", userId);
         request.setAttribute("prefillClubId", clubId);
@@ -71,7 +67,7 @@ public class JoinClubServlet extends HttpServlet {
 
         try {
             int clubId = Integer.parseInt(clubIdStr);
-            int userId = authUser.getUserId(); // đổi getter nếu khác
+            int userId = authUser.getUserId(); 
 
             if (dao.isAlreadyMember(userId, clubId)) {
                 session.setAttribute("flashInfo", "Bạn đã là thành viên CLB này.");
@@ -81,7 +77,6 @@ public class JoinClubServlet extends HttpServlet {
                 dao.createJoinRequest(userId, clubId, reason);
                 session.setAttribute("flashSuccess", "Đã gửi yêu cầu tham gia! Vui lòng chờ duyệt.");
             }
-            // PRG: redirect về trang chi tiết CLB để hiển thị flash
             response.sendRedirect(request.getContextPath() + "/clubDetail?clubId=" + clubId);
 
         } catch (NumberFormatException e) {
