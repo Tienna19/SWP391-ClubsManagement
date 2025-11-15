@@ -29,7 +29,7 @@ public class AssignRoleController {
 
             if (isCritical && "Leader".equalsIgnoreCase(currentUserRole)) {
                 // Leader gán role quan trọng → pending
-                PendingRequest req = new PendingRequest(membershipId, member.getRole(), newRole, currentUserId);
+                PendingRequest req = new PendingRequest(membershipId, member.getRoleInClub(), newRole, currentUserId);
                 membershipDAO.addPendingRequest(req);
                 return "Request submitted: Role change pending Admin approval.";
             }

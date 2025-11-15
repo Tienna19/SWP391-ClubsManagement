@@ -8,7 +8,6 @@ import model.EventClub;
 
 public class EventViewDAO extends DBContext {
 
-    // ====== CŨ: Lấy theo CLB ======
     public List<Event> getEventsByClubId(int clubId) throws SQLException {
         List<Event> list = new ArrayList<>();
         String sql = """
@@ -44,7 +43,6 @@ public class EventViewDAO extends DBContext {
         return list;
     }
 
-    // ====== CŨ: Tất cả Published (không phân trang) – vẫn giữ nếu chỗ khác dùng ======
     public List<Event> getAllPublishedEvents() throws SQLException {
         List<Event> events = new ArrayList<>();
         String sql = "SELECT * FROM Events "
@@ -74,7 +72,6 @@ public class EventViewDAO extends DBContext {
         return events;
     }
 
-    // ====== CŨ: Lấy chi tiết theo ID ======
     public Event getEventById(int eventId) throws SQLException {
         String sql = "SELECT * FROM Events WHERE EventID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -101,11 +98,7 @@ public class EventViewDAO extends DBContext {
         return null;
     }
 
-    // ========================================================================
-    //  MỚI: TÌM KIẾM + LỌC + PHÂN TRANG
-    // ========================================================================
 
-    // Đếm tổng số sự kiện Published (có áp dụng keyword + clubId nếu có)
     public int countPublishedEvents(String keyword, Integer clubId) throws SQLException {
         StringBuilder sql = new StringBuilder(
             "SELECT COUNT(*) FROM Events " +
@@ -141,7 +134,6 @@ public class EventViewDAO extends DBContext {
         return 0;
     }
 
-    // Lấy list sự kiện Published theo keyword + clubId + phân trang
     public List<Event> searchPublishedEvents(String keyword, Integer clubId,
                                              int offset, int pageSize) throws SQLException {
         List<Event> events = new ArrayList<>();
@@ -198,7 +190,6 @@ public class EventViewDAO extends DBContext {
         return events;
     }
 
-    // Lấy danh sách CLB có ít nhất 1 sự kiện Published (để đổ dropdown)
     public List<EventClub> getPublishedClubs() throws SQLException {
         List<EventClub> clubs = new ArrayList<>();
         String sql = """
