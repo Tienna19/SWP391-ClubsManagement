@@ -150,7 +150,7 @@
                                                                 style="background: #dc3545; border: none; padding: 8px 20px; color: white;">
                                                             <i class="fa fa-times"></i> Từ chối
                                                         </button>
-                                                        <a href="editEvent?eventId=${-(request.requestID + 1000000)}" class="btn btn-info btn-sm"
+                                                        <a href="${pageContext.request.contextPath}/viewEvent?eventId=${eventIdMap[request.requestID]}" class="btn btn-info btn-sm"
                                                            style="background: #17a2b8; border: none; padding: 8px 20px; color: white;">
                                                             <i class="fa fa-eye"></i> Xem chi tiết
                                                         </a>

@@ -428,27 +428,7 @@
 												</div>
 											</div>
 											
-											<c:if test="${not empty sessionScope.account}">
-												<div class="action-buttons">
-													<c:choose>
-														<c:when test="${isRegistered}">
-															<button class="btn btn-registered" disabled>
-																<i class="fa fa-check"></i> Đã đăng ký
-															</button>
-														</c:when>
-														<c:when test="${event.status == 'Published' && availableSlots > 0}">
-															<button class="btn btn-register" onclick="registerEvent(<c:out value='${event.eventID}'/>)">
-																<i class="fa fa-user-plus"></i> Đăng ký tham gia
-															</button>
-														</c:when>
-														<c:otherwise>
-															<button class="btn btn-registered" disabled>
-																<i class="fa fa-ban"></i> Không thể đăng ký
-															</button>
-														</c:otherwise>
-													</c:choose>
-												</div>
-											</c:if>
+											
 										</div>
 										
 										<!-- Club Info -->
@@ -524,14 +504,7 @@
 	<script src="${pageContext.request.contextPath}/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
 	<script src="${pageContext.request.contextPath}/assets/js/functions.js"></script>
 	
-	<script>
-		function registerEvent(eventId) {
-			if (confirm('Bạn có chắc chắn muốn đăng ký tham gia sự kiện này?')) {
-				// TODO: Implement event registration functionality
-				alert('Chức năng đăng ký sự kiện sẽ được triển khai sau.');
-			}
-		}
-	</script>
+
 	
 </body>
 </html>
