@@ -17,6 +17,7 @@ public class User {
     private String address;
     private String gender;
     private int roleId; // Foreign key to Roles.RoleID
+    private String status;
     private String profileImage;
     private Timestamp createdAt;
 
@@ -25,7 +26,7 @@ public class User {
 
     // Constructor đầy đủ
     public User(int userId, String fullName, String email, String passwordHash,
-            String phoneNumber, String address, String gender, int roleId,
+            String phoneNumber, String address, String gender, int roleId, String status,
             String profileImage, Timestamp createdAt) {
         this.userId = userId;
         this.fullName = fullName;
@@ -35,6 +36,7 @@ public class User {
         this.address = address;
         this.gender = gender;
         this.roleId = roleId;
+        this.status = status;
         this.profileImage = profileImage;
         this.createdAt = createdAt;
     }
@@ -127,6 +129,14 @@ public class User {
         this.roleId = roleId;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
     public String getProfileImage() {
         return profileImage;
     }
