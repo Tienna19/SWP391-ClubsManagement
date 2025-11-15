@@ -65,7 +65,7 @@
             <div id="loading-icon-bx"></div>
             <div class="account-form">
                 <div class="account-head" style="background-image:url(assets/images/bg2.jpg);">
-                    <a href="home"><img src="assets/images/logo-white-2.png" alt=""></a>
+                    <a href="home"><img src="assets/images/logo-white.png" alt=""></a>
                 </div>
                 <div class="account-form-inner">
                     <div class="account-container">
@@ -125,7 +125,7 @@
         <script src="assets/vendors/masonry/filter.js"></script>
         <script src="assets/vendors/owl-carousel/owl.carousel.js"></script>
         <script src="assets/js/functions.js"></script>
-        <script src="assets/js/contact.js"></script>
+        <!-- <script src="assets/js/contact.js"></script> -->
         <script src='assets/vendors/switcher/switcher.js'></script>
     </body>
 
