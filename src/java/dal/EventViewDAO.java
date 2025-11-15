@@ -98,31 +98,66 @@ public class EventViewDAO extends DBContext {
         return null;
     }
 
+    /**
+     * Đếm số event theo filter (keyword, club, status, date range)
+     * Mặc định: chỉ đếm event có EndDate >= GETDATE()
+     * và nếu status rỗng => chỉ đếm Status = 'Published'
+     */
+    public int countPublishedEvents(String keyword,
+                                    Integer clubId,
+                                    String status,
+                                    String startFrom,
+                                    String startTo) throws SQLException {
 
-    public int countPublishedEvents(String keyword, Integer clubId) throws SQLException {
         StringBuilder sql = new StringBuilder(
-            "SELECT COUNT(*) FROM Events " +
-            "WHERE Status = 'Published' AND EndDate >= GETDATE()"
+            "SELECT COUNT(*) FROM Events WHERE 1=1 AND EndDate >= GETDATE()"
         );
+        List<Object> params = new ArrayList<>();
 
-        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        // keyword
+        boolean hasKeyword = (keyword != null && !keyword.trim().isEmpty());
         if (hasKeyword) {
             sql.append(" AND (EventName LIKE ? OR Description LIKE ? OR Location LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
         }
+
+        // club
         if (clubId != null) {
             sql.append(" AND ClubID = ?");
+            params.add(clubId);
+        }
+
+        // status: rỗng => mặc định Published
+        if (status == null || status.trim().isEmpty()) {
+            sql.append(" AND Status = 'Published'");
+        } else {
+            sql.append(" AND Status = ?");
+            params.add(status.trim());
+        }
+
+        // date from
+        if (startFrom != null && !startFrom.isEmpty()) {
+            try {
+                sql.append(" AND StartDate >= ?");
+                params.add(java.sql.Date.valueOf(startFrom));
+            } catch (IllegalArgumentException ignore) {}
+        }
+
+        // date to
+        if (startTo != null && !startTo.isEmpty()) {
+            try {
+                sql.append(" AND StartDate <= ?");
+                params.add(java.sql.Date.valueOf(startTo));
+            } catch (IllegalArgumentException ignore) {}
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int idx = 1;
-            if (hasKeyword) {
-                String like = "%" + keyword.trim() + "%";
-                ps.setNString(idx++, like);
-                ps.setNString(idx++, like);
-                ps.setNString(idx++, like);
-            }
-            if (clubId != null) {
-                ps.setInt(idx++, clubId);
+            for (Object obj : params) {
+                ps.setObject(idx++, obj);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -134,38 +169,73 @@ public class EventViewDAO extends DBContext {
         return 0;
     }
 
-    public List<Event> searchPublishedEvents(String keyword, Integer clubId,
-                                             int offset, int pageSize) throws SQLException {
+    /**
+     * Lấy list event theo filter + phân trang
+     * Mặc định: Status = 'Published' nếu không chọn gì, EndDate >= GETDATE()
+     */
+    public List<Event> searchPublishedEvents(String keyword,
+                                             Integer clubId,
+                                             String status,
+                                             String startFrom,
+                                             String startTo,
+                                             int offset,
+                                             int pageSize) throws SQLException {
         List<Event> events = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
-            "SELECT * FROM Events " +
-            "WHERE Status = 'Published' AND EndDate >= GETDATE()"
+            "SELECT * FROM Events WHERE 1=1 AND EndDate >= GETDATE()"
         );
+        List<Object> params = new ArrayList<>();
 
-        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        // keyword
+        boolean hasKeyword = (keyword != null && !keyword.trim().isEmpty());
         if (hasKeyword) {
             sql.append(" AND (EventName LIKE ? OR Description LIKE ? OR Location LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
         }
+
+        // club
         if (clubId != null) {
             sql.append(" AND ClubID = ?");
+            params.add(clubId);
+        }
+
+        // status
+        if (status == null || status.trim().isEmpty()) {
+            sql.append(" AND Status = 'Published'");
+        } else {
+            sql.append(" AND Status = ?");
+            params.add(status.trim());
+        }
+
+        // date from
+        if (startFrom != null && !startFrom.isEmpty()) {
+            try {
+                sql.append(" AND StartDate >= ?");
+                params.add(java.sql.Date.valueOf(startFrom));
+            } catch (IllegalArgumentException ignore) {}
+        }
+
+        // date to
+        if (startTo != null && !startTo.isEmpty()) {
+            try {
+                sql.append(" AND StartDate <= ?");
+                params.add(java.sql.Date.valueOf(startTo));
+            } catch (IllegalArgumentException ignore) {}
         }
 
         sql.append(" ORDER BY StartDate ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(offset);
+        params.add(pageSize);
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int idx = 1;
-            if (hasKeyword) {
-                String like = "%" + keyword.trim() + "%";
-                ps.setNString(idx++, like);
-                ps.setNString(idx++, like);
-                ps.setNString(idx++, like);
+            for (Object obj : params) {
+                ps.setObject(idx++, obj);
             }
-            if (clubId != null) {
-                ps.setInt(idx++, clubId);
-            }
-            ps.setInt(idx++, offset);
-            ps.setInt(idx, pageSize);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

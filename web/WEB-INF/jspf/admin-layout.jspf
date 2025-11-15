@@ -142,8 +142,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="${ctx}/AssignRoleNewServlet" class="ttr-material-button">
-                                <span class="ttr-label">Vai trò (Mới)</span>
+                            <a href="${ctx}/AssignRoleNew" class="ttr-material-button">
+                                <span class="ttr-label">Vai trò</span>
                             </a>
                         </li>
                     </ul>
