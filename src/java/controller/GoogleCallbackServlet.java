@@ -18,7 +18,7 @@ public class GoogleCallbackServlet extends HttpServlet {
 
     private String CLIENT_ID;
     private String CLIENT_SECRET;
-    private final String REDIRECT_URI = "http://localhost:9999/ClubManagerTest/google-callback";
+    private final String REDIRECT_URI = "http://localhost:9999/SWP391-ClubsManagement/google-callback";
 
     @Override
     public void init() throws ServletException {

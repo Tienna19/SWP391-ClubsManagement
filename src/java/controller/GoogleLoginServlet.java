@@ -10,8 +10,17 @@ import java.nio.charset.StandardCharsets;
 @WebServlet(name = "GoogleLoginServlet", urlPatterns = {"/google-login"})
 public class GoogleLoginServlet extends HttpServlet {
 
-    private final String CLIENT_ID = "413146930977-atqeb8s48a9efuqm7grru57tth8qvi01.apps.googleusercontent.com";
-    private final String REDIRECT_URI = "http://localhost:9999/ClubManagerTest/google-callback";
+    private String CLIENT_ID;
+    private final String REDIRECT_URI = "http://localhost:9999/SWP391-ClubsManagement/google-callback";
+
+    @Override
+    public void init() throws ServletException {
+        CLIENT_ID = getServletContext().getInitParameter("GOOGLE_CLIENT_ID");
+
+        if (CLIENT_ID == null) {
+            throw new ServletException("Không tìm thấy cấu hình Google Client ID/Secret trong web.xml");
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

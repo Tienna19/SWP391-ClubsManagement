@@ -565,7 +565,7 @@
 					 <div class="row">
 						 <div class="col-lg-6 m-b30">
 							<h2 class="title-head ">Vì sao chọn <br> <span class="text-primary">StuClubManagement?</span></h2>
-							<h4>Xây dựng <span class="counter">tương lai</span> từ hôm nay</h4>
+							<h4>Xây dựng <span>tương lai</span> từ hôm nay</h4>
 							<p>Nền tảng giúp ban chủ nhiệm quản lí CLB hiệu quả, sinh viên dễ dàng tiếp cận thông tin và đăng ký tham gia sự kiện. Mọi thứ tập trung tại một nơi duy nhất.</p>
 							<a href="viewAllClubs" class="btn button-md">Trải nghiệm ngay</a>
 						 </div>
